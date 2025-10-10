@@ -10,7 +10,7 @@ const HeaderContainer = styled.header`
   padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
-  justify-between;
+  justify-content: space-between;
   border-bottom: 1px solid rgb(226 232 240);
 `
 
@@ -29,6 +29,12 @@ const LogoCircle = styled.div`
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+`
+
+const StyledTruckIcon = styled(Truck)`
+  width: 1.5rem;
+  height: 1.5rem;
+  color: white;
 `
 
 const TitleSection = styled.div`
@@ -61,6 +67,7 @@ const StatusIndicator = styled.div`
   gap: 0.5rem;
   font-size: 0.875rem;
   color: rgb(22 163 74);
+  font-weight: 500;
 `
 
 const StatusDot = styled.div`
@@ -68,6 +75,27 @@ const StatusDot = styled.div`
   height: 0.5rem;
   background: rgb(22 163 74);
   border-radius: 50%;
+  flex-shrink: 0;
+`
+
+const StyledArrowLeftIcon = styled(ArrowLeft)`
+  width: 1rem;
+  height: 1rem;
+`
+
+const StyledLogOutIcon = styled(LogOut)`
+  width: 1rem;
+  height: 1rem;
+`
+
+const StyledButton = styled(Button)`
+  border-color: rgb(148 163 184);
+  color: rgb(71 85 105);
+  
+  &:hover {
+    border-color: rgb(100 116 139);
+    background-color: rgb(248 250 252);
+  }
 `
 
 interface HeaderProps {
@@ -89,7 +117,7 @@ export default function Header({
     <HeaderContainer>
       <LogoSection>
         <LogoCircle>
-          <Truck className="w-6 h-6 text-white" />
+          <StyledTruckIcon />
         </LogoCircle>
         <TitleSection>
           <Title>Vendor Bid Portal</Title>
@@ -102,40 +130,14 @@ export default function Header({
           Secure Portal
         </StatusIndicator>
         {showBackButton && onBack && (
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<ArrowLeft className="w-4 h-4" />}
-            onClick={onBack}
-            sx={{
-              borderColor: "rgb(148 163 184)",
-              color: "rgb(71 85 105)",
-              "&:hover": {
-                borderColor: "rgb(100 116 139)",
-                backgroundColor: "rgb(248 250 252)",
-              },
-            }}
-          >
+          <StyledButton variant="outlined" size="small" startIcon={<StyledArrowLeftIcon />} onClick={onBack}>
             Back to Cities
-          </Button>
+          </StyledButton>
         )}
         {showLogoutButton && onLogout && (
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<LogOut className="w-4 h-4" />}
-            onClick={onLogout}
-            sx={{
-              borderColor: "rgb(148 163 184)",
-              color: "rgb(71 85 105)",
-              "&:hover": {
-                borderColor: "rgb(100 116 139)",
-                backgroundColor: "rgb(248 250 252)",
-              },
-            }}
-          >
+          <StyledButton variant="outlined" size="small" startIcon={<StyledLogOutIcon />} onClick={onLogout}>
             Logout
-          </Button>
+          </StyledButton>
         )}
       </ActionsSection>
     </HeaderContainer>
