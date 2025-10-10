@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState } from "react"
+import styled from "styled-components"
 import {
   Table,
   TableBody,
@@ -16,6 +17,209 @@ import {
   TableSortLabel,
 } from "@mui/material"
 import { Truck, LogOut, Search, Download } from "lucide-react"
+
+const PageContainer = styled.div`
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, rgb(248 250 252), rgb(226 232 240));
+  display: flex;
+  flex-direction: column;
+`
+
+const Header = styled.header`
+  background: white;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgb(226 232 240);
+`
+
+const HeaderContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+`
+
+const LogoCircle = styled.div`
+  width: 3rem;
+  height: 3rem;
+  background: rgb(37 99 235);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+`
+
+const HeaderText = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
+const HeaderTitle = styled.h1`
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: rgb(15 23 42);
+  margin: 0;
+`
+
+const HeaderSubtitle = styled.p`
+  font-size: 0.875rem;
+  color: rgb(71 85 105);
+  margin: 0;
+`
+
+const HeaderActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`
+
+const StatusIndicator = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`
+
+const StatusDot = styled.div`
+  width: 0.5rem;
+  height: 0.5rem;
+  background: rgb(34 197 94);
+  border-radius: 50%;
+`
+
+const StatusText = styled.span`
+  font-size: 0.875rem;
+  color: rgb(71 85 105);
+`
+
+const Main = styled.main`
+  flex: 1;
+  padding: 1.5rem;
+`
+
+const Container = styled.div`
+  max-width: 112rem;
+  margin: 0 auto;
+`
+
+const GridContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 3fr;
+  }
+`
+
+const Sidebar = styled.div`
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  padding: 1rem;
+  border: 1px solid rgb(226 232 240);
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  overflow-y: auto;
+`
+
+const SidebarTitle = styled.h4`
+  font-weight: 600;
+  color: rgb(15 23 42);
+  margin-bottom: 1rem;
+`
+
+const DestinationList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-y: auto;
+  flex: 1;
+`
+
+const DestinationButton = styled.button<{ $selected?: boolean }>`
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: ${(props) => (props.$selected ? "rgb(37 99 235)" : "rgb(241 245 249)")};
+  color: ${(props) => (props.$selected ? "white" : "rgb(15 23 42)")};
+
+  &:hover {
+    background: ${(props) => (props.$selected ? "rgb(37 99 235)" : "rgb(226 232 240)")};
+  }
+`
+
+const DestinationName = styled.div`
+  font-weight: 500;
+`
+
+const DestinationCount = styled.div<{ $selected?: boolean }>`
+  font-size: 0.875rem;
+  color: ${(props) => (props.$selected ? "rgb(191 219 254)" : "rgb(71 85 105)")};
+`
+
+const ContentCard = styled.div`
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  padding: 1.5rem;
+  border: 1px solid rgb(226 232 240);
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+`
+
+const CardHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+`
+
+const CardHeaderText = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
+const CardTitle = styled.h2`
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: rgb(15 23 42);
+  margin-bottom: 0.25rem;
+`
+
+const CardDescription = styled.p`
+  color: rgb(71 85 105);
+  margin: 0;
+`
+
+const SearchContainer = styled.div`
+  margin-bottom: 1.5rem;
+`
+
+const TableWrapper = styled.div`
+  flex: 1;
+  overflow: auto;
+`
+
+const EmptyState = styled.div`
+  text-align: center;
+  padding: 3rem 0;
+  color: rgb(100 116 139);
+`
+
+const TableFooter = styled.div`
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: rgb(71 85 105);
+`
 
 const MOCK_RATES = [
   {
@@ -764,26 +968,28 @@ export default function AdminRatesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col">
-      <header className="bg-white shadow-sm px-6 py-4 flex items-center justify-between border-b border-slate-200">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-md">
-            <Truck className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-slate-900">Vendor Bid Portal</h1>
-            <p className="text-sm text-slate-600">Admin - Rate Management{selectedCity && ` - ${selectedCity}`}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-          <span className="text-sm text-slate-600">Admin Portal</span>
+    <PageContainer>
+      <Header>
+        <HeaderContent>
+          <LogoCircle>
+            <Truck style={{ width: "1.5rem", height: "1.5rem", color: "white" }} />
+          </LogoCircle>
+          <HeaderText>
+            <HeaderTitle>Vendor Bid Portal</HeaderTitle>
+            <HeaderSubtitle>Admin - Rate Management{selectedCity && ` - ${selectedCity}`}</HeaderSubtitle>
+          </HeaderText>
+        </HeaderContent>
+        <HeaderActions>
+          <StatusIndicator>
+            <StatusDot />
+            <StatusText>Admin Portal</StatusText>
+          </StatusIndicator>
           <Button
             variant="outlined"
             size="small"
             onClick={() => router.push("/cities")}
             sx={{
-              ml: 2,
+              marginLeft: "0.5rem",
               borderColor: "rgb(148 163 184)",
               color: "rgb(71 85 105)",
               "&:hover": {
@@ -797,10 +1003,10 @@ export default function AdminRatesPage() {
           <Button
             variant="outlined"
             size="small"
-            startIcon={<LogOut className="w-4 h-4" />}
+            startIcon={<LogOut style={{ width: "1rem", height: "1rem" }} />}
             onClick={handleLogout}
             sx={{
-              ml: 2,
+              marginLeft: "0.5rem",
               borderColor: "rgb(148 163 184)",
               color: "rgb(71 85 105)",
               "&:hover": {
@@ -811,214 +1017,200 @@ export default function AdminRatesPage() {
           >
             Logout
           </Button>
-        </div>
-      </header>
+        </HeaderActions>
+      </Header>
 
-      <main className="flex-1 p-6">
-        <div className="max-w-7xl mx-auto">
+      <Main>
+        <Container>
           {selectedCity === "Atlanta" ? (
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 ">
-              <div className="lg:col-span-1 max-h-[80vh] overflow-y-auto">
-                <div className="bg-white rounded-lg shadow-sm p-4 border border-slate-200 flex flex-col h-[80vh] overflow-y-auto">
-                  <h4 className="font-semibold text-slate-900 mb-4">Select Destination</h4>
-                  <div className="space-y-2 overflow-y-auto flex-1">
-                    <button
-                      onClick={() => setSelectedDestination(null)}
-                      className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
-                        selectedDestination === null
-                          ? "bg-blue-600 text-white"
-                          : "bg-slate-100 hover:bg-slate-200 text-slate-900"
-                      }`}
-                    >
-                      <div className="font-medium">All Destinations</div>
-                      <div className={`text-sm ${selectedDestination === null ? "text-blue-100" : "text-slate-600"}`}>
-                        {MOCK_RATES.filter((r) => r.startCity === "Atlanta").length} rates
-                      </div>
-                    </button>
-                    {atlantaDestinations.map((dest) => {
-                      const count = MOCK_RATES.filter((r) => r.startCity === "Atlanta" && r.endCity === dest).length
-                      return (
-                        <button
-                          key={dest}
-                          onClick={() => setSelectedDestination(dest)}
-                          className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
-                            selectedDestination === dest
-                              ? "bg-blue-600 text-white"
-                              : "bg-slate-100 hover:bg-slate-200 text-slate-900"
-                          }`}
-                        >
-                          <div className="font-medium">{dest}</div>
-                          <div
-                            className={`text-sm ${selectedDestination === dest ? "text-blue-100" : "text-slate-600"}`}
-                          >
-                            {count} {count === 1 ? "rate" : "rates"}
-                          </div>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              </div>
+            <GridContainer>
+              <Sidebar>
+                <SidebarTitle>Select Destination</SidebarTitle>
+                <DestinationList>
+                  <DestinationButton
+                    onClick={() => setSelectedDestination(null)}
+                    $selected={selectedDestination === null}
+                  >
+                    <DestinationName>All Destinations</DestinationName>
+                    <DestinationCount $selected={selectedDestination === null}>
+                      {MOCK_RATES.filter((r) => r.startCity === "Atlanta").length} rates
+                    </DestinationCount>
+                  </DestinationButton>
+                  {atlantaDestinations.map((dest) => {
+                    const count = MOCK_RATES.filter((r) => r.startCity === "Atlanta" && r.endCity === dest).length
+                    return (
+                      <DestinationButton
+                        key={dest}
+                        onClick={() => setSelectedDestination(dest)}
+                        $selected={selectedDestination === dest}
+                      >
+                        <DestinationName>{dest}</DestinationName>
+                        <DestinationCount $selected={selectedDestination === dest}>
+                          {count} {count === 1 ? "rate" : "rates"}
+                        </DestinationCount>
+                      </DestinationButton>
+                    )
+                  })}
+                </DestinationList>
+              </Sidebar>
 
-              <div className="lg:col-span-3 max-h-[80vh] overflow-y-auto">
-                <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200 h-full flex flex-col">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h2 className="text-2xl font-bold text-slate-900 mb-1">
-                        Atlanta Vendor Rates
-                        {selectedDestination && ` - ${selectedDestination}`}
-                      </h2>
-                      <p className="text-slate-600">
-                        {selectedDestination
-                          ? `Viewing rates for ${selectedDestination}`
-                          : "Select a destination to view rates"}
-                      </p>
-                    </div>
-                    <Button
-                      variant="contained"
-                      startIcon={<Download className="w-4 h-4" />}
-                      onClick={handleExport}
-                      sx={{
-                        backgroundColor: "rgb(37 99 235)",
-                        "&:hover": {
-                          backgroundColor: "rgb(29 78 216)",
-                        },
-                      }}
-                    >
-                      Export to CSV
-                    </Button>
-                  </div>
+              <ContentCard>
+                <CardHeader>
+                  <CardHeaderText>
+                    <CardTitle>
+                      Atlanta Vendor Rates
+                      {selectedDestination && ` - ${selectedDestination}`}
+                    </CardTitle>
+                    <CardDescription>
+                      {selectedDestination
+                        ? `Viewing rates for ${selectedDestination}`
+                        : "Select a destination to view rates"}
+                    </CardDescription>
+                  </CardHeaderText>
+                  <Button
+                    variant="contained"
+                    startIcon={<Download style={{ width: "1rem", height: "1rem" }} />}
+                    onClick={handleExport}
+                    sx={{
+                      backgroundColor: "rgb(37 99 235)",
+                      "&:hover": {
+                        backgroundColor: "rgb(29 78 216)",
+                      },
+                    }}
+                  >
+                    Export to CSV
+                  </Button>
+                </CardHeader>
 
-                  <div className="mb-6">
-                    <TextField
-                      fullWidth
-                      placeholder="Search by vendor ID, email, or city..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Search className="w-5 h-5 text-slate-400" />
-                          </InputAdornment>
-                        ),
-                      }}
-                      variant="outlined"
-                    />
-                  </div>
+                <SearchContainer>
+                  <TextField
+                    fullWidth
+                    placeholder="Search by vendor ID, email, or city..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Search style={{ width: "1.25rem", height: "1.25rem", color: "rgb(156 163 175)" }} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    variant="outlined"
+                  />
+                </SearchContainer>
 
-                  <div className="flex-1 overflow-auto">
-                    <TableContainer component={Paper} variant="outlined" sx={{ height: "100%" }}>
-                      <Table stickyHeader>
-                        <TableHead>
-                          <TableRow className="bg-slate-50">
-                            <TableCell className="font-bold">
-                              <TableSortLabel
-                                active={orderBy === "vendorId"}
-                                direction={orderBy === "vendorId" ? order : "asc"}
-                                onClick={() => handleSort("vendorId")}
-                              >
-                                Vendor ID
-                              </TableSortLabel>
+                <TableWrapper>
+                  <TableContainer component={Paper} variant="outlined" sx={{ height: "100%" }}>
+                    <Table stickyHeader>
+                      <TableHead>
+                        <TableRow sx={{ backgroundColor: "rgb(248 250 252)" }}>
+                          <TableCell sx={{ fontWeight: 700 }}>
+                            <TableSortLabel
+                              active={orderBy === "vendorId"}
+                              direction={orderBy === "vendorId" ? order : "asc"}
+                              onClick={() => handleSort("vendorId")}
+                            >
+                              Vendor ID
+                            </TableSortLabel>
+                          </TableCell>
+                          <TableCell sx={{ fontWeight: 700 }}>
+                            <TableSortLabel
+                              active={orderBy === "vendorEmail"}
+                              direction={orderBy === "vendorEmail" ? order : "asc"}
+                              onClick={() => handleSort("vendorEmail")}
+                            >
+                              Email
+                            </TableSortLabel>
+                          </TableCell>
+                          <TableCell sx={{ fontWeight: 700 }}>
+                            <TableSortLabel
+                              active={orderBy === "endCity"}
+                              direction={orderBy === "endCity" ? order : "asc"}
+                              onClick={() => handleSort("endCity")}
+                            >
+                              Destination
+                            </TableSortLabel>
+                          </TableCell>
+                          <TableCell sx={{ fontWeight: 700 }}>
+                            <TableSortLabel
+                              active={orderBy === "submittedAt"}
+                              direction={orderBy === "submittedAt" ? order : "asc"}
+                              onClick={() => handleSort("submittedAt")}
+                            >
+                              Submitted
+                            </TableSortLabel>
+                          </TableCell>
+                          <TableCell sx={{ fontWeight: 700 }} align="right">
+                            <TableSortLabel
+                              active={orderBy === "baseRate"}
+                              direction={orderBy === "baseRate" ? order : "asc"}
+                              onClick={() => handleSort("baseRate")}
+                            >
+                              Base Rate
+                            </TableSortLabel>
+                          </TableCell>
+                          <TableCell sx={{ fontWeight: 700 }} align="right">
+                            <TableSortLabel
+                              active={orderBy === "fsc"}
+                              direction={orderBy === "fsc" ? order : "asc"}
+                              onClick={() => handleSort("fsc")}
+                            >
+                              FSC %
+                            </TableSortLabel>
+                          </TableCell>
+                          <TableCell sx={{ fontWeight: 700 }} align="right">
+                            <TableSortLabel
+                              active={orderBy === "total"}
+                              direction={orderBy === "total" ? order : "asc"}
+                              onClick={() => handleSort("total")}
+                            >
+                              Total
+                            </TableSortLabel>
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {filteredRates.map((rate) => (
+                          <TableRow key={rate.id} hover>
+                            <TableCell sx={{ fontFamily: "monospace", fontSize: "0.875rem" }}>
+                              {rate.vendorId}
                             </TableCell>
-                            <TableCell className="font-bold">
-                              <TableSortLabel
-                                active={orderBy === "vendorEmail"}
-                                direction={orderBy === "vendorEmail" ? order : "asc"}
-                                onClick={() => handleSort("vendorEmail")}
-                              >
-                                Email
-                              </TableSortLabel>
+                            <TableCell>{rate.vendorEmail}</TableCell>
+                            <TableCell>{rate.endCity}</TableCell>
+                            <TableCell sx={{ fontSize: "0.875rem", color: "rgb(71 85 105)" }}>
+                              {rate.submittedAt}
                             </TableCell>
-                            <TableCell className="font-bold">
-                              <TableSortLabel
-                                active={orderBy === "endCity"}
-                                direction={orderBy === "endCity" ? order : "asc"}
-                                onClick={() => handleSort("endCity")}
-                              >
-                                Destination
-                              </TableSortLabel>
-                            </TableCell>
-                            <TableCell className="font-bold">
-                              <TableSortLabel
-                                active={orderBy === "submittedAt"}
-                                direction={orderBy === "submittedAt" ? order : "asc"}
-                                onClick={() => handleSort("submittedAt")}
-                              >
-                                Submitted
-                              </TableSortLabel>
-                            </TableCell>
-                            <TableCell className="font-bold" align="right">
-                              <TableSortLabel
-                                active={orderBy === "baseRate"}
-                                direction={orderBy === "baseRate" ? order : "asc"}
-                                onClick={() => handleSort("baseRate")}
-                              >
-                                Base Rate
-                              </TableSortLabel>
-                            </TableCell>
-                            <TableCell className="font-bold" align="right">
-                              <TableSortLabel
-                                active={orderBy === "fsc"}
-                                direction={orderBy === "fsc" ? order : "asc"}
-                                onClick={() => handleSort("fsc")}
-                              >
-                                FSC %
-                              </TableSortLabel>
-                            </TableCell>
-                            <TableCell className="font-bold" align="right">
-                              <TableSortLabel
-                                active={orderBy === "total"}
-                                direction={orderBy === "total" ? order : "asc"}
-                                onClick={() => handleSort("total")}
-                              >
-                                Total
-                              </TableSortLabel>
+                            <TableCell align="right">${rate.baseRate.toFixed(2)}</TableCell>
+                            <TableCell align="right">{rate.fsc.toFixed(2)}%</TableCell>
+                            <TableCell align="right">
+                              <span style={{ fontWeight: 700, color: "rgb(37 99 235)" }}>${rate.total.toFixed(2)}</span>
                             </TableCell>
                           </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {filteredRates.map((rate) => (
-                            <TableRow key={rate.id} hover>
-                              <TableCell className="font-mono text-sm">{rate.vendorId}</TableCell>
-                              <TableCell>{rate.vendorEmail}</TableCell>
-                              <TableCell>{rate.endCity}</TableCell>
-                              <TableCell className="text-sm text-slate-600">{rate.submittedAt}</TableCell>
-                              <TableCell align="right">${rate.baseRate.toFixed(2)}</TableCell>
-                              <TableCell align="right">{rate.fsc.toFixed(2)}%</TableCell>
-                              <TableCell align="right">
-                                <span className="font-bold text-blue-600">${rate.total.toFixed(2)}</span>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  </div>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </TableWrapper>
 
-                  {filteredRates.length === 0 && (
-                    <div className="text-center py-12 text-slate-500">No rates found matching your search criteria</div>
-                  )}
+                {filteredRates.length === 0 && <EmptyState>No rates found matching your search criteria</EmptyState>}
 
-                  <div className="mt-4 text-sm text-slate-600">Showing {filteredRates.length} rates</div>
-                </div>
-              </div>
-            </div>
+                <TableFooter>Showing {filteredRates.length} rates</TableFooter>
+              </ContentCard>
+            </GridContainer>
           ) : (
-            <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-900 mb-1">
-                    {selectedCity ? `${selectedCity} Vendor Rates` : "All Vendor Rates"}
-                  </h2>
-                  <p className="text-slate-600">
+            <ContentCard>
+              <CardHeader>
+                <CardHeaderText>
+                  <CardTitle>{selectedCity ? `${selectedCity} Vendor Rates` : "All Vendor Rates"}</CardTitle>
+                  <CardDescription>
                     {selectedCity
                       ? `View and manage bids starting from ${selectedCity}`
                       : "View and manage all submitted vendor bids"}
-                  </p>
-                </div>
+                  </CardDescription>
+                </CardHeaderText>
                 <Button
                   variant="contained"
-                  startIcon={<Download className="w-4 h-4" />}
+                  startIcon={<Download style={{ width: "1rem", height: "1rem" }} />}
                   onClick={handleExport}
                   sx={{
                     backgroundColor: "rgb(37 99 235)",
@@ -1029,9 +1221,9 @@ export default function AdminRatesPage() {
                 >
                   Export to CSV
                 </Button>
-              </div>
+              </CardHeader>
 
-              <div className="mb-6">
+              <SearchContainer>
                 <TextField
                   fullWidth
                   placeholder="Search by vendor ID, email, or city..."
@@ -1040,20 +1232,20 @@ export default function AdminRatesPage() {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Search className="w-5 h-5 text-slate-400" />
+                        <Search style={{ width: "1.25rem", height: "1.25rem", color: "rgb(156 163 175)" }} />
                       </InputAdornment>
                     ),
                   }}
                   variant="outlined"
                 />
-              </div>
+              </SearchContainer>
 
-              <div className="max-h-[50vh] overflow-auto">
+              <TableWrapper>
                 <TableContainer component={Paper} variant="outlined">
                   <Table stickyHeader>
                     <TableHead>
-                      <TableRow className="bg-slate-50">
-                        <TableCell className="font-bold">
+                      <TableRow sx={{ backgroundColor: "rgb(248 250 252)" }}>
+                        <TableCell sx={{ fontWeight: 700 }}>
                           <TableSortLabel
                             active={orderBy === "vendorId"}
                             direction={orderBy === "vendorId" ? order : "asc"}
@@ -1062,7 +1254,7 @@ export default function AdminRatesPage() {
                             Vendor ID
                           </TableSortLabel>
                         </TableCell>
-                        <TableCell className="font-bold">
+                        <TableCell sx={{ fontWeight: 700 }}>
                           <TableSortLabel
                             active={orderBy === "vendorEmail"}
                             direction={orderBy === "vendorEmail" ? order : "asc"}
@@ -1072,7 +1264,7 @@ export default function AdminRatesPage() {
                           </TableSortLabel>
                         </TableCell>
                         {!selectedCity && (
-                          <TableCell className="font-bold">
+                          <TableCell sx={{ fontWeight: 700 }}>
                             <TableSortLabel
                               active={orderBy === "startCity"}
                               direction={orderBy === "startCity" ? order : "asc"}
@@ -1082,7 +1274,7 @@ export default function AdminRatesPage() {
                             </TableSortLabel>
                           </TableCell>
                         )}
-                        <TableCell className="font-bold">
+                        <TableCell sx={{ fontWeight: 700 }}>
                           <TableSortLabel
                             active={orderBy === "endCity"}
                             direction={orderBy === "endCity" ? order : "asc"}
@@ -1091,7 +1283,7 @@ export default function AdminRatesPage() {
                             Destination
                           </TableSortLabel>
                         </TableCell>
-                        <TableCell className="font-bold">
+                        <TableCell sx={{ fontWeight: 700 }}>
                           <TableSortLabel
                             active={orderBy === "submittedAt"}
                             direction={orderBy === "submittedAt" ? order : "asc"}
@@ -1100,7 +1292,7 @@ export default function AdminRatesPage() {
                             Submitted
                           </TableSortLabel>
                         </TableCell>
-                        <TableCell className="font-bold" align="right">
+                        <TableCell sx={{ fontWeight: 700 }} align="right">
                           <TableSortLabel
                             active={orderBy === "baseRate"}
                             direction={orderBy === "baseRate" ? order : "asc"}
@@ -1109,7 +1301,7 @@ export default function AdminRatesPage() {
                             Base Rate
                           </TableSortLabel>
                         </TableCell>
-                        <TableCell className="font-bold" align="right">
+                        <TableCell sx={{ fontWeight: 700 }} align="right">
                           <TableSortLabel
                             active={orderBy === "fsc"}
                             direction={orderBy === "fsc" ? order : "asc"}
@@ -1118,7 +1310,7 @@ export default function AdminRatesPage() {
                             FSC %
                           </TableSortLabel>
                         </TableCell>
-                        <TableCell className="font-bold" align="right">
+                        <TableCell sx={{ fontWeight: 700 }} align="right">
                           <TableSortLabel
                             active={orderBy === "total"}
                             direction={orderBy === "total" ? order : "asc"}
@@ -1132,38 +1324,38 @@ export default function AdminRatesPage() {
                     <TableBody>
                       {filteredRates.map((rate) => (
                         <TableRow key={rate.id} hover>
-                          <TableCell className="font-mono text-sm">{rate.vendorId}</TableCell>
+                          <TableCell sx={{ fontFamily: "monospace", fontSize: "0.875rem" }}>{rate.vendorId}</TableCell>
                           <TableCell>{rate.vendorEmail}</TableCell>
                           {!selectedCity && (
                             <TableCell>
-                              <span className="font-medium">{rate.startCity}</span>
+                              <span style={{ fontWeight: 500 }}>{rate.startCity}</span>
                             </TableCell>
                           )}
                           <TableCell>{rate.endCity}</TableCell>
-                          <TableCell className="text-sm text-slate-600">{rate.submittedAt}</TableCell>
+                          <TableCell sx={{ fontSize: "0.875rem", color: "rgb(71 85 105)" }}>
+                            {rate.submittedAt}
+                          </TableCell>
                           <TableCell align="right">${rate.baseRate.toFixed(2)}</TableCell>
                           <TableCell align="right">{rate.fsc.toFixed(2)}%</TableCell>
                           <TableCell align="right">
-                            <span className="font-bold text-blue-600">${rate.total.toFixed(2)}</span>
+                            <span style={{ fontWeight: 700, color: "rgb(37 99 235)" }}>${rate.total.toFixed(2)}</span>
                           </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
                 </TableContainer>
-              </div>
+              </TableWrapper>
 
-              {filteredRates.length === 0 && (
-                <div className="text-center py-12 text-slate-500">No rates found matching your search criteria</div>
-              )}
+              {filteredRates.length === 0 && <EmptyState>No rates found matching your search criteria</EmptyState>}
 
-              <div className="mt-4 text-sm text-slate-600">
+              <TableFooter>
                 Showing {filteredRates.length} of {MOCK_RATES.length} total rates
-              </div>
-            </div>
+              </TableFooter>
+            </ContentCard>
           )}
-        </div>
-      </main>
-    </div>
+        </Container>
+      </Main>
+    </PageContainer>
   )
 }

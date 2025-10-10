@@ -2,8 +2,218 @@
 
 import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
+import styled from "styled-components"
 import { TextField, Chip, InputAdornment, Button } from "@mui/material"
 import { Search, Truck, LogOut, BarChart3, TrendingUp } from "lucide-react"
+
+const PageContainer = styled.div`
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, rgb(248 250 252), rgb(226 232 240));
+  display: flex;
+  flex-direction: column;
+`
+
+const Header = styled.header`
+  background: white;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: between;
+`
+
+const HeaderContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+`
+
+const LogoCircle = styled.div`
+  width: 3rem;
+  height: 3rem;
+  background: rgb(37 99 235);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const HeaderText = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
+const HeaderTitle = styled.h1`
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: rgb(15 23 42);
+  margin: 0;
+`
+
+const HeaderSubtitle = styled.p`
+  font-size: 0.875rem;
+  color: rgb(71 85 105);
+  margin: 0;
+`
+
+const HeaderActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: auto;
+`
+
+const StatusIndicator = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: rgb(22 163 74);
+`
+
+const StatusDot = styled.div`
+  width: 0.5rem;
+  height: 0.5rem;
+  background: rgb(22 163 74);
+  border-radius: 50%;
+`
+
+const Main = styled.main`
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 112rem;
+  margin: 0 auto;
+  width: 100%;
+`
+
+const StatsGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+`
+
+const StatCard = styled.div`
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  padding: 1.5rem;
+`
+
+const StatHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+`
+
+const StatLabel = styled.span`
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgb(71 85 105);
+`
+
+const StatValue = styled.div`
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: rgb(15 23 42);
+`
+
+const StatDescription = styled.p`
+  font-size: 0.875rem;
+  color: rgb(100 116 139);
+  margin-top: 0.25rem;
+`
+
+const ContentCard = styled.div`
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  padding: 2rem;
+`
+
+const CardHeader = styled.div`
+  margin-bottom: 1.5rem;
+`
+
+const CardTitle = styled.h2`
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: rgb(15 23 42);
+  margin-bottom: 0.5rem;
+`
+
+const CardDescription = styled.p`
+  color: rgb(71 85 105);
+`
+
+const StepsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+`
+
+const StepItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+`
+
+const StepCircle = styled.div<{ $active?: boolean }>`
+  width: 2.5rem;
+  height: 2.5rem;
+  background: ${(props) => (props.$active ? "rgb(22 163 74)" : "rgb(37 99 235)")};
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+`
+
+const StepLabel = styled.span<{ $active?: boolean }>`
+  font-weight: 500;
+  color: ${(props) => (props.$active ? "rgb(15 23 42)" : "rgb(71 85 105)")};
+`
+
+const StepDivider = styled.div`
+  width: 4rem;
+  height: 0.125rem;
+  background: rgb(209 213 219);
+`
+
+const SearchContainer = styled.div`
+  margin-bottom: 1.5rem;
+`
+
+const ChipsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+`
+
+const StyledChip = styled(Chip)`
+  font-size: 1rem !important;
+  padding: 1.5rem 1rem !important;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgb(239 246 255) !important;
+  }
+`
+
+const EmptyState = styled.div`
+  text-align: center;
+  padding: 3rem 0;
+  color: rgb(100 116 139);
+`
 
 const CITIES = [
   { name: "Atlanta", routes: 12, newRoutes: 3, totalBids: 45 },
@@ -76,76 +286,82 @@ export default function CitiesPage() {
 
   if (userType === "admin") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col">
-        <header className="bg-white shadow-sm px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
-              <Truck className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Vendor Bid Portal</h1>
-              <p className="text-sm text-gray-600">Admin Dashboard</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-sm text-green-600">
-              <div className="w-2 h-2 bg-green-600 rounded-full" />
+      <PageContainer>
+        <Header>
+          <HeaderContent>
+            <LogoCircle>
+              <Truck style={{ width: "1.5rem", height: "1.5rem", color: "white" }} />
+            </LogoCircle>
+            <HeaderText>
+              <HeaderTitle>Vendor Bid Portal</HeaderTitle>
+              <HeaderSubtitle>Admin Dashboard</HeaderSubtitle>
+            </HeaderText>
+          </HeaderContent>
+          <HeaderActions>
+            <StatusIndicator>
+              <StatusDot />
               Secure Portal
-            </div>
+            </StatusIndicator>
             <Button
               variant="outlined"
               size="small"
               onClick={handleLogout}
-              startIcon={<LogOut className="w-4 h-4" />}
-              className="text-gray-700 border-gray-300 hover:bg-gray-50"
+              startIcon={<LogOut style={{ width: "1rem", height: "1rem" }} />}
+              sx={{
+                color: "rgb(55 65 81)",
+                borderColor: "rgb(209 213 219)",
+                "&:hover": {
+                  backgroundColor: "rgb(249 250 251)",
+                },
+              }}
             >
               Logout
             </Button>
-          </div>
-        </header>
+          </HeaderActions>
+        </Header>
 
-        <main className="flex-1 p-6 max-w-7xl mx-auto w-full">
-          <div className="mb-6">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Rate Management Dashboard</h2>
-            <p className="text-gray-600">View and manage vendor bids across all cities</p>
-          </div>
+        <Main>
+          <CardHeader>
+            <CardTitle>Rate Management Dashboard</CardTitle>
+            <CardDescription>View and manage vendor bids across all cities</CardDescription>
+          </CardHeader>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-600">Total Bids</span>
-                <BarChart3 className="w-5 h-5 text-blue-600" />
-              </div>
-              <div className="text-3xl font-bold text-gray-900">{totalBids}</div>
-              <p className="text-sm text-gray-500 mt-1">Across all cities</p>
-            </div>
+          <StatsGrid>
+            <StatCard>
+              <StatHeader>
+                <StatLabel>Total Bids</StatLabel>
+                <BarChart3 style={{ width: "1.25rem", height: "1.25rem", color: "rgb(37 99 235)" }} />
+              </StatHeader>
+              <StatValue>{totalBids}</StatValue>
+              <StatDescription>Across all cities</StatDescription>
+            </StatCard>
 
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-600">Active Routes</span>
-                <TrendingUp className="w-5 h-5 text-blue-600" />
-              </div>
-              <div className="text-3xl font-bold text-gray-900">{totalRoutes}</div>
-              <p className="text-sm text-gray-500 mt-1">Available destinations</p>
-            </div>
+            <StatCard>
+              <StatHeader>
+                <StatLabel>Active Routes</StatLabel>
+                <TrendingUp style={{ width: "1.25rem", height: "1.25rem", color: "rgb(37 99 235)" }} />
+              </StatHeader>
+              <StatValue>{totalRoutes}</StatValue>
+              <StatDescription>Available destinations</StatDescription>
+            </StatCard>
 
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-600">Active Cities</span>
-                <Truck className="w-5 h-5 text-blue-600" />
-              </div>
-              <div className="text-3xl font-bold text-gray-900">{activeCities}</div>
-              <p className="text-sm text-gray-500 mt-1">Serviced locations</p>
-            </div>
-          </div>
+            <StatCard>
+              <StatHeader>
+                <StatLabel>Active Cities</StatLabel>
+                <Truck style={{ width: "1.25rem", height: "1.25rem", color: "rgb(37 99 235)" }} />
+              </StatHeader>
+              <StatValue>{activeCities}</StatValue>
+              <StatDescription>Serviced locations</StatDescription>
+            </StatCard>
+          </StatsGrid>
 
-          <div className="bg-white rounded-lg shadow-sm p-8">
-            <div className="mb-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Select City to View Rates</h3>
-              <p className="text-gray-600">Click on any city to view all vendor bids and rates</p>
-            </div>
+          <ContentCard>
+            <CardHeader>
+              <CardTitle>Select City to View Rates</CardTitle>
+              <CardDescription>Click on any city to view all vendor bids and rates</CardDescription>
+            </CardHeader>
 
-            <div className="mb-6">
+            <SearchContainer>
               <TextField
                 fullWidth
                 placeholder="Search for a city..."
@@ -154,93 +370,92 @@ export default function CitiesPage() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Search className="w-5 h-5 text-gray-400" />
+                      <Search style={{ width: "1.25rem", height: "1.25rem", color: "rgb(156 163 175)" }} />
                     </InputAdornment>
                   ),
                 }}
                 variant="outlined"
               />
-            </div>
+            </SearchContainer>
 
-            <div className="flex flex-wrap gap-3">
+            <ChipsContainer>
               {filteredCities.map((city) => (
-                <Chip
+                <StyledChip
                   key={city.name}
                   label={
-                    <span className="flex items-center gap-2">
+                    <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                       {city.name}
-                      <span className="text-xs text-gray-500">({city.totalBids} bids)</span>
+                      <span style={{ fontSize: "0.75rem", color: "rgb(100 116 139)" }}>({city.totalBids} bids)</span>
                     </span>
                   }
                   onClick={() => handleCityClick(city.name)}
-                  className="text-base py-6 px-4 hover:bg-blue-50 cursor-pointer transition-colors"
                   variant="outlined"
                 />
               ))}
-            </div>
+            </ChipsContainer>
 
-            {filteredCities.length === 0 && (
-              <div className="text-center py-12 text-gray-500">No cities found matching "{searchTerm}"</div>
-            )}
-          </div>
-        </main>
-      </div>
+            {filteredCities.length === 0 && <EmptyState>No cities found matching "{searchTerm}"</EmptyState>}
+          </ContentCard>
+        </Main>
+      </PageContainer>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col">
-      <header className="bg-white shadow-sm px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
-            <Truck className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">Vendor Bid Portal</h1>
-            <p className="text-sm text-gray-600">Motor Carrier Services</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm text-green-600">
-            <div className="w-2 h-2 bg-green-600 rounded-full" />
+    <PageContainer>
+      <Header>
+        <HeaderContent>
+          <LogoCircle>
+            <Truck style={{ width: "1.5rem", height: "1.5rem", color: "white" }} />
+          </LogoCircle>
+          <HeaderText>
+            <HeaderTitle>Vendor Bid Portal</HeaderTitle>
+            <HeaderSubtitle>Motor Carrier Services</HeaderSubtitle>
+          </HeaderText>
+        </HeaderContent>
+        <HeaderActions>
+          <StatusIndicator>
+            <StatusDot />
             Secure Portal
-          </div>
+          </StatusIndicator>
           <Button
             variant="outlined"
             size="small"
             onClick={handleLogout}
-            startIcon={<LogOut className="w-4 h-4" />}
-            className="text-gray-700 border-gray-300 hover:bg-gray-50"
+            startIcon={<LogOut style={{ width: "1rem", height: "1rem" }} />}
+            sx={{
+              color: "rgb(55 65 81)",
+              borderColor: "rgb(209 213 219)",
+              "&:hover": {
+                backgroundColor: "rgb(249 250 251)",
+              },
+            }}
           >
             Logout
           </Button>
-        </div>
-      </header>
+        </HeaderActions>
+      </Header>
 
-      <main className="flex-1 p-6 max-w-7xl mx-auto w-full">
-        <div className="bg-white rounded-lg shadow-sm p-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Submit Your Bid</h2>
-            <p className="text-gray-600">Select the starting city to view and submit rates</p>
+      <Main>
+        <ContentCard>
+          <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+            <CardTitle>Submit Your Bid</CardTitle>
+            <CardDescription>Select the starting city to view and submit rates</CardDescription>
           </div>
 
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white font-bold">
-                1
-              </div>
-              <span className="font-medium text-gray-900">Choose Starting Point</span>
-            </div>
-            <div className="w-16 h-0.5 bg-gray-300" />
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                2
-              </div>
-              <span className="font-medium text-gray-600">Input Rates</span>
-            </div>
-          </div>
+          <StepsContainer>
+            <StepItem>
+              <StepCircle $active>1</StepCircle>
+              <StepLabel $active>Choose Starting Point</StepLabel>
+            </StepItem>
+            <StepDivider />
+            <StepItem>
+              <StepCircle>2</StepCircle>
+              <StepLabel>Input Rates</StepLabel>
+            </StepItem>
+          </StepsContainer>
 
-          <div className="mb-6">
+          <SearchContainer>
             <TextField
               fullWidth
               placeholder="Search for a city..."
@@ -249,40 +464,46 @@ export default function CitiesPage() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Search className="w-5 h-5 text-gray-400" />
+                    <Search style={{ width: "1.25rem", height: "1.25rem", color: "rgb(156 163 175)" }} />
                   </InputAdornment>
                 ),
               }}
               variant="outlined"
             />
-          </div>
+          </SearchContainer>
 
-          <div className="flex flex-wrap gap-3">
+          <ChipsContainer>
             {filteredCities.map((city) => (
-              <Chip
+              <StyledChip
                 key={city.name}
                 label={
-                  <span className="flex items-center gap-2">
+                  <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                     {city.name}
                     {city.newRoutes > 0 && (
-                      <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                      <span
+                        style={{
+                          background: "rgb(37 99 235)",
+                          color: "white",
+                          fontSize: "0.75rem",
+                          fontWeight: 700,
+                          padding: "0.125rem 0.5rem",
+                          borderRadius: "9999px",
+                        }}
+                      >
                         {city.newRoutes}
                       </span>
                     )}
                   </span>
                 }
                 onClick={() => handleCityClick(city.name)}
-                className="text-base py-6 px-4 hover:bg-blue-50 cursor-pointer transition-colors"
                 variant="outlined"
               />
             ))}
-          </div>
+          </ChipsContainer>
 
-          {filteredCities.length === 0 && (
-            <div className="text-center py-12 text-gray-500">No cities found matching "{searchTerm}"</div>
-          )}
-        </div>
-      </main>
-    </div>
+          {filteredCities.length === 0 && <EmptyState>No cities found matching "{searchTerm}"</EmptyState>}
+        </ContentCard>
+      </Main>
+    </PageContainer>
   )
 }
