@@ -4,7 +4,7 @@ import { useParams, useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import styled from "styled-components"
 import { TextField, Button, InputAdornment } from "@mui/material"
-import { Truck, ArrowLeft, Check } from "lucide-react"
+import { Truck, ArrowLeft, Check, Star } from "lucide-react"
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -77,11 +77,49 @@ const CityLabel = styled.p`
   margin-bottom: 0.25rem;
 `
 
+const CityNameContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+`
+
 const CityName = styled.h2`
   font-size: 2.25rem;
   font-weight: 700;
   color: rgb(15 23 42);
-  margin-bottom: 1rem;
+  margin: 0;
+`
+
+const FavoriteButton = styled.button<{ $isFavorite?: boolean }>`
+  background: ${(props) => (props.$isFavorite ? "rgb(250 204 21)" : "white")};
+  border: 2px solid ${(props) => (props.$isFavorite ? "rgb(250 204 21)" : "rgb(209 213 219)")};
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: ${(props) => (props.$isFavorite ? "rgb(234 179 8)" : "rgb(254 249 195)")};
+    border-color: ${(props) => (props.$isFavorite ? "rgb(234 179 8)" : "rgb(250 204 21)")};
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`
+
+const StyledStarIcon = styled(Star)<{ $filled?: boolean }>`
+  width: 1.5rem;
+  height: 1.5rem;
+  color: ${(props) => (props.$filled ? "white" : "rgb(161 161 170)")};
+  fill: ${(props) => (props.$filled ? "white" : "none")};
 `
 
 const PageTitle = styled.h3`
@@ -262,6 +300,7 @@ export default function BidPage() {
   const cityName = city.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
 
   const [selectedDestination, setSelectedDestination] = useState<number | null>(null)
+  const [isFavorite, setIsFavorite] = useState(false)
   const [formData, setFormData] = useState({
     baseRate: "",
     fsc: "",
@@ -279,6 +318,25 @@ export default function BidPage() {
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   const destinations = DESTINATIONS[city as keyof typeof DESTINATIONS] || DESTINATIONS.boston
+
+  useEffect(() => {
+    const favorites = JSON.parse(localStorage.getItem("favoriteCities") || "[]")
+    setIsFavorite(favorites.includes(cityName))
+  }, [cityName])
+
+  const toggleFavorite = () => {
+    const favorites = JSON.parse(localStorage.getItem("favoriteCities") || "[]")
+    let updatedFavorites
+
+    if (favorites.includes(cityName)) {
+      updatedFavorites = favorites.filter((c: string) => c !== cityName)
+    } else {
+      updatedFavorites = [...favorites, cityName]
+    }
+
+    localStorage.setItem("favoriteCities", JSON.stringify(updatedFavorites))
+    setIsFavorite(!isFavorite)
+  }
 
   useEffect(() => {
     const baseRate = Number.parseFloat(formData.baseRate) || 0
@@ -345,7 +403,16 @@ export default function BidPage() {
         <Container>
           <TitleSection>
             <CityLabel>Starting route:</CityLabel>
-            <CityName>{cityName.toUpperCase()}</CityName>
+            <CityNameContainer>
+              <CityName>{cityName.toUpperCase()}</CityName>
+              <FavoriteButton
+                onClick={toggleFavorite}
+                $isFavorite={isFavorite}
+                title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+              >
+                <StyledStarIcon $filled={isFavorite} />
+              </FavoriteButton>
+            </CityNameContainer>
             <PageTitle>Submit Your Bid</PageTitle>
             <PageDescription>Select the destination and then fill up the rates!</PageDescription>
           </TitleSection>

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import styled from "styled-components"
 import { TextField, Chip, InputAdornment, Button } from "@mui/material"
-import { Search, Truck, LogOut, BarChart3, TrendingUp } from "lucide-react"
+import { Search, Truck, LogOut, BarChart3, TrendingUp, Star } from "lucide-react"
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -209,6 +209,14 @@ const StyledChip = styled(Chip)`
   }
 `
 
+const FavoriteStarIcon = styled(Star)`
+  width: 1rem;
+  height: 1rem;
+  color: rgb(250 204 21);
+  fill: rgb(250 204 21);
+  margin-left: 0.25rem;
+`
+
 const EmptyState = styled.div`
   text-align: center;
   padding: 3rem 0;
@@ -259,13 +267,26 @@ export default function CitiesPage() {
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState("")
   const [userType, setUserType] = useState<"vendor" | "admin">("vendor")
+  const [favoriteCities, setFavoriteCities] = useState<string[]>([])
 
   useEffect(() => {
     const type = localStorage.getItem("userType") as "vendor" | "admin"
     if (type) setUserType(type)
+
+    const favorites = JSON.parse(localStorage.getItem("favoriteCities") || "[]")
+    setFavoriteCities(favorites)
   }, [])
 
-  const filteredCities = CITIES.filter((city) => city.name.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredCities = CITIES.filter((city) => city.name.toLowerCase().includes(searchTerm.toLowerCase())).sort(
+    (a, b) => {
+      const aIsFavorite = favoriteCities.includes(a.name)
+      const bIsFavorite = favoriteCities.includes(b.name)
+
+      if (aIsFavorite && !bIsFavorite) return -1
+      if (!aIsFavorite && bIsFavorite) return 1
+      return 0
+    },
+  )
 
   const handleCityClick = (cityName: string) => {
     if (userType === "admin") {
@@ -479,6 +500,7 @@ export default function CitiesPage() {
                 label={
                   <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                     {city.name}
+                    {favoriteCities.includes(city.name) && <FavoriteStarIcon />}
                     {city.newRoutes > 0 && (
                       <span
                         style={{
