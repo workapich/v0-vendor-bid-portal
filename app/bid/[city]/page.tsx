@@ -1264,9 +1264,9 @@ export default function BidPage() {
                           <StyledInput
                             type="text"
                             value={formData.total}
+                            readOnly
                             $error={!!errors.total}
                             $success={!!formData.total && !errors.total}
-                            $readOnly
                           />
                           <InputHelperText>Auto-calculated: Base Rate + FSC%</InputHelperText>
                         </InputWrapper>
