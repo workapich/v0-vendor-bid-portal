@@ -283,9 +283,9 @@ const CityName = styled.h2`
   }
 `
 
-const FavoriteButton = styled.button<{ $isFavorite?: boolean }>`
-  background: ${(props) => (props.$isFavorite ? "linear-gradient(135deg, rgb(250 204 21), rgb(234 179 8))" : "white")};
-  border: 2px solid ${(props) => (props.$isFavorite ? "rgb(250 204 21)" : "rgb(226 232 240)")};
+const FavoriteButton = styled.button<{ isFavorite?: boolean }>`
+  background: ${(props) => (props.isFavorite ? "linear-gradient(135deg, rgb(250 204 21), rgb(234 179 8))" : "white")};
+  border: 2px solid ${(props) => (props.isFavorite ? "rgb(250 204 21)" : "rgb(226 232 240)")};
   border-radius: 0.75rem;
   width: 3.5rem;
   height: 3.5rem;
@@ -294,12 +294,12 @@ const FavoriteButton = styled.button<{ $isFavorite?: boolean }>`
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: ${(props) => (props.$isFavorite ? "0 4px 6px -1px rgb(250 204 21 / 0.3)" : "0 1px 3px 0 rgb(0 0 0 / 0.1)")};
+  box-shadow: ${(props) => (props.isFavorite ? "0 4px 6px -1px rgb(250 204 21 / 0.3)" : "0 1px 3px 0 rgb(0 0 0 / 0.1)")};
 
   &:hover {
-    background: ${(props) => (props.$isFavorite ? "linear-gradient(135deg, rgb(234 179 8), rgb(202 138 4))" : "rgb(254 249 195)")};
-    border-color: ${(props) => (props.$isFavorite ? "rgb(234 179 8)" : "rgb(250 204 21)")};
-    transform: scale(1.1) rotate(${(props) => (props.$isFavorite ? "0deg" : "15deg")});
+    background: ${(props) => (props.isFavorite ? "linear-gradient(135deg, rgb(234 179 8), rgb(202 138 4))" : "rgb(254 249 195)")};
+    border-color: ${(props) => (props.isFavorite ? "rgb(234 179 8)" : "rgb(250 204 21)")};
+    transform: scale(1.1) rotate(${(props) => (props.isFavorite ? "0deg" : "15deg")});
     box-shadow: 0 10px 15px -3px rgb(250 204 21 / 0.4);
   }
 
@@ -313,11 +313,11 @@ const FavoriteButton = styled.button<{ $isFavorite?: boolean }>`
   }
 `
 
-const StyledStarIcon = styled(Star)<{ $filled?: boolean }>`
+const StyledStarIcon = styled(Star)<{ filled?: boolean }>`
   width: 1.5rem;
   height: 1.5rem;
-  color: ${(props) => (props.$filled ? "white" : "rgb(161 161 170)")};
-  fill: ${(props) => (props.$filled ? "white" : "none")};
+  color: ${(props) => (props.filled ? "white" : "rgb(161 161 170)")};
+  fill: ${(props) => (props.filled ? "white" : "none")};
   transition: all 0.2s;
 
   @media (max-width: 640px) {
@@ -365,11 +365,11 @@ const StepItem = styled.div`
   }
 `
 
-const StepCircle = styled.div<{ $completed?: boolean }>`
+const StepCircle = styled.div<{ completed?: boolean }>`
   width: 3rem;
   height: 3rem;
   background: ${(props) =>
-    props.$completed
+    props.completed
       ? "linear-gradient(135deg, rgb(22 163 74), rgb(21 128 61))"
       : "linear-gradient(135deg, rgb(37 99 235), rgb(29 78 216))"};
   border-radius: 50%;
@@ -379,7 +379,7 @@ const StepCircle = styled.div<{ $completed?: boolean }>`
   color: white;
   font-weight: 700;
   font-size: 1.125rem;
-  box-shadow: ${(props) => (props.$completed ? "0 4px 6px -1px rgb(22 163 74 / 0.3)" : "0 4px 6px -1px rgb(37 99 235 / 0.3)")};
+  box-shadow: ${(props) => (props.completed ? "0 4px 6px -1px rgb(22 163 74 / 0.3)" : "0 4px 6px -1px rgb(37 99 235 / 0.3)")};
 
   @media (max-width: 640px) {
     width: 2.5rem;
@@ -398,10 +398,10 @@ const StyledCheckIcon = styled(Check)`
   }
 `
 
-const StepLabel = styled.span<{ $active?: boolean }>`
+const StepLabel = styled.span<{ active?: boolean }>`
   font-weight: 600;
   font-size: 0.9375rem;
-  color: ${(props) => (props.$active ? "rgb(15 23 42)" : "rgb(100 116 139)")};
+  color: ${(props) => (props.active ? "rgb(15 23 42)" : "rgb(100 116 139)")};
 
   @media (max-width: 640px) {
     font-size: 0.8125rem;
@@ -462,17 +462,17 @@ const DestinationList = styled.div`
   gap: 0.75rem;
 `
 
-const DestinationButton = styled.button<{ $selected?: boolean }>`
+const DestinationButton = styled.button<{ selected?: boolean }>`
   width: 100%;
   text-align: left;
   padding: 1rem 1.25rem;
   border-radius: 0.75rem;
-  border: 2px solid ${(props) => (props.$selected ? "rgb(37 99 235)" : "rgb(226 232 240)")};
+  border: 2px solid ${(props) => (props.selected ? "rgb(37 99 235)" : "rgb(226 232 240)")};
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: ${(props) => (props.$selected ? "linear-gradient(135deg, rgb(37 99 235), rgb(29 78 216))" : "white")};
-  color: ${(props) => (props.$selected ? "white" : "rgb(15 23 42)")};
-  box-shadow: ${(props) => (props.$selected ? "0 4px 6px -1px rgb(37 99 235 / 0.3)" : "0 1px 3px 0 rgb(0 0 0 / 0.05)")};
+  background: ${(props) => (props.selected ? "linear-gradient(135deg, rgb(37 99 235), rgb(29 78 216))" : "white")};
+  color: ${(props) => (props.selected ? "white" : "rgb(15 23 42)")};
+  box-shadow: ${(props) => (props.selected ? "0 4px 6px -1px rgb(37 99 235 / 0.3)" : "0 1px 3px 0 rgb(0 0 0 / 0.05)")};
   position: relative;
   overflow: hidden;
 
@@ -492,8 +492,8 @@ const DestinationButton = styled.button<{ $selected?: boolean }>`
   }
 
   &:hover {
-    background: ${(props) => (props.$selected ? "linear-gradient(135deg, rgb(29 78 216), rgb(30 64 175))" : "rgb(248 250 252)")};
-    border-color: ${(props) => (props.$selected ? "rgb(29 78 216)" : "rgb(203 213 225)")};
+    background: ${(props) => (props.selected ? "linear-gradient(135deg, rgb(29 78 216), rgb(30 64 175))" : "rgb(248 250 252)")};
+    border-color: ${(props) => (props.selected ? "rgb(29 78 216)" : "rgb(203 213 225)")};
     transform: translateX(4px);
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
   }
@@ -678,11 +678,11 @@ const SectionContainer = styled.div`
   }
 `
 
-const SectionHeader = styled.div<{ $required?: boolean }>`
-  background: ${(props) => (props.$required ? "linear-gradient(135deg, rgb(239 246 255), rgb(219 234 254))" : "rgb(248 250 252)")};
+const SectionHeader = styled.div<{ required?: boolean }>`
+  background: ${(props) => (props.required ? "linear-gradient(135deg, rgb(239 246 255), rgb(219 234 254))" : "rgb(248 250 252)")};
   padding: 1rem 1.5rem;
   border-radius: 0.75rem 0.75rem 0 0;
-  border-bottom: 3px solid ${(props) => (props.$required ? "rgb(37 99 235)" : "rgb(203 213 225)")};
+  border-bottom: 3px solid ${(props) => (props.required ? "rgb(37 99 235)" : "rgb(203 213 225)")};
 `
 
 const SectionTitle = styled.h4`
@@ -706,13 +706,13 @@ const SectionContent = styled.div`
   }
 `
 
-const FieldGrid = styled.div<{ $columns?: number }>`
+const FieldGrid = styled.div<{ columns?: number }>`
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.5rem;
 
   @media (min-width: 768px) {
-    grid-template-columns: repeat(${(props) => props.$columns || 3}, 1fr);
+    grid-template-columns: repeat(${(props) => props.columns || 3}, 1fr);
   }
 `
 
@@ -723,7 +723,7 @@ const InputWrapper = styled.div`
   animation: ${fadeIn} 0.3s ease-out;
 `
 
-const InputLabel = styled.label<{ $required?: boolean }>`
+const InputLabel = styled.label<{ required?: boolean }>`
   font-size: 0.875rem;
   font-weight: 600;
   color: rgb(51 65 85);
@@ -732,7 +732,7 @@ const InputLabel = styled.label<{ $required?: boolean }>`
   gap: 0.5rem;
 
   ${(props) =>
-    props.$required &&
+    props.required &&
     `
     &::after {
       content: '*';
@@ -768,32 +768,32 @@ const StyledCalculatorIcon = styled(Calculator)`
   color: rgb(100 116 139);
 `
 
-const StyledInput = styled.input<{ $error?: boolean; $readOnly?: boolean; $success?: boolean }>`
+const StyledInput = styled.input<{ error?: boolean; readOnly?: boolean; success?: boolean }>`
   width: 100%;
   padding: 0.875rem 1rem;
   border: 2px solid ${(props) => {
-    if (props.$error) return "rgb(239 68 68)"
-    if (props.$success) return "rgb(34 197 94)"
+    if (props.error) return "rgb(239 68 68)"
+    if (props.success) return "rgb(34 197 94)"
     return "rgb(226 232 240)"
   }};
   border-radius: 0.5rem;
   font-size: 0.9375rem;
   font-weight: 500;
   color: rgb(15 23 42);
-  background: ${(props) => (props.$readOnly ? "rgb(241 245 249)" : "white")};
+  background: ${(props) => (props.readOnly ? "rgb(241 245 249)" : "white")};
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: ${(props) => (props.$readOnly ? "not-allowed" : "text")};
+  cursor: ${(props) => (props.readOnly ? "not-allowed" : "text")};
 
   &:focus {
     outline: none;
     border-color: ${(props) => {
-      if (props.$error) return "rgb(239 68 68)"
-      if (props.$success) return "rgb(34 197 94)"
+      if (props.error) return "rgb(239 68 68)"
+      if (props.success) return "rgb(34 197 94)"
       return "rgb(37 99 235)"
     }};
     box-shadow: 0 0 0 3px ${(props) => {
-      if (props.$error) return "rgb(239 68 68 / 0.1)"
-      if (props.$success) return "rgb(34 197 94 / 0.1)"
+      if (props.error) return "rgb(239 68 68 / 0.1)"
+      if (props.success) return "rgb(34 197 94 / 0.1)"
       return "rgb(37 99 235 / 0.1)"
     }};
     transform: translateY(-1px);
@@ -804,17 +804,17 @@ const StyledInput = styled.input<{ $error?: boolean; $readOnly?: boolean; $succe
   }
 
   ${(props) =>
-    props.$success &&
+    props.success &&
     `
     animation: ${successPulse} 0.6s ease-out;
   `}
 `
 
-const InputHelperText = styled.span<{ $error?: boolean; $success?: boolean }>`
+const InputHelperText = styled.span<{ error?: boolean; success?: boolean }>`
   font-size: 0.8125rem;
   color: ${(props) => {
-    if (props.$error) return "rgb(239 68 68)"
-    if (props.$success) return "rgb(34 197 94)"
+    if (props.error) return "rgb(239 68 68)"
+    if (props.success) return "rgb(34 197 94)"
     return "rgb(100 116 139)"
   }};
   font-weight: 500;
@@ -854,10 +854,10 @@ const ProgressLabel = styled.span`
   color: rgb(51 65 85);
 `
 
-const ProgressPercentage = styled.span<{ $complete?: boolean }>`
+const ProgressPercentage = styled.span<{ complete?: boolean }>`
   font-size: 0.875rem;
   font-weight: 700;
-  color: ${(props) => (props.$complete ? "rgb(34 197 94)" : "rgb(37 99 235)")};
+  color: ${(props) => (props.complete ? "rgb(34 197 94)" : "rgb(37 99 235)")};
 `
 
 const ProgressBar = styled.div`
@@ -868,9 +868,9 @@ const ProgressBar = styled.div`
   overflow: hidden;
 `
 
-const ProgressFill = styled.div<{ $percentage: number }>`
+const ProgressFill = styled.div<{ percentage: number }>`
   height: 100%;
-  width: ${(props) => props.$percentage}%;
+  width: ${(props) => props.percentage}%;
   background: linear-gradient(90deg, rgb(37 99 235), rgb(59 130 246));
   border-radius: 9999px;
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -897,31 +897,31 @@ const ButtonContainer = styled.div`
   border-top: 2px solid rgb(226 232 240);
 `
 
-const SubmitButton = styled.button<{ $disabled?: boolean }>`
+const SubmitButton = styled.button<{ disabled?: boolean }>`
   padding: 1rem 3rem;
   background: ${(props) =>
-    props.$disabled ? "rgb(203 213 225)" : "linear-gradient(135deg, rgb(37 99 235), rgb(29 78 216))"};
+    props.disabled ? "rgb(203 213 225)" : "linear-gradient(135deg, rgb(37 99 235), rgb(29 78 216))"};
   color: white;
   border: none;
   border-radius: 0.75rem;
   font-size: 1rem;
   font-weight: 700;
-  cursor: ${(props) => (props.$disabled ? "not-allowed" : "pointer")};
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: ${(props) => (props.$disabled ? "none" : "0 4px 6px -1px rgb(37 99 235 / 0.4)")};
+  box-shadow: ${(props) => (props.disabled ? "none" : "0 4px 6px -1px rgb(37 99 235 / 0.4)")};
   letter-spacing: 0.025em;
-  opacity: ${(props) => (props.$disabled ? "0.6" : "1")};
+  opacity: ${(props) => (props.disabled ? "0.6" : "1")};
 
   &:hover {
     background: ${(props) =>
-      props.$disabled ? "rgb(203 213 225)" : "linear-gradient(135deg, rgb(29 78 216), rgb(30 64 175))"};
-    transform: ${(props) => (props.$disabled ? "none" : "translateY(-2px)")};
-    box-shadow: ${(props) => (props.$disabled ? "none" : "0 10px 15px -3px rgb(37 99 235 / 0.5)")};
+      props.disabled ? "rgb(203 213 225)" : "linear-gradient(135deg, rgb(29 78 216), rgb(30 64 175))"};
+    transform: ${(props) => (props.disabled ? "none" : "translateY(-2px)")};
+    box-shadow: ${(props) => (props.disabled ? "none" : "0 10px 15px -3px rgb(37 99 235 / 0.5)")};
   }
 
   &:active {
-    transform: ${(props) => (props.$disabled ? "none" : "translateY(0)")};
-    box-shadow: ${(props) => (props.$disabled ? "none" : "0 4px 6px -1px rgb(37 99 235 / 0.4)")};
+    transform: ${(props) => (props.disabled ? "none" : "translateY(0)")};
+    box-shadow: ${(props) => (props.disabled ? "none" : "0 4px 6px -1px rgb(37 99 235 / 0.4)")};
   }
 
   @media (max-width: 640px) {
@@ -1103,10 +1103,10 @@ export default function BidPage() {
               </CityInfo>
               <FavoriteButton
                 onClick={toggleFavorite}
-                $isFavorite={isFavorite}
+                isFavorite={isFavorite}
                 title={isFavorite ? "Remove from favorites" : "Add to favorites"}
               >
-                <StyledStarIcon $filled={isFavorite} />
+                <StyledStarIcon filled={isFavorite} />
               </FavoriteButton>
             </CityHeader>
             <PageDescription>
@@ -1117,7 +1117,7 @@ export default function BidPage() {
 
           <StepsContainer>
             <StepItem>
-              <StepCircle $completed>
+              <StepCircle completed>
                 <StyledCheckIcon />
               </StepCircle>
               <StepLabel>Pickup Location</StepLabel>
@@ -1125,7 +1125,7 @@ export default function BidPage() {
             <StepDivider />
             <StepItem>
               <StepCircle>2</StepCircle>
-              <StepLabel $active>End Location & Rates</StepLabel>
+              <StepLabel active>End Location & Rates</StepLabel>
             </StepItem>
           </StepsContainer>
 
@@ -1137,7 +1137,7 @@ export default function BidPage() {
                   <DestinationButton
                     key={dest.id}
                     onClick={() => setSelectedDestination(dest.id)}
-                    $selected={selectedDestination === dest.id}
+                    selected={selectedDestination === dest.id}
                   >
                     <DestinationName>{dest.name}</DestinationName>
                     <DestinationDistance>{dest.distance} miles</DestinationDistance>
@@ -1179,23 +1179,23 @@ export default function BidPage() {
                   <ProgressContainer>
                     <ProgressHeader>
                       <ProgressLabel>Form Completion</ProgressLabel>
-                      <ProgressPercentage $complete={calculateProgress() === 100}>
+                      <ProgressPercentage complete={calculateProgress() === 100}>
                         {calculateProgress()}%
                       </ProgressPercentage>
                     </ProgressHeader>
                     <ProgressBar>
-                      <ProgressFill $percentage={calculateProgress()} />
+                      <ProgressFill percentage={calculateProgress()} />
                     </ProgressBar>
                   </ProgressContainer>
 
                   <SectionContainer>
-                    <SectionHeader $required>
+                    <SectionHeader required>
                       <SectionTitle>Required Fields</SectionTitle>
                     </SectionHeader>
                     <SectionContent>
-                      <FieldGrid $columns={3}>
+                      <FieldGrid columns={3}>
                         <InputWrapper>
-                          <InputLabel $required>
+                          <InputLabel required>
                             <InputIconWrapper>
                               <StyledDollarIcon />
                             </InputIconWrapper>
@@ -1207,17 +1207,17 @@ export default function BidPage() {
                             value={formData.baseRate}
                             onChange={(e) => handleInputChange("baseRate", e.target.value)}
                             onBlur={() => handleInputBlur("baseRate")}
-                            $error={touched.baseRate && !!errors.baseRate}
-                            $success={touched.baseRate && formData.baseRate && !errors.baseRate}
+                            error={touched.baseRate && !!errors.baseRate}
+                            success={touched.baseRate && !!formData.baseRate && !errors.baseRate}
                           />
                           {touched.baseRate && errors.baseRate && (
-                            <InputHelperText $error>
+                            <InputHelperText error>
                               <StyledAlertIcon />
                               {errors.baseRate}
                             </InputHelperText>
                           )}
                           {touched.baseRate && formData.baseRate && !errors.baseRate && (
-                            <InputHelperText $success>
+                            <InputHelperText success>
                               <StyledCheckCircleIcon />
                               Looks good!
                             </InputHelperText>
@@ -1225,7 +1225,7 @@ export default function BidPage() {
                         </InputWrapper>
 
                         <InputWrapper>
-                          <InputLabel $required>
+                          <InputLabel required>
                             <InputIconWrapper>
                               <StyledPercentIcon />
                             </InputIconWrapper>
@@ -1237,17 +1237,17 @@ export default function BidPage() {
                             value={formData.fsc}
                             onChange={(e) => handleInputChange("fsc", e.target.value)}
                             onBlur={() => handleInputBlur("fsc")}
-                            $error={touched.fsc && !!errors.fsc}
-                            $success={touched.fsc && formData.fsc && !errors.fsc}
+                            error={touched.fsc && !!errors.fsc}
+                            success={touched.fsc && !!formData.fsc && !errors.fsc}
                           />
                           {touched.fsc && errors.fsc && (
-                            <InputHelperText $error>
+                            <InputHelperText error>
                               <StyledAlertIcon />
                               {errors.fsc}
                             </InputHelperText>
                           )}
                           {touched.fsc && formData.fsc && !errors.fsc && (
-                            <InputHelperText $success>
+                            <InputHelperText success>
                               <StyledCheckCircleIcon />
                               Looks good!
                             </InputHelperText>
@@ -1255,7 +1255,7 @@ export default function BidPage() {
                         </InputWrapper>
 
                         <InputWrapper>
-                          <InputLabel $required>
+                          <InputLabel required>
                             <InputIconWrapper>
                               <StyledCalculatorIcon />
                             </InputIconWrapper>
@@ -1265,8 +1265,8 @@ export default function BidPage() {
                             type="text"
                             value={formData.total}
                             readOnly
-                            $error={!!errors.total}
-                            $success={!!formData.total && !errors.total}
+                            error={!!errors.total}
+                            success={!!formData.total && !errors.total}
                           />
                           <InputHelperText>Auto-calculated: Base Rate + FSC%</InputHelperText>
                         </InputWrapper>
@@ -1279,7 +1279,7 @@ export default function BidPage() {
                       <SectionTitle>Optional Fields</SectionTitle>
                     </SectionHeader>
                     <SectionContent>
-                      <FieldGrid $columns={4}>
+                      <FieldGrid columns={4}>
                         {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
                           <InputWrapper key={num}>
                             <InputLabel>Optional #{num}</InputLabel>
@@ -1296,7 +1296,7 @@ export default function BidPage() {
                   </SectionContainer>
 
                   <ButtonContainer>
-                    <SubmitButton onClick={handleSubmit} $disabled={!isFormValid}>
+                    <SubmitButton onClick={handleSubmit} disabled={!isFormValid}>
                       Submit Bid
                     </SubmitButton>
                   </ButtonContainer>
