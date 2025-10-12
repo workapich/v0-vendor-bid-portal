@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import styled from "styled-components"
-import { Truck, ArrowLeft, MapPin } from "lucide-react"
+import { Truck, ArrowLeft, MapPin, Star, Check } from "lucide-react"
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -69,11 +69,21 @@ const BackButton = styled.button`
   }
 `
 
-const ProgressHeader = styled.div`
+const ProgressSection = styled.div`
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+`
+
+const ProgressCard = styled.div`
   background: white;
-  padding: 3rem 2rem;
+  border-radius: 1rem;
+  padding: 3rem 4rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  width: 100%;
   text-align: center;
-  border-bottom: 1px solid #e2e8f0;
 `
 
 const ProgressTitle = styled.h1`
@@ -94,8 +104,6 @@ const StepsContainer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 2rem;
-  max-width: 600px;
-  margin: 0 auto;
 `
 
 const Step = styled.div`
@@ -108,7 +116,7 @@ const StepCircle = styled.div`
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 50%;
-  background: ${(props) => (props.className?.includes("active") ? "#22c55e" : "#2563eb")};
+  background: ${(props) => (props.className?.includes("completed") ? "#22c55e" : "#2563eb")};
   color: white;
   display: flex;
   align-items: center;
@@ -121,7 +129,7 @@ const StepCircle = styled.div`
 const StepLabel = styled.span`
   font-size: 1.125rem;
   font-weight: 600;
-  color: #0f172a;
+  color: ${(props) => (props.className?.includes("completed") ? "#22c55e" : "#2563eb")};
 `
 
 const StepConnector = styled.div`
@@ -136,7 +144,7 @@ const Main = styled.main`
   margin: 0 auto;
 `
 
-const CityHeader = styled.div`
+const StartingRouteCard = styled.div`
   background: white;
   border-radius: 1rem;
   padding: 2rem;
@@ -147,13 +155,13 @@ const CityHeader = styled.div`
   justify-content: space-between;
 `
 
-const CityInfo = styled.div`
+const RouteInfo = styled.div`
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
 `
 
-const CityIcon = styled.div`
+const RouteIcon = styled.div`
   width: 4rem;
   height: 4rem;
   background: linear-gradient(135deg, #eff6ff, #dbeafe);
@@ -164,12 +172,13 @@ const CityIcon = styled.div`
   border: 2px solid #bfdbfe;
 `
 
-const CityText = styled.div`
+const RouteText = styled.div`
   h2 {
     font-size: 2rem;
     font-weight: 800;
     color: #0f172a;
     margin: 0 0 0.25rem 0;
+    text-transform: uppercase;
   }
   p {
     font-size: 0.875rem;
@@ -179,7 +188,7 @@ const CityText = styled.div`
 `
 
 const FavoriteButton = styled.button`
-  background: ${(props) => (props.className?.includes("favorite") ? "linear-gradient(135deg, #fbbf24, #f59e0b)" : "white")};
+  background: ${(props) => (props.className?.includes("favorite") ? "#fbbf24" : "white")};
   border: 2px solid ${(props) => (props.className?.includes("favorite") ? "#fbbf24" : "#e2e8f0")};
   border-radius: 0.75rem;
   width: 3.5rem;
@@ -189,6 +198,7 @@ const FavoriteButton = styled.button`
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s;
+  color: ${(props) => (props.className?.includes("favorite") ? "white" : "#94a3b8")};
 
   &:hover {
     transform: scale(1.1);
@@ -266,18 +276,20 @@ const FormCard = styled.div`
 
 const EmptyState = styled.div`
   text-align: center;
-  padding: 4rem 2rem;
-  color: #64748b;
+  padding: 6rem 2rem;
+  color: #94a3b8;
 
   h3 {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: #334155;
-    margin: 1rem 0 0.5rem 0;
+    margin: 1.5rem 0 0.75rem 0;
   }
 
   p {
     margin: 0;
+    font-size: 1rem;
+    color: #64748b;
   }
 `
 
@@ -350,23 +362,19 @@ const Input = styled.input`
 
 const SubmitButton = styled.button`
   padding: 1rem 3rem;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, #cbd5e1, #94a3b8);
   color: white;
   border: none;
   border-radius: 0.75rem;
   font-size: 1rem;
   font-weight: 700;
-  cursor: pointer;
+  cursor: not-allowed;
   transition: all 0.2s;
   float: right;
   margin-top: 1rem;
 
-  &:hover {
-    background: linear-gradient(135deg, #1d4ed8, #1e40af);
-  }
-
   &:disabled {
-    background: #cbd5e1;
+    background: linear-gradient(135deg, #cbd5e1, #94a3b8);
     cursor: not-allowed;
   }
 `
@@ -473,23 +481,42 @@ export default function BidPage() {
         </BackButton>
       </Header>
 
-      <ProgressHeader>
-        <ProgressTitle>Submit Your Bid</ProgressTitle>
-        <ProgressSubtitle>Select the starting city to view and submit rates</ProgressSubtitle>
-        <StepsContainer>
-          <Step>
-            <StepCircle className="active">1</StepCircle>
-            <StepLabel>Choose Starting Point</StepLabel>
-          </Step>
-          <StepConnector />
-          <Step>
-            <StepCircle>2</StepCircle>
-            <StepLabel>Input Rates</StepLabel>
-          </Step>
-        </StepsContainer>
-      </ProgressHeader>
+      <ProgressSection>
+        <ProgressCard>
+          <ProgressTitle>Submit Your Bid</ProgressTitle>
+          <ProgressSubtitle>Select your base and destination locations</ProgressSubtitle>
+          <StepsContainer>
+            <Step>
+              <StepCircle className="completed">
+                <Check size={28} />
+              </StepCircle>
+              <StepLabel className="completed">Login</StepLabel>
+            </Step>
+            <StepConnector />
+            <Step>
+              <StepCircle>2</StepCircle>
+              <StepLabel>Bid Details</StepLabel>
+            </Step>
+          </StepsContainer>
+        </ProgressCard>
+      </ProgressSection>
 
       <Main>
+        <StartingRouteCard>
+          <RouteInfo>
+            <RouteIcon>
+              <MapPin size={32} color="#2563eb" />
+            </RouteIcon>
+            <RouteText>
+              <h2>{cityName}</h2>
+              <p>Starting Route</p>
+            </RouteText>
+          </RouteInfo>
+          <FavoriteButton onClick={toggleFavorite} className={isFavorite ? "favorite" : ""}>
+            <Star size={24} fill={isFavorite ? "white" : "none"} />
+          </FavoriteButton>
+        </StartingRouteCard>
+
         <GridLayout>
           <Sidebar>
             <SidebarTitle>Select Destination</SidebarTitle>
@@ -510,7 +537,7 @@ export default function BidPage() {
           <FormCard>
             {!selectedDestination ? (
               <EmptyState>
-                <MapPin size={64} color="#cbd5e1" />
+                <MapPin size={80} strokeWidth={1.5} />
                 <h3>No Destination Selected</h3>
                 <p>Please select a destination from the sidebar to begin entering your bid rates</p>
               </EmptyState>
