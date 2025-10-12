@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import styled from "styled-components"
-import { Truck, ArrowLeft, Star, MapPin } from "lucide-react"
+import { Truck, ArrowLeft, MapPin } from "lucide-react"
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -67,6 +67,67 @@ const BackButton = styled.button`
     background: #f8fafc;
     border-color: #cbd5e1;
   }
+`
+
+const ProgressHeader = styled.div`
+  background: white;
+  padding: 3rem 2rem;
+  text-align: center;
+  border-bottom: 1px solid #e2e8f0;
+`
+
+const ProgressTitle = styled.h1`
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.75rem 0;
+`
+
+const ProgressSubtitle = styled.p`
+  font-size: 1.125rem;
+  color: #64748b;
+  margin: 0 0 3rem 0;
+`
+
+const StepsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+`
+
+const Step = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`
+
+const StepCircle = styled.div`
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: ${(props) => (props.className?.includes("active") ? "#22c55e" : "#2563eb")};
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  flex-shrink: 0;
+`
+
+const StepLabel = styled.span`
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #0f172a;
+`
+
+const StepConnector = styled.div`
+  width: 6rem;
+  height: 2px;
+  background: #cbd5e1;
 `
 
 const Main = styled.main`
@@ -168,13 +229,17 @@ const DestinationList = styled.div`
 const DestinationButton = styled.button`
   width: 100%;
   text-align: left;
-  padding: 1rem;
+  padding: 0.75rem 1rem;
+  height: 4rem;
   border-radius: 0.75rem;
   border: 2px solid ${(props) => (props.className?.includes("selected") ? "#2563eb" : "#e2e8f0")};
   background: ${(props) => (props.className?.includes("selected") ? "linear-gradient(135deg, #2563eb, #1d4ed8)" : "white")};
   color: ${(props) => (props.className?.includes("selected") ? "white" : "#0f172a")};
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
   &:hover {
     border-color: ${(props) => (props.className?.includes("selected") ? "#1d4ed8" : "#cbd5e1")};
@@ -265,6 +330,7 @@ const Label = styled.label`
 
 const Input = styled.input`
   padding: 0.75rem;
+  height: 4rem;
   border: 2px solid #e2e8f0;
   border-radius: 0.5rem;
   font-size: 0.9375rem;
@@ -407,26 +473,23 @@ export default function BidPage() {
         </BackButton>
       </Header>
 
-      <Main>
-        <CityHeader>
-          <CityInfo>
-            <CityIcon>
-              <MapPin size={32} color="#2563eb" />
-            </CityIcon>
-            <CityText>
-              <h2>{cityName.toUpperCase()}</h2>
-              <p>Starting Route</p>
-            </CityText>
-          </CityInfo>
-          <FavoriteButton
-            onClick={toggleFavorite}
-            className={isFavorite ? "favorite" : ""}
-            title={isFavorite ? "Remove from favorites" : "Add to favorites"}
-          >
-            <Star size={24} fill={isFavorite ? "white" : "none"} color={isFavorite ? "white" : "#a1a1aa"} />
-          </FavoriteButton>
-        </CityHeader>
+      <ProgressHeader>
+        <ProgressTitle>Submit Your Bid</ProgressTitle>
+        <ProgressSubtitle>Select the starting city to view and submit rates</ProgressSubtitle>
+        <StepsContainer>
+          <Step>
+            <StepCircle className="active">1</StepCircle>
+            <StepLabel>Choose Starting Point</StepLabel>
+          </Step>
+          <StepConnector />
+          <Step>
+            <StepCircle>2</StepCircle>
+            <StepLabel>Input Rates</StepLabel>
+          </Step>
+        </StepsContainer>
+      </ProgressHeader>
 
+      <Main>
         <GridLayout>
           <Sidebar>
             <SidebarTitle>Select Destination</SidebarTitle>
