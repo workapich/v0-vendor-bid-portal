@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import styled from "styled-components"
 import { TextField, Chip, InputAdornment, Button } from "@mui/material"
-import { Search, Truck, LogOut, BarChart3, TrendingUp, Star } from "lucide-react"
+import { Search, Truck, LogOut, TrendingUp, Star, Clock, Users } from "lucide-react"
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -19,7 +19,7 @@ const Header = styled.header`
   padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
-  justify-content: between;
+  justify-content: space-between;
 `
 
 const HeaderContent = styled.div`
@@ -129,6 +129,73 @@ const StatDescription = styled.p`
   margin-top: 0.25rem;
 `
 
+const StatMetrics = styled.div`
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgb(226 232 240);
+`
+
+const StatMetric = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`
+
+const MetricLabel = styled.span`
+  font-size: 0.75rem;
+  color: rgb(100 116 139);
+  font-weight: 500;
+`
+
+const MetricValue = styled.span`
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: rgb(37 99 235);
+`
+
+const QuickActionsCard = styled.div`
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+`
+
+const QuickActionsTitle = styled.h3`
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgb(15 23 42);
+  margin: 0 0 1rem 0;
+`
+
+const QuickActionsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+`
+
+const QuickActionButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgb(239 246 255), rgb(219 234 254));
+  border: 2px solid rgb(191 219 254);
+  border-radius: 0.5rem;
+  color: rgb(37 99 235);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: linear-gradient(135deg, rgb(219 234 254), rgb(191 219 254));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  }
+`
+
 const ContentCard = styled.div`
   background: white;
   border-radius: 0.5rem;
@@ -213,8 +280,8 @@ const StyledChip = styled(Chip)`
 const FavoriteStarIcon = styled(Star)`
   width: 1rem;
   height: 1rem;
-  color: rgb(250 204 21);
-  fill: rgb(250 204 21);
+  color: rgb(37 99 235);
+  fill: rgb(37 99 235);
   margin-left: 0.25rem;
 `
 
@@ -306,6 +373,9 @@ export default function CitiesPage() {
   const totalRoutes = CITIES.reduce((sum, city) => sum + city.routes, 0)
   const activeCities = CITIES.length
 
+  const bidsLast24Hours = 23
+  const bidsLast7Days = 147
+
   if (userType === "admin") {
     return (
       <PageContainer>
@@ -352,10 +422,20 @@ export default function CitiesPage() {
             <StatCard>
               <StatHeader>
                 <StatLabel>Total Bids</StatLabel>
-                <BarChart3 style={{ width: "1.25rem", height: "1.25rem", color: "rgb(37 99 235)" }} />
+                <Clock style={{ width: "1.25rem", height: "1.25rem", color: "rgb(37 99 235)" }} />
               </StatHeader>
               <StatValue>{totalBids}</StatValue>
-              <StatDescription>Across all cities</StatDescription>
+              <StatDescription>All time submissions</StatDescription>
+              <StatMetrics>
+                <StatMetric>
+                  <MetricLabel>Last 24 hours</MetricLabel>
+                  <MetricValue>{bidsLast24Hours}</MetricValue>
+                </StatMetric>
+                <StatMetric>
+                  <MetricLabel>Last 7 days</MetricLabel>
+                  <MetricValue>{bidsLast7Days}</MetricValue>
+                </StatMetric>
+              </StatMetrics>
             </StatCard>
 
             <StatCard>
@@ -376,6 +456,16 @@ export default function CitiesPage() {
               <StatDescription>Serviced locations</StatDescription>
             </StatCard>
           </StatsGrid>
+
+          <QuickActionsCard>
+            <QuickActionsTitle>Quick Actions</QuickActionsTitle>
+            <QuickActionsGrid>
+              <QuickActionButton onClick={() => router.push("/admin/vendors")}>
+                <Users size={20} />
+                Manage Vendors
+              </QuickActionButton>
+            </QuickActionsGrid>
+          </QuickActionsCard>
 
           <ContentCard>
             <CardHeader>
