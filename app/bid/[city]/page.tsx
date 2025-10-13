@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import styled from "styled-components"
-import { Truck, ArrowLeft, MapPin, Star, Check } from "lucide-react"
+import { Truck, ArrowLeft, MapPin, Star } from "lucide-react"
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -67,75 +67,6 @@ const BackButton = styled.button`
     background: #f8fafc;
     border-color: #cbd5e1;
   }
-`
-
-const ProgressSection = styled.div`
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  padding: 2rem;
-  display: flex;
-  justify-content: center;
-`
-
-const ProgressCard = styled.div`
-  background: white;
-  border-radius: 1rem;
-  padding: 3rem 4rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  max-width: 900px;
-  width: 100%;
-  text-align: center;
-`
-
-const ProgressTitle = styled.h1`
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #0f172a;
-  margin: 0 0 0.75rem 0;
-`
-
-const ProgressSubtitle = styled.p`
-  font-size: 1.125rem;
-  color: #64748b;
-  margin: 0 0 3rem 0;
-`
-
-const StepsContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-`
-
-const Step = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-`
-
-const StepCircle = styled.div`
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: 50%;
-  background: ${(props) => (props.className?.includes("completed") ? "#22c55e" : "#2563eb")};
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  font-weight: 700;
-  flex-shrink: 0;
-`
-
-const StepLabel = styled.span`
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: ${(props) => (props.className?.includes("completed") ? "#22c55e" : "#2563eb")};
-`
-
-const StepConnector = styled.div`
-  width: 6rem;
-  height: 2px;
-  background: #cbd5e1;
 `
 
 const Main = styled.main`
@@ -480,26 +411,6 @@ export default function BidPage() {
           <span>Back to Cities</span>
         </BackButton>
       </Header>
-
-      <ProgressSection>
-        <ProgressCard>
-          <ProgressTitle>Submit Your Bid</ProgressTitle>
-          <ProgressSubtitle>Select your base and destination locations</ProgressSubtitle>
-          <StepsContainer>
-            <Step>
-              <StepCircle className="completed">
-                <Check size={28} />
-              </StepCircle>
-              <StepLabel className="completed">Login</StepLabel>
-            </Step>
-            <StepConnector />
-            <Step>
-              <StepCircle>2</StepCircle>
-              <StepLabel>Bid Details</StepLabel>
-            </Step>
-          </StepsContainer>
-        </ProgressCard>
-      </ProgressSection>
 
       <Main>
         <StartingRouteCard>
