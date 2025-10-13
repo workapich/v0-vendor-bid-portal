@@ -1,545 +1,351 @@
 "use client"
 
-import { useParams, useRouter } from "next/navigation"
+import type React from "react"
+
 import { useState, useEffect } from "react"
+import { useParams, useRouter } from "next/navigation"
 import styled from "styled-components"
-import { Truck, ArrowLeft, MapPin, Star } from "lucide-react"
+import { Star, MapPin, ArrowRight, CheckCircle } from "lucide-react"
+import Header from "@/components/Header"
 
-const PageContainer = styled.div`
+const BidContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  background: oklch(0.99 0 0);
 `
 
-const Header = styled.header`
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`
-
-const HeaderLeft = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-`
-
-const Logo = styled.div`
-  width: 3rem;
-  height: 3rem;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-`
-
-const HeaderTitle = styled.div`
-  h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin: 0;
-  }
-  p {
-    font-size: 0.875rem;
-    color: #64748b;
-    margin: 0;
-  }
-`
-
-const BackButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
-  background: white;
-  border: 2px solid #e2e8f0;
-  border-radius: 0.5rem;
-  color: #334155;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
-  }
-`
-
-const Main = styled.main`
-  padding: 2rem;
-  max-width: 1400px;
+const ContentWrapper = styled.div`
+  max-width: 800px;
   margin: 0 auto;
+  padding: 40px 24px;
 `
 
-const StartingRouteCard = styled.div`
+const BidCard = styled.div`
   background: white;
-  border-radius: 1rem;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  border: 1px solid oklch(0.92 0 0);
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 `
 
-const RouteInfo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
+const RouteHeader = styled.div`
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid oklch(0.92 0 0);
 `
 
-const RouteIcon = styled.div`
-  width: 4rem;
-  height: 4rem;
-  background: linear-gradient(135deg, #eff6ff, #dbeafe);
-  border-radius: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #bfdbfe;
-`
-
-const RouteText = styled.div`
-  h2 {
-    font-size: 2rem;
-    font-weight: 800;
-    color: #0f172a;
-    margin: 0 0 0.25rem 0;
-    text-transform: uppercase;
-  }
-  p {
-    font-size: 0.875rem;
-    color: #64748b;
-    margin: 0;
-  }
-`
-
-const FavoriteButton = styled.button`
-  background: ${(props) => (props.className?.includes("favorite") ? "#fbbf24" : "white")};
-  border: 2px solid ${(props) => (props.className?.includes("favorite") ? "#fbbf24" : "#e2e8f0")};
-  border-radius: 0.75rem;
-  width: 3.5rem;
-  height: 3.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s;
-  color: ${(props) => (props.className?.includes("favorite") ? "white" : "#94a3b8")};
-
-  &:hover {
-    transform: scale(1.1);
-  }
-`
-
-const GridLayout = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 2.5fr;
-  gap: 1.5rem;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-  }
-`
-
-const Sidebar = styled.div`
-  background: white;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  height: 65vh;
-  overflow-y: auto;
-`
-
-const SidebarTitle = styled.h3`
-  font-size: 1.125rem;
+const RouteTitle = styled.h1`
+  font-size: 28px;
   font-weight: 700;
-  color: #0f172a;
-  margin: 0 0 1rem 0;
+  color: oklch(0.2 0 0);
+  margin: 0 0 16px 0;
 `
 
-const DestinationList = styled.div`
+const RouteSection = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
 `
 
-const DestinationButton = styled.button`
-  width: 100%;
-  text-align: left;
-  padding: 0.75rem 1rem;
-  height: 4rem;
-  border-radius: 0.75rem;
-  border: 2px solid ${(props) => (props.className?.includes("selected") ? "#2563eb" : "#e2e8f0")};
-  background: ${(props) => (props.className?.includes("selected") ? "linear-gradient(135deg, #2563eb, #1d4ed8)" : "white")};
-  color: ${(props) => (props.className?.includes("selected") ? "white" : "#0f172a")};
+const CityBadge = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: oklch(0.98 0 0);
+  border: 1px solid oklch(0.92 0 0);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: oklch(0.3 0 0);
+  
+  svg {
+    width: 18px;
+    height: 18px;
+    color: oklch(0.5 0.15 250);
+  }
+`
+
+const FavoriteButton = styled.button<{ $isFavorite: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: ${(props) => (props.$isFavorite ? "oklch(0.75 0.15 85)" : "white")};
+  border: 1px solid ${(props) => (props.$isFavorite ? "oklch(0.75 0.15 85)" : "oklch(0.92 0 0)")};
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: ${(props) => (props.$isFavorite ? "white" : "oklch(0.3 0 0)")};
   cursor: pointer;
   transition: all 0.2s;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
+  
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: ${(props) => (props.$isFavorite ? "white" : "none")};
+  }
+  
   &:hover {
-    border-color: ${(props) => (props.className?.includes("selected") ? "#1d4ed8" : "#cbd5e1")};
-    background: ${(props) => (props.className?.includes("selected") ? "linear-gradient(135deg, #1d4ed8, #1e40af)" : "#f8fafc")};
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
-
-  div:first-child {
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-  }
-
-  div:last-child {
-    font-size: 0.875rem;
-    opacity: 0.8;
+  
+  &:active {
+    transform: scale(0.98);
   }
 `
 
-const FormCard = styled.div`
-  background: white;
-  border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  height: 65vh;
-  overflow-y: auto;
+const ArrowIcon = styled.div`
+  svg {
+    width: 20px;
+    height: 20px;
+    color: oklch(0.7 0 0);
+  }
 `
 
-const EmptyState = styled.div`
+const BidForm = styled.form`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: #94a3b8;
-
-  h3 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #334155;
-    margin: 0 0 0.75rem 0;
-  }
-
-  p {
-    margin: 0;
-    font-size: 1rem;
-    color: #64748b;
-  }
+  gap: 24px;
 `
 
-const FormSection = styled.div`
-  margin-bottom: 2rem;
-`
-
-const SectionTitle = styled.h4`
-  font-size: 1rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0 0 1rem 0;
-  padding: 1rem;
-  background: #eff6ff;
-  border-radius: 0.5rem;
-`
-
-const FieldGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  padding: 1.5rem;
-  background: #f9fafb;
-  border-radius: 0.5rem;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-`
-
-const FieldGridOptional = styled(FieldGrid)`
-  grid-template-columns: repeat(4, 1fr);
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-`
-
-const InputGroup = styled.div`
+const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 8px;
 `
 
 const Label = styled.label`
-  font-size: 0.875rem;
+  font-size: 14px;
   font-weight: 600;
-  color: #334155;
+  color: oklch(0.3 0 0);
+`
+
+const Select = styled.select`
+  padding: 12px 16px;
+  border: 1px solid oklch(0.92 0 0);
+  border-radius: 8px;
+  font-size: 15px;
+  background: white;
+  color: oklch(0.3 0 0);
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:focus {
+    outline: none;
+    border-color: oklch(0.5 0.15 250);
+    box-shadow: 0 0 0 3px oklch(0.5 0.15 250 / 0.1);
+  }
 `
 
 const Input = styled.input`
-  padding: 0.75rem;
-  height: 4rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 0.5rem;
-  font-size: 0.9375rem;
-  color: #0f172a;
-  background: ${(props) => (props.readOnly ? "#f1f5f9" : "white")};
+  padding: 12px 16px;
+  border: 1px solid oklch(0.92 0 0);
+  border-radius: 8px;
+  font-size: 15px;
   transition: all 0.2s;
-
+  
   &:focus {
     outline: none;
-    border-color: #2563eb;
+    border-color: oklch(0.5 0.15 250);
+    box-shadow: 0 0 0 3px oklch(0.5 0.15 250 / 0.1);
   }
-
+  
   &::placeholder {
-    color: #94a3b8;
+    color: oklch(0.7 0 0);
   }
 `
 
 const SubmitButton = styled.button`
-  padding: 1rem 3rem;
-  background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+  padding: 16px 24px;
+  background: oklch(0.5 0.15 250);
   color: white;
   border: none;
-  border-radius: 0.75rem;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: not-allowed;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
   transition: all 0.2s;
-  float: right;
-  margin-top: 1rem;
-
-  &:disabled {
-    background: linear-gradient(135deg, #cbd5e1, #94a3b8);
-    cursor: not-allowed;
+  margin-top: 8px;
+  
+  &:hover {
+    background: oklch(0.45 0.15 250);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px oklch(0.5 0.15 250 / 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
   }
 `
 
-const DESTINATIONS = {
-  boston: [
-    { id: 1, name: "Franlin, NH", distance: 95 },
-    { id: 2, name: "Slatersville, RI", distance: 52 },
-    { id: 3, name: "Augustas, GA", distance: 1100 },
-    { id: 4, name: "Portland, ME", distance: 103 },
-    { id: 5, name: "Hartford, CT", distance: 102 },
-  ],
-  atlanta: [
-    { id: 1, name: "Birmingham, AL", distance: 147 },
-    { id: 2, name: "Charlotte, NC", distance: 244 },
-    { id: 3, name: "Nashville, TN", distance: 250 },
-  ],
-  philadelphia: [
-    { id: 1, name: "New York, NY", distance: 95 },
-    { id: 2, name: "Baltimore, MD", distance: 106 },
-    { id: 3, name: "Washington, DC", distance: 140 },
-  ],
-}
+const SuccessMessage = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: oklch(0.95 0.05 145);
+  border: 1px solid oklch(0.6 0.15 145);
+  border-radius: 8px;
+  color: oklch(0.3 0.1 145);
+  font-weight: 500;
+  margin-top: 16px;
+  
+  svg {
+    width: 20px;
+    height: 20px;
+    color: oklch(0.6 0.15 145);
+    flex-shrink: 0;
+  }
+`
+
+const cities = [
+  "New York",
+  "Los Angeles",
+  "Chicago",
+  "Houston",
+  "Phoenix",
+  "Philadelphia",
+  "San Antonio",
+  "San Diego",
+  "Dallas",
+  "San Jose",
+]
 
 export default function BidPage() {
   const params = useParams()
   const router = useRouter()
-  const city = params.city as string
-  const cityName = city.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
+  const city = decodeURIComponent(params.city as string)
 
-  const [selectedDestination, setSelectedDestination] = useState<number | null>(null)
   const [isFavorite, setIsFavorite] = useState(false)
-  const [formData, setFormData] = useState({
-    baseRate: "",
-    fsc: "",
-    total: "",
-    optional1: "",
-    optional2: "",
-    optional3: "",
-    optional4: "",
-    optional5: "",
-    optional6: "",
-    optional7: "",
-    optional8: "",
-  })
-
-  const destinations = DESTINATIONS[city as keyof typeof DESTINATIONS] || DESTINATIONS.boston
+  const [destination, setDestination] = useState("")
+  const [rate, setRate] = useState("")
+  const [vendorName, setVendorName] = useState("")
+  const [email, setEmail] = useState("")
+  const [phone, setPhone] = useState("")
+  const [submitted, setSubmitted] = useState(false)
 
   useEffect(() => {
     const favorites = JSON.parse(localStorage.getItem("favoriteCities") || "[]")
-    setIsFavorite(favorites.includes(cityName))
-  }, [cityName])
+    setIsFavorite(favorites.includes(city))
+  }, [city])
 
   const toggleFavorite = () => {
     const favorites = JSON.parse(localStorage.getItem("favoriteCities") || "[]")
-    let updatedFavorites
-
-    if (favorites.includes(cityName)) {
-      updatedFavorites = favorites.filter((c: string) => c !== cityName)
-    } else {
-      updatedFavorites = [...favorites, cityName]
-    }
-
-    localStorage.setItem("favoriteCities", JSON.stringify(updatedFavorites))
+    const newFavorites = isFavorite ? favorites.filter((c: string) => c !== city) : [...favorites, city]
+    localStorage.setItem("favoriteCities", JSON.stringify(newFavorites))
     setIsFavorite(!isFavorite)
   }
 
-  const formatCurrency = (value: string): string => {
-    const numericValue = value.replace(/[^0-9.]/g, "")
-    if (!numericValue) return ""
-    return `$${numericValue}`
-  }
-
-  const formatPercentage = (value: string): string => {
-    const numericValue = value.replace(/[^0-9.]/g, "")
-    if (!numericValue) return ""
-    return `${numericValue}%`
-  }
-
-  const extractNumericValue = (value: string): string => {
-    return value.replace(/[^0-9.]/g, "")
-  }
-
-  useEffect(() => {
-    const baseRate = Number.parseFloat(extractNumericValue(formData.baseRate)) || 0
-    const fsc = Number.parseFloat(extractNumericValue(formData.fsc)) || 0
-
-    if (baseRate > 0 && fsc >= 0) {
-      const total = baseRate + baseRate * (fsc / 100)
-      setFormData((prev) => ({ ...prev, total: `$${total.toFixed(2)}` }))
-    } else if (!formData.baseRate && !formData.fsc) {
-      setFormData((prev) => ({ ...prev, total: "" }))
-    }
-  }, [formData.baseRate, formData.fsc])
-
-  const handleCurrencyInput = (field: string, value: string) => {
-    const formatted = formatCurrency(value)
-    setFormData({ ...formData, [field]: formatted })
-  }
-
-  const handlePercentageInput = (value: string) => {
-    const formatted = formatPercentage(value)
-    setFormData({ ...formData, fsc: formatted })
-  }
-
-  const handleSubmit = () => {
-    if (formData.baseRate && formData.fsc && formData.total) {
-      alert("Bid submitted successfully!")
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setSubmitted(true)
+    setTimeout(() => {
       router.push("/cities")
-    }
+    }, 2000)
   }
 
-  const isFormValid = formData.baseRate && formData.fsc && formData.total
+  const availableDestinations = cities.filter((c) => c !== city)
 
   return (
-    <PageContainer>
-      <Header>
-        <HeaderLeft>
-          <Logo>
-            <Truck size={24} />
-          </Logo>
-          <HeaderTitle>
-            <h1>Vendor Bid Portal</h1>
-            <p>Motor Carrier Services</p>
-          </HeaderTitle>
-        </HeaderLeft>
-        <BackButton onClick={() => router.push("/cities")}>
-          <ArrowLeft size={16} />
-          <span>Back to Cities</span>
-        </BackButton>
-      </Header>
+    <BidContainer>
+      <Header />
+      <ContentWrapper>
+        <BidCard>
+          <RouteHeader>
+            <RouteTitle>Submit Your Bid</RouteTitle>
+            <RouteSection>
+              <CityBadge>
+                <MapPin />
+                {city}
+              </CityBadge>
+              <FavoriteButton $isFavorite={isFavorite} onClick={toggleFavorite}>
+                <Star />
+                {isFavorite ? "Favorited" : "Add to Favorites"}
+              </FavoriteButton>
+              <ArrowIcon>
+                <ArrowRight />
+              </ArrowIcon>
+              <CityBadge>
+                <MapPin />
+                {destination || "Select destination"}
+              </CityBadge>
+            </RouteSection>
+          </RouteHeader>
 
-      <Main>
-        <StartingRouteCard>
-          <RouteInfo>
-            <RouteIcon>
-              <MapPin size={32} color="#2563eb" />
-            </RouteIcon>
-            <RouteText>
-              <h2>{cityName}</h2>
-              <p>Starting Route</p>
-            </RouteText>
-          </RouteInfo>
-          <FavoriteButton onClick={toggleFavorite} className={isFavorite ? "favorite" : ""}>
-            <Star size={24} fill={isFavorite ? "white" : "none"} />
-          </FavoriteButton>
-        </StartingRouteCard>
+          <BidForm onSubmit={handleSubmit}>
+            <FormGroup>
+              <Label htmlFor="destination">Destination City</Label>
+              <Select id="destination" value={destination} onChange={(e) => setDestination(e.target.value)} required>
+                <option value="">Select a destination</option>
+                {availableDestinations.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </Select>
+            </FormGroup>
 
-        <GridLayout>
-          <Sidebar>
-            <SidebarTitle>Select Destination</SidebarTitle>
-            <DestinationList>
-              {destinations.map((dest) => (
-                <DestinationButton
-                  key={dest.id}
-                  onClick={() => setSelectedDestination(dest.id)}
-                  className={selectedDestination === dest.id ? "selected" : ""}
-                >
-                  <div>{dest.name}</div>
-                  <div>{dest.distance} miles</div>
-                </DestinationButton>
-              ))}
-            </DestinationList>
-          </Sidebar>
+            <FormGroup>
+              <Label htmlFor="rate">Your Rate (per mile)</Label>
+              <Input
+                id="rate"
+                type="text"
+                placeholder="e.g., $2.25"
+                value={rate}
+                onChange={(e) => setRate(e.target.value)}
+                required
+              />
+            </FormGroup>
 
-          <FormCard>
-            {!selectedDestination ? (
-              <EmptyState>
-                <h3>No Destination Selected</h3>
-                <p>Please select a destination from the sidebar to begin entering your bid rates</p>
-              </EmptyState>
-            ) : (
-              <>
-                <FormSection>
-                  <SectionTitle>REQUIRED FIELDS</SectionTitle>
-                  <FieldGrid>
-                    <InputGroup>
-                      <Label>Base Rate *</Label>
-                      <Input
-                        type="text"
-                        placeholder="$0.00"
-                        value={formData.baseRate}
-                        onChange={(e) => handleCurrencyInput("baseRate", e.target.value)}
-                      />
-                    </InputGroup>
+            <FormGroup>
+              <Label htmlFor="vendorName">Vendor Name</Label>
+              <Input
+                id="vendorName"
+                type="text"
+                placeholder="Your company name"
+                value={vendorName}
+                onChange={(e) => setVendorName(e.target.value)}
+                required
+              />
+            </FormGroup>
 
-                    <InputGroup>
-                      <Label>FSC *</Label>
-                      <Input
-                        type="text"
-                        placeholder="0%"
-                        value={formData.fsc}
-                        onChange={(e) => handlePercentageInput(e.target.value)}
-                      />
-                    </InputGroup>
+            <FormGroup>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </FormGroup>
 
-                    <InputGroup>
-                      <Label>Total *</Label>
-                      <Input type="text" value={formData.total} readOnly />
-                    </InputGroup>
-                  </FieldGrid>
-                </FormSection>
+            <FormGroup>
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="(555) 123-4567"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+              />
+            </FormGroup>
 
-                <FormSection>
-                  <SectionTitle>OPTIONAL FIELDS</SectionTitle>
-                  <FieldGridOptional>
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                      <InputGroup key={num}>
-                        <Label>Optional #{num}</Label>
-                        <Input
-                          type="text"
-                          placeholder="$0.00"
-                          value={formData[`optional${num}` as keyof typeof formData]}
-                          onChange={(e) => handleCurrencyInput(`optional${num}`, e.target.value)}
-                        />
-                      </InputGroup>
-                    ))}
-                  </FieldGridOptional>
-                </FormSection>
+            <SubmitButton type="submit">Submit Bid</SubmitButton>
 
-                <SubmitButton onClick={handleSubmit} disabled={!isFormValid}>
-                  Submit Bid
-                </SubmitButton>
-              </>
+            {submitted && (
+              <SuccessMessage>
+                <CheckCircle />
+                Bid submitted successfully! Redirecting...
+              </SuccessMessage>
             )}
-          </FormCard>
-        </GridLayout>
-      </Main>
-    </PageContainer>
+          </BidForm>
+        </BidCard>
+      </ContentWrapper>
+    </BidContainer>
   )
 }

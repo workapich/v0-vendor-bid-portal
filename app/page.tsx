@@ -2,234 +2,213 @@
 
 import type React from "react"
 
-import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import styled from "styled-components"
-import { TextField, Card, CardContent } from "@mui/material"
-import { Lock } from "lucide-react"
-import Header from "@/components/Header"
+import { Truck, Lock } from "lucide-react"
 
-const PageContainer = styled.div`
+const LoginContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(to bottom right, rgb(248 250 252), rgb(226 232 240));
-  display: flex;
-  flex-direction: column;
-`
-
-const Main = styled.main`
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
+  background: linear-gradient(135deg, oklch(0.5 0.15 250) 0%, oklch(0.4 0.12 250) 100%);
+  padding: 24px;
 `
 
-const LoginCard = styled(Card)`
+const LoginCard = styled.div`
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  padding: 48px;
   width: 100%;
-  max-width: 28rem;
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  max-width: 440px;
 `
 
-const LoginContent = styled(CardContent)`
-  padding: 2rem;
+const LogoSection = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  justify-content: center;
 `
 
-const IconCircle = styled.div`
-  width: 4rem;
-  height: 4rem;
-  background: rgb(37 99 235);
-  border-radius: 50%;
+const LogoIcon = styled.div`
+  width: 48px;
+  height: 48px;
+  background: oklch(0.5 0.15 250);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
-`
-
-const StyledLockIcon = styled(Lock)`
-  width: 2rem;
-  height: 2rem;
-  color: white;
-`
-
-const LoginTitle = styled.h2`
-  font-size: 1.5rem;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 0.5rem;
-  color: rgb(15 23 42);
-`
-
-const LoginSubtitle = styled.p`
-  text-align: center;
-  color: rgb(71 85 105);
-  margin-bottom: 2rem;
-`
-
-const FormSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  width: 100%;
-`
-
-const InputWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`
-
-const InputLabel = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: rgb(51 65 85);
-  margin-bottom: 0.5rem;
-`
-
-const SmallLockIcon = styled(Lock)`
-  width: 1rem;
-  height: 1rem;
-`
-
-const StyledTextField = styled(TextField)`
-  width: 100%;
   
-  & .MuiOutlinedInput-root {
-    background: white;
-    
-    &:hover fieldset {
-      border-color: rgb(37 99 235);
-    }
-    
-    &.Mui-focused fieldset {
-      border-color: rgb(37 99 235);
-    }
+  svg {
+    width: 28px;
+    height: 28px;
+    color: white;
   }
 `
 
-const LoginButton = styled.button`
-  width: 100%;
-  background: rgb(37 99 235);
-  color: white;
-  padding: 0.75rem;
-  font-size: 1rem;
+const LogoText = styled.h1`
+  font-size: 28px;
+  font-weight: 700;
+  color: oklch(0.2 0 0);
+  margin: 0;
+`
+
+const Title = styled.h2`
+  font-size: 24px;
+  font-weight: 600;
+  color: oklch(0.2 0 0);
+  margin: 0 0 8px 0;
+  text-align: center;
+`
+
+const Subtitle = styled.p`
+  font-size: 15px;
+  color: oklch(0.5 0 0);
+  margin: 0 0 32px 0;
+  text-align: center;
+`
+
+const LoginForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`
+
+const FormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`
+
+const Label = styled.label`
+  font-size: 14px;
   font-weight: 500;
+  color: oklch(0.3 0 0);
+`
+
+const Input = styled.input`
+  padding: 12px 16px;
+  border: 1px solid oklch(0.92 0 0);
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.2s;
+  background: white;
+  
+  &:focus {
+    outline: none;
+    border-color: oklch(0.5 0.15 250);
+    box-shadow: 0 0 0 3px oklch(0.5 0.15 250 / 0.1);
+  }
+  
+  &::placeholder {
+    color: oklch(0.7 0 0);
+  }
+`
+
+const SubmitButton = styled.button`
+  padding: 14px 24px;
+  background: oklch(0.5 0.15 250);
+  color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
+  margin-top: 8px;
   
   &:hover {
-    background: rgb(29 78 216);
+    background: oklch(0.45 0.15 250);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px oklch(0.5 0.15 250 / 0.3);
   }
   
   &:active {
-    background: rgb(30 64 175);
+    transform: translateY(0);
   }
 `
 
-const Footer = styled.footer`
-  background: white;
-  border-top: 1px solid rgb(226 232 240);
-  padding: 1rem 1.5rem;
-  text-align: center;
-  font-size: 0.875rem;
-  color: rgb(71 85 105);
-`
-
-const FooterStatus = styled.div`
+const SecureBadge = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  margin-top: 0.25rem;
-  color: rgb(22 163 74);
-`
-
-const StatusDot = styled.div`
-  width: 0.5rem;
-  height: 0.5rem;
-  background: rgb(22 163 74);
-  border-radius: 50%;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 12px;
+  background: oklch(0.98 0 0);
+  border-radius: 8px;
+  font-size: 13px;
+  color: oklch(0.5 0 0);
+  
+  svg {
+    width: 16px;
+    height: 16px;
+    color: oklch(0.6 0.15 145);
+  }
 `
 
 export default function LoginPage() {
   const router = useRouter()
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
 
-  const handleLogin = () => {
-    if (password === "123456") {
-      localStorage.setItem("userType", "admin")
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Simple validation for demo
+    if (username && password) {
       router.push("/cities")
-    } else if (password === "qwerty") {
-      localStorage.setItem("userType", "vendor")
-      router.push("/cities")
-    } else {
-      setError("Invalid password")
-    }
-  }
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleLogin()
     }
   }
 
   return (
-    <PageContainer>
-      <Header />
+    <LoginContainer>
+      <LoginCard>
+        <LogoSection>
+          <LogoIcon>
+            <Truck />
+          </LogoIcon>
+          <LogoText>VendorBid</LogoText>
+        </LogoSection>
 
-      <Main>
-        <LoginCard>
-          <LoginContent>
-            <IconCircle>
-              <StyledLockIcon />
-            </IconCircle>
+        <Title>Vendor Portal</Title>
+        <Subtitle>Sign in to access your bidding dashboard</Subtitle>
 
-            <LoginTitle>Vendor Entry</LoginTitle>
-            <LoginSubtitle>Enter your password to access the bid portal</LoginSubtitle>
+        <LoginForm onSubmit={handleSubmit}>
+          <FormGroup>
+            <Label htmlFor="username">Username</Label>
+            <Input
+              id="username"
+              type="text"
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </FormGroup>
 
-            <FormSection>
-              <InputWrapper>
-                <InputLabel>
-                  <SmallLockIcon />
-                  Password
-                </InputLabel>
-                <StyledTextField
-                  type="password"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value)
-                    setError("")
-                  }}
-                  onKeyPress={handleKeyPress}
-                  error={!!error}
-                  helperText={error}
-                  variant="outlined"
-                  autoFocus
-                />
-              </InputWrapper>
+          <FormGroup>
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </FormGroup>
 
-              <LoginButton onClick={handleLogin}>Login</LoginButton>
-            </FormSection>
-          </LoginContent>
-        </LoginCard>
-      </Main>
+          <SubmitButton type="submit">Sign In</SubmitButton>
+        </LoginForm>
 
-      <Footer>
-        <p>© 2025 Motor Carrier Services. All rights reserved.</p>
-        <FooterStatus>
-          <StatusDot />
-          Your information is secure and encrypted
-        </FooterStatus>
-      </Footer>
-    </PageContainer>
+        <SecureBadge>
+          <Lock />
+          <span>Secure Portal - Your data is encrypted</span>
+        </SecureBadge>
+      </LoginCard>
+    </LoginContainer>
   )
 }
