@@ -93,7 +93,7 @@ const StatsGrid = styled.div`
   margin-bottom: 2rem;
 
   @media (min-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 `
 
@@ -102,6 +102,51 @@ const StatCard = styled.div`
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
   padding: 1.5rem;
+`
+
+const ActionCard = styled.div`
+  background: linear-gradient(135deg, rgb(239 246 255), rgb(219 234 254));
+  border: 2px solid rgb(191 219 254);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.75rem;
+
+  &:hover {
+    background: linear-gradient(135deg, rgb(219 234 254), rgb(191 219 254));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  }
+`
+
+const ActionCardIcon = styled.div`
+  width: 3rem;
+  height: 3rem;
+  background: rgb(37 99 235);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const ActionCardTitle = styled.h3`
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: rgb(37 99 235);
+  margin: 0;
+`
+
+const ActionCardDescription = styled.p`
+  font-size: 0.875rem;
+  color: rgb(71 85 105);
+  margin: 0;
 `
 
 const StatHeader = styled.div`
@@ -395,22 +440,6 @@ export default function CitiesPage() {
             </HeaderText>
           </HeaderContent>
           <HeaderActions>
-            <Button
-              variant="contained"
-              size="small"
-              onClick={() => router.push("/admin/vendors")}
-              startIcon={<Users style={{ width: "1rem", height: "1rem" }} />}
-              sx={{
-                background: "linear-gradient(135deg, rgb(37 99 235), rgb(29 78 216))",
-                color: "white",
-                fontWeight: 600,
-                "&:hover": {
-                  background: "linear-gradient(135deg, rgb(29 78 216), rgb(30 64 175))",
-                },
-              }}
-            >
-              Manage Vendors
-            </Button>
             <StatusIndicator>
               <StatusDot />
               Secure Portal
@@ -440,6 +469,14 @@ export default function CitiesPage() {
           </CardHeader>
 
           <StatsGrid>
+            <ActionCard onClick={() => router.push("/admin/vendors")}>
+              <ActionCardIcon>
+                <Users style={{ width: "1.5rem", height: "1.5rem", color: "white" }} />
+              </ActionCardIcon>
+              <ActionCardTitle>Manage Vendors</ActionCardTitle>
+              <ActionCardDescription>View and create vendors</ActionCardDescription>
+            </ActionCard>
+
             <StatCard>
               <StatHeader>
                 <StatLabel>Total Bids</StatLabel>
