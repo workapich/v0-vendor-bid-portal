@@ -409,8 +409,9 @@ export default function CitiesPage() {
   const handleCityClick = (cityName: string) => {
     if (userType === "vendor") {
       router.push(`/bid/${cityName.toLowerCase().replace(/\s+/g, "-")}`)
+    } else {
+      router.push(`/admin/rates?city=${cityName}`)
     }
-    // Admins clicking cities will stay on the current page to view all routes
   }
 
   const handleLogout = () => {
