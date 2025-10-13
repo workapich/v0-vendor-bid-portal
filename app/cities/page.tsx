@@ -117,42 +117,47 @@ const StatLabel = styled.span`
   color: rgb(71 85 105);
 `
 
-const StatValue = styled.div`
+const StatValueRow = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 2rem;
+  margin-top: 0.5rem;
+`
+
+const StatMainValue = styled.div`
   font-size: 1.875rem;
   font-weight: 700;
   color: rgb(15 23 42);
+`
+
+const StatInlineMetrics = styled.div`
+  display: flex;
+  gap: 1.5rem;
+  align-items: baseline;
+`
+
+const InlineMetric = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+`
+
+const InlineMetricLabel = styled.span`
+  font-size: 0.75rem;
+  color: rgb(100 116 139);
+  font-weight: 500;
+`
+
+const InlineMetricValue = styled.span`
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgb(37 99 235);
 `
 
 const StatDescription = styled.p`
   font-size: 0.875rem;
   color: rgb(100 116 139);
   margin-top: 0.25rem;
-`
-
-const StatMetrics = styled.div`
-  display: flex;
-  gap: 1.5rem;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid rgb(226 232 240);
-`
-
-const StatMetric = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-`
-
-const MetricLabel = styled.span`
-  font-size: 0.75rem;
-  color: rgb(100 116 139);
-  font-weight: 500;
-`
-
-const MetricValue = styled.span`
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: rgb(37 99 235);
 `
 
 const QuickActionsCard = styled.div`
@@ -358,7 +363,7 @@ export default function CitiesPage() {
 
   const handleCityClick = (cityName: string) => {
     if (userType === "admin") {
-      router.push(`/admin/rates?city=${cityName}`)
+      router.push(`/admin/vendors`)
     } else {
       router.push(`/bid/${cityName.toLowerCase().replace(/\s+/g, "-")}`)
     }
@@ -390,6 +395,22 @@ export default function CitiesPage() {
             </HeaderText>
           </HeaderContent>
           <HeaderActions>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => router.push("/admin/vendors")}
+              startIcon={<Users style={{ width: "1rem", height: "1rem" }} />}
+              sx={{
+                background: "linear-gradient(135deg, rgb(37 99 235), rgb(29 78 216))",
+                color: "white",
+                fontWeight: 600,
+                "&:hover": {
+                  background: "linear-gradient(135deg, rgb(29 78 216), rgb(30 64 175))",
+                },
+              }}
+            >
+              Manage Vendors
+            </Button>
             <StatusIndicator>
               <StatusDot />
               Secure Portal
@@ -424,18 +445,20 @@ export default function CitiesPage() {
                 <StatLabel>Total Bids</StatLabel>
                 <Clock style={{ width: "1.25rem", height: "1.25rem", color: "rgb(37 99 235)" }} />
               </StatHeader>
-              <StatValue>{totalBids}</StatValue>
+              <StatValueRow>
+                <StatMainValue>{totalBids}</StatMainValue>
+                <StatInlineMetrics>
+                  <InlineMetric>
+                    <InlineMetricLabel>Last 24h:</InlineMetricLabel>
+                    <InlineMetricValue>{bidsLast24Hours}</InlineMetricValue>
+                  </InlineMetric>
+                  <InlineMetric>
+                    <InlineMetricLabel>Last 7d:</InlineMetricLabel>
+                    <InlineMetricValue>{bidsLast7Days}</InlineMetricValue>
+                  </InlineMetric>
+                </StatInlineMetrics>
+              </StatValueRow>
               <StatDescription>All time submissions</StatDescription>
-              <StatMetrics>
-                <StatMetric>
-                  <MetricLabel>Last 24 hours</MetricLabel>
-                  <MetricValue>{bidsLast24Hours}</MetricValue>
-                </StatMetric>
-                <StatMetric>
-                  <MetricLabel>Last 7 days</MetricLabel>
-                  <MetricValue>{bidsLast7Days}</MetricValue>
-                </StatMetric>
-              </StatMetrics>
             </StatCard>
 
             <StatCard>
@@ -443,7 +466,7 @@ export default function CitiesPage() {
                 <StatLabel>Active Routes</StatLabel>
                 <TrendingUp style={{ width: "1.25rem", height: "1.25rem", color: "rgb(37 99 235)" }} />
               </StatHeader>
-              <StatValue>{totalRoutes}</StatValue>
+              <StatMainValue>{totalRoutes}</StatMainValue>
               <StatDescription>Available destinations</StatDescription>
             </StatCard>
 
@@ -452,25 +475,15 @@ export default function CitiesPage() {
                 <StatLabel>Active Cities</StatLabel>
                 <Truck style={{ width: "1.25rem", height: "1.25rem", color: "rgb(37 99 235)" }} />
               </StatHeader>
-              <StatValue>{activeCities}</StatValue>
+              <StatMainValue>{activeCities}</StatMainValue>
               <StatDescription>Serviced locations</StatDescription>
             </StatCard>
           </StatsGrid>
 
-          <QuickActionsCard>
-            <QuickActionsTitle>Quick Actions</QuickActionsTitle>
-            <QuickActionsGrid>
-              <QuickActionButton onClick={() => router.push("/admin/vendors")}>
-                <Users size={20} />
-                Manage Vendors
-              </QuickActionButton>
-            </QuickActionsGrid>
-          </QuickActionsCard>
-
           <ContentCard>
             <CardHeader>
               <CardTitle>Select City to View Rates</CardTitle>
-              <CardDescription>Click on any city to view all vendor bids and rates</CardDescription>
+              <CardDescription>Click on any city to manage vendors and view bids</CardDescription>
             </CardHeader>
 
             <SearchContainer>
