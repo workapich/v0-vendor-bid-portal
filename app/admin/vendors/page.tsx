@@ -292,9 +292,8 @@ const HistoryDetails = styled.div`
 
 interface Vendor {
   id: number
-  name: string
+  mcId: string
   email: string
-  company: string
   status: "active" | "inactive"
   totalBids: number
   joinedDate: string
@@ -316,9 +315,8 @@ export default function VendorsPage() {
   const [rateHistory, setRateHistory] = useState<RateHistory[]>([])
   const [openDialog, setOpenDialog] = useState(false)
   const [newVendor, setNewVendor] = useState({
-    name: "",
+    mcId: "",
     email: "",
-    company: "",
   })
 
   useEffect(() => {
@@ -327,27 +325,24 @@ export default function VendorsPage() {
       const defaultVendors: Vendor[] = [
         {
           id: 1,
-          name: "John Smith",
+          mcId: "MC-123456",
           email: "john.smith@transport.com",
-          company: "Smith Transport LLC",
           status: "active",
           totalBids: 45,
           joinedDate: "2024-01-15",
         },
         {
           id: 2,
-          name: "Sarah Johnson",
+          mcId: "MC-789012",
           email: "sarah.j@logistics.com",
-          company: "Johnson Logistics",
           status: "active",
           totalBids: 32,
           joinedDate: "2024-02-20",
         },
         {
           id: 3,
-          name: "Mike Davis",
+          mcId: "MC-345678",
           email: "mike@davisfreight.com",
-          company: "Davis Freight Services",
           status: "inactive",
           totalBids: 18,
           joinedDate: "2023-11-10",
@@ -361,12 +356,11 @@ export default function VendorsPage() {
   }, [])
 
   const handleAddVendor = () => {
-    if (newVendor.name && newVendor.email && newVendor.company) {
+    if (newVendor.mcId && newVendor.email) {
       const vendor: Vendor = {
         id: Date.now(),
-        name: newVendor.name,
+        mcId: newVendor.mcId,
         email: newVendor.email,
-        company: newVendor.company,
         status: "active",
         totalBids: 0,
         joinedDate: new Date().toISOString().split("T")[0],
@@ -376,7 +370,7 @@ export default function VendorsPage() {
       setVendors(updatedVendors)
       localStorage.setItem("vendors", JSON.stringify(updatedVendors))
 
-      setNewVendor({ name: "", email: "", company: "" })
+      setNewVendor({ mcId: "", email: "" })
       setOpenDialog(false)
     }
   }
@@ -461,8 +455,8 @@ export default function VendorsPage() {
             <VendorsTable>
               <TableHeader>
                 <tr>
-                  <TableHeaderCell>Vendor</TableHeaderCell>
-                  <TableHeaderCell>Company</TableHeaderCell>
+                  <TableHeaderCell>MC-ID</TableHeaderCell>
+                  <TableHeaderCell>Email</TableHeaderCell>
                   <TableHeaderCell>Status</TableHeaderCell>
                   <TableHeaderCell>Total Bids</TableHeaderCell>
                   <TableHeaderCell>Joined Date</TableHeaderCell>
@@ -473,10 +467,11 @@ export default function VendorsPage() {
                 {vendors.map((vendor) => (
                   <TableRow key={vendor.id}>
                     <TableCell>
-                      <VendorName>{vendor.name}</VendorName>
+                      <VendorName>{vendor.mcId}</VendorName>
+                    </TableCell>
+                    <TableCell>
                       <VendorEmail>{vendor.email}</VendorEmail>
                     </TableCell>
-                    <TableCell>{vendor.company}</TableCell>
                     <TableCell>
                       <StatusBadge $status={vendor.status}>
                         {vendor.status === "active" ? "Active" : "Inactive"}
@@ -507,7 +502,7 @@ export default function VendorsPage() {
 
         {selectedVendor && rateHistory.length > 0 && (
           <HistoryCard>
-            <HistoryTitle>Rate History - {selectedVendor.name}</HistoryTitle>
+            <HistoryTitle>Rate History - {selectedVendor.mcId}</HistoryTitle>
             <HistoryList>
               {rateHistory.map((history) => (
                 <HistoryItem key={history.id}>
@@ -537,10 +532,11 @@ export default function VendorsPage() {
           <DialogContent>
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "1rem" }}>
               <TextField
-                label="Vendor Name"
+                label="Motor Carrier ID (MC-ID)"
                 fullWidth
-                value={newVendor.name}
-                onChange={(e) => setNewVendor({ ...newVendor, name: e.target.value })}
+                placeholder="MC-123456"
+                value={newVendor.mcId}
+                onChange={(e) => setNewVendor({ ...newVendor, mcId: e.target.value })}
               />
               <TextField
                 label="Email Address"
@@ -548,12 +544,6 @@ export default function VendorsPage() {
                 fullWidth
                 value={newVendor.email}
                 onChange={(e) => setNewVendor({ ...newVendor, email: e.target.value })}
-              />
-              <TextField
-                label="Company Name"
-                fullWidth
-                value={newVendor.company}
-                onChange={(e) => setNewVendor({ ...newVendor, company: e.target.value })}
               />
             </div>
           </DialogContent>
