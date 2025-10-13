@@ -151,7 +151,8 @@ const Sidebar = styled.div`
   border-radius: 1rem;
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  height: fit-content;
+  height: 70vh;
+  overflow-y: auto;
 `
 
 const SidebarTitle = styled.h3`
@@ -203,18 +204,23 @@ const FormCard = styled.div`
   border-radius: 1rem;
   padding: 2rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: 70vh;
+  overflow-y: auto;
 `
 
 const EmptyState = styled.div`
-  text-align: center;
-  padding: 6rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
   color: #94a3b8;
 
   h3 {
     font-size: 1.5rem;
     font-weight: 700;
     color: #334155;
-    margin: 1.5rem 0 0.75rem 0;
+    margin: 0 0 0.75rem 0;
   }
 
   p {
