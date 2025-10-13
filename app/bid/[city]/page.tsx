@@ -379,17 +379,43 @@ export default function BidPage() {
     setIsFavorite(!isFavorite)
   }
 
+  const formatCurrency = (value: string): string => {
+    const numericValue = value.replace(/[^0-9.]/g, "")
+    if (!numericValue) return ""
+    return `$${numericValue}`
+  }
+
+  const formatPercentage = (value: string): string => {
+    const numericValue = value.replace(/[^0-9.]/g, "")
+    if (!numericValue) return ""
+    return `${numericValue}%`
+  }
+
+  const extractNumericValue = (value: string): string => {
+    return value.replace(/[^0-9.]/g, "")
+  }
+
   useEffect(() => {
-    const baseRate = Number.parseFloat(formData.baseRate) || 0
-    const fsc = Number.parseFloat(formData.fsc) || 0
+    const baseRate = Number.parseFloat(extractNumericValue(formData.baseRate)) || 0
+    const fsc = Number.parseFloat(extractNumericValue(formData.fsc)) || 0
 
     if (baseRate > 0 && fsc >= 0) {
       const total = baseRate + baseRate * (fsc / 100)
-      setFormData((prev) => ({ ...prev, total: total.toFixed(2) }))
+      setFormData((prev) => ({ ...prev, total: `$${total.toFixed(2)}` }))
     } else if (!formData.baseRate && !formData.fsc) {
       setFormData((prev) => ({ ...prev, total: "" }))
     }
   }, [formData.baseRate, formData.fsc])
+
+  const handleCurrencyInput = (field: string, value: string) => {
+    const formatted = formatCurrency(value)
+    setFormData({ ...formData, [field]: formatted })
+  }
+
+  const handlePercentageInput = (value: string) => {
+    const formatted = formatPercentage(value)
+    setFormData({ ...formData, fsc: formatted })
+  }
 
   const handleSubmit = () => {
     if (formData.baseRate && formData.fsc && formData.total) {
@@ -454,7 +480,6 @@ export default function BidPage() {
           <FormCard>
             {!selectedDestination ? (
               <EmptyState>
-                <MapPin size={80} strokeWidth={1.5} />
                 <h3>No Destination Selected</h3>
                 <p>Please select a destination from the sidebar to begin entering your bid rates</p>
               </EmptyState>
@@ -467,9 +492,9 @@ export default function BidPage() {
                       <Label>Base Rate *</Label>
                       <Input
                         type="text"
-                        placeholder="0.00"
+                        placeholder="$0.00"
                         value={formData.baseRate}
-                        onChange={(e) => setFormData({ ...formData, baseRate: e.target.value })}
+                        onChange={(e) => handleCurrencyInput("baseRate", e.target.value)}
                       />
                     </InputGroup>
 
@@ -477,9 +502,9 @@ export default function BidPage() {
                       <Label>FSC *</Label>
                       <Input
                         type="text"
-                        placeholder="0.00"
+                        placeholder="0%"
                         value={formData.fsc}
-                        onChange={(e) => setFormData({ ...formData, fsc: e.target.value })}
+                        onChange={(e) => handlePercentageInput(e.target.value)}
                       />
                     </InputGroup>
 
@@ -498,9 +523,9 @@ export default function BidPage() {
                         <Label>Optional #{num}</Label>
                         <Input
                           type="text"
-                          placeholder="Enter value"
+                          placeholder="$0.00"
                           value={formData[`optional${num}` as keyof typeof formData]}
-                          onChange={(e) => setFormData({ ...formData, [`optional${num}`]: e.target.value })}
+                          onChange={(e) => handleCurrencyInput(`optional${num}`, e.target.value)}
                         />
                       </InputGroup>
                     ))}
