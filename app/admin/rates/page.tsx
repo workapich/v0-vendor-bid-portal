@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter, useSearchParams } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import styled from "styled-components"
 import {
   Table,
@@ -17,6 +17,38 @@ import {
   TableSortLabel,
 } from "@mui/material"
 import { Truck, LogOut, Search, Download } from "lucide-react"
+
+const DESTINATIONS: Record<string, Record<number, string>> = {
+  boston: {
+    1: "Franlin, NH",
+    2: "Slatersville, RI",
+    3: "Augustas, GA",
+    4: "Portland, ME",
+    5: "Hartford, CT",
+  },
+  atlanta: {
+    1: "Birmingham, AL",
+    2: "Charlotte, NC",
+    3: "Nashville, TN",
+  },
+  philadelphia: {
+    1: "New York, NY",
+    2: "Baltimore, MD",
+    3: "Washington, DC",
+  },
+}
+
+interface RateData {
+  id: string
+  vendorId: string
+  vendorEmail: string
+  startCity: string
+  endCity: string
+  baseRate: number
+  fsc: number
+  total: number
+  submittedAt: string
+}
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -912,51 +944,94 @@ export default function AdminRatesPage() {
   const selectedCity = searchParams.get("city")
 
   const [searchTerm, setSearchTerm] = useState("")
-  const [orderBy, setOrderBy] = useState<keyof (typeof MOCK_RATES)[0]>("submittedAt")
+  const [orderBy, setOrderBy] = useState<keyof RateData>("submittedAt")
   const [order, setOrder] = useState<"asc" | "desc">("desc")
   const [selectedDestination, setSelectedDestination] = useState<string | null>(null)
+  const [rates, setRates] = useState<RateData[]>([])
 
-  const handleSort = (property: keyof (typeof MOCK_RATES)[0]) => {
+  useEffect(() => {
+    const loadRates = () => {
+      const submittedRates = JSON.parse(localStorage.getItem("submittedRates") || "{}")
+      const ratesArray: RateData[] = []
+
+      Object.entries(submittedRates).forEach(([key, value]: [string, any]) => {
+        const [city, destId] = key.split("-")
+        const cityName = city.charAt(0).toUpperCase() + city.slice(1)
+        const destName = DESTINATIONS[city]?.[Number.parseInt(destId)] || "Unknown"
+
+        const baseRate = Number.parseFloat(value.baseRate?.replace(/[^0-9.]/g, "") || "0")
+        const fsc = Number.parseFloat(value.fsc?.replace(/[^0-9.]/g, "") || "0")
+        const total = Number.parseFloat(value.total?.replace(/[^0-9.]/g, "") || "0")
+
+        ratesArray.push({
+          id: key,
+          vendorId: "MC-123456", // Default vendor ID
+          vendorEmail: "vendor@example.com", // Default email
+          startCity: cityName,
+          endCity: destName,
+          baseRate,
+          fsc,
+          total,
+          submittedAt: new Date().toLocaleString("en-US", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+        })
+      })
+
+      setRates(ratesArray)
+    }
+
+    loadRates()
+  }, [])
+
+  const handleSort = (property: keyof RateData) => {
     const isAsc = orderBy === property && order === "asc"
     setOrder(isAsc ? "desc" : "asc")
     setOrderBy(property)
   }
 
-  const filteredRates = MOCK_RATES.filter((rate) => {
-    const matchesCity = selectedCity ? rate.startCity === selectedCity : true
-    const matchesDestination =
-      selectedCity === "Atlanta" && selectedDestination ? rate.endCity === selectedDestination : true
-    const matchesSearch =
-      rate.vendorId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      rate.vendorEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      rate.startCity.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      rate.endCity.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredRates = rates
+    .filter((rate) => {
+      const matchesCity = selectedCity ? rate.startCity.toLowerCase() === selectedCity.toLowerCase() : true
+      const matchesDestination =
+        selectedCity?.toLowerCase() === "atlanta" && selectedDestination ? rate.endCity === selectedDestination : true
+      const matchesSearch =
+        rate.vendorId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        rate.vendorEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        rate.startCity.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        rate.endCity.toLowerCase().includes(searchTerm.toLowerCase())
 
-    return matchesCity && matchesDestination && matchesSearch
-  }).sort((a, b) => {
-    if (selectedCity === "Atlanta" && orderBy === "submittedAt") {
-      const destCompare = a.endCity.localeCompare(b.endCity)
-      if (destCompare !== 0) return destCompare
-      return order === "asc" ? a.submittedAt.localeCompare(b.submittedAt) : b.submittedAt.localeCompare(a.submittedAt)
-    }
+      return matchesCity && matchesDestination && matchesSearch
+    })
+    .sort((a, b) => {
+      if (selectedCity?.toLowerCase() === "atlanta" && orderBy === "submittedAt") {
+        const destCompare = a.endCity.localeCompare(b.endCity)
+        if (destCompare !== 0) return destCompare
+        return order === "asc" ? a.submittedAt.localeCompare(b.submittedAt) : b.submittedAt.localeCompare(a.submittedAt)
+      }
 
-    const aValue = a[orderBy]
-    const bValue = b[orderBy]
+      const aValue = a[orderBy]
+      const bValue = b[orderBy]
 
-    if (typeof aValue === "string" && typeof bValue === "string") {
-      return order === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue)
-    }
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        return order === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue)
+      }
 
-    if (typeof aValue === "number" && typeof bValue === "number") {
-      return order === "asc" ? aValue - bValue : bValue - aValue
-    }
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return order === "asc" ? aValue - bValue : bValue - aValue
+      }
 
-    return 0
-  })
+      return 0
+    })
 
   const atlantaDestinations =
-    selectedCity === "Atlanta"
-      ? Array.from(new Set(MOCK_RATES.filter((r) => r.startCity === "Atlanta").map((r) => r.endCity))).sort()
+    selectedCity?.toLowerCase() === "atlanta"
+      ? Array.from(new Set(rates.filter((r) => r.startCity.toLowerCase() === "atlanta").map((r) => r.endCity))).sort()
       : []
 
   const handleExport = () => {
@@ -1022,7 +1097,7 @@ export default function AdminRatesPage() {
 
       <Main>
         <Container>
-          {selectedCity === "Atlanta" ? (
+          {selectedCity?.toLowerCase() === "atlanta" ? (
             <GridContainer>
               <Sidebar>
                 <SidebarTitle>Select Destination</SidebarTitle>
@@ -1033,11 +1108,13 @@ export default function AdminRatesPage() {
                   >
                     <DestinationName>All Destinations</DestinationName>
                     <DestinationCount $selected={selectedDestination === null}>
-                      {MOCK_RATES.filter((r) => r.startCity === "Atlanta").length} rates
+                      {rates.filter((r) => r.startCity.toLowerCase() === "atlanta").length} rates
                     </DestinationCount>
                   </DestinationButton>
                   {atlantaDestinations.map((dest) => {
-                    const count = MOCK_RATES.filter((r) => r.startCity === "Atlanta" && r.endCity === dest).length
+                    const count = rates.filter(
+                      (r) => r.startCity.toLowerCase() === "atlanta" && r.endCity === dest,
+                    ).length
                     return (
                       <DestinationButton
                         key={dest}
@@ -1350,7 +1427,7 @@ export default function AdminRatesPage() {
               {filteredRates.length === 0 && <EmptyState>No rates found matching your search criteria</EmptyState>}
 
               <TableFooter>
-                Showing {filteredRates.length} of {MOCK_RATES.length} total rates
+                Showing {filteredRates.length} of {rates.length} total rates
               </TableFooter>
             </ContentCard>
           )}
