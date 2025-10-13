@@ -165,15 +165,16 @@ const StepItem = styled.div`
   gap: 0.75rem;
 `
 
-const StepCircle = styled.div<{ $active?: boolean }>`
+const StepCircle = styled.div<{ $active?: boolean; $outline?: boolean }>`
   width: 2.5rem;
   height: 2.5rem;
-  background: ${(props) => (props.$active ? "rgb(22 163 74)" : "rgb(37 99 235)")};
+  background: ${(props) => (props.$outline ? "transparent" : "rgb(37 99 235)")};
+  border: ${(props) => (props.$outline ? "2px solid rgb(37 99 235)" : "none")};
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: ${(props) => (props.$outline ? "rgb(37 99 235)" : "white")};
   font-weight: 700;
 `
 
@@ -466,13 +467,13 @@ export default function CitiesPage() {
 
           <StepsContainer>
             <StepItem>
-              <StepCircle $active>1</StepCircle>
+              <StepCircle>1</StepCircle>
               <StepLabel $active>Choose Starting Point</StepLabel>
             </StepItem>
             <StepDivider />
             <StepItem>
-              <StepCircle>2</StepCircle>
-              <StepLabel>Input Rates</StepLabel>
+              <StepCircle $outline>2</StepCircle>
+              <StepLabel>Choose Destination and Input Rates</StepLabel>
             </StepItem>
           </StepsContainer>
 
