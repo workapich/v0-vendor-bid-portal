@@ -351,7 +351,23 @@ export default function VendorsPage() {
       localStorage.setItem("vendors", JSON.stringify(defaultVendors))
       setVendors(defaultVendors)
     } else {
-      setVendors(savedVendors)
+      const migratedVendors = savedVendors.map((vendor: Vendor) => {
+        if (!vendor.mcId || vendor.mcId === "") {
+          if (vendor.email === "john.smith@transport.com") {
+            return { ...vendor, mcId: "MC-123456" }
+          } else if (vendor.email === "sarah.j@logistics.com") {
+            return { ...vendor, mcId: "MC-789012" }
+          } else if (vendor.email === "mike@davisfreight.com") {
+            return { ...vendor, mcId: "MC-345678" }
+          } else {
+            return { ...vendor, mcId: `MC-${Math.floor(100000 + Math.random() * 900000)}` }
+          }
+        }
+        return vendor
+      })
+
+      localStorage.setItem("vendors", JSON.stringify(migratedVendors))
+      setVendors(migratedVendors)
     }
   }, [])
 
