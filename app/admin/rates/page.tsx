@@ -1222,6 +1222,138 @@ const MOCK_RATES = [
     total: 305,
     submittedAt: "2025-01-07 08:40 AM",
   },
+  {
+    id: 1001,
+    vendorId: "MC-123456",
+    vendorEmail: "john.smith@transport.com",
+    startCity: "Atlanta",
+    endCity: "Birmingham, AL",
+    baseRate: 280,
+    fsc: 10.71,
+    total: 310,
+    submittedAt: "2025-01-14 02:20 PM",
+  },
+  {
+    id: 1002,
+    vendorId: "MC-789012",
+    vendorEmail: "sarah.j@logistics.com",
+    startCity: "Atlanta",
+    endCity: "Birmingham, AL",
+    baseRate: 295,
+    fsc: 10.17,
+    total: 325,
+    submittedAt: "2025-01-14 09:15 AM",
+  },
+  {
+    id: 1003,
+    vendorId: "MC-345678",
+    vendorEmail: "mike@davisfreight.com",
+    startCity: "Atlanta",
+    endCity: "Birmingham, AL",
+    baseRate: 270,
+    fsc: 11.11,
+    total: 300,
+    submittedAt: "2025-01-13 03:45 PM",
+  },
+  {
+    id: 1004,
+    vendorId: "MC-223344",
+    vendorEmail: "vendor13@example.com",
+    startCity: "Atlanta",
+    endCity: "Birmingham, AL",
+    baseRate: 285,
+    fsc: 10.53,
+    total: 315,
+    submittedAt: "2025-01-13 11:30 AM",
+  },
+  {
+    id: 1005,
+    vendorId: "MC-556677",
+    vendorEmail: "vendor14@example.com",
+    startCity: "Atlanta",
+    endCity: "Birmingham, AL",
+    baseRate: 275,
+    fsc: 10.91,
+    total: 305,
+    submittedAt: "2025-01-12 04:20 PM",
+  },
+  {
+    id: 1006,
+    vendorId: "MC-889900",
+    vendorEmail: "vendor15@example.com",
+    startCity: "Atlanta",
+    endCity: "Birmingham, AL",
+    baseRate: 290,
+    fsc: 10.34,
+    total: 320,
+    submittedAt: "2025-01-12 10:05 AM",
+  },
+  {
+    id: 1007,
+    vendorId: "MC-123456",
+    vendorEmail: "john.smith@transport.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1250,
+    fsc: 15.0,
+    total: 1437.5,
+    submittedAt: "2025-01-14 12:38 PM",
+  },
+  {
+    id: 1008,
+    vendorId: "MC-789012",
+    vendorEmail: "sarah.j@logistics.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1220,
+    fsc: 13.64,
+    total: 1387,
+    submittedAt: "2025-01-14 01:45 PM",
+  },
+  {
+    id: 1009,
+    vendorId: "MC-345678",
+    vendorEmail: "mike@davisfreight.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1230,
+    fsc: 13.04,
+    total: 1390,
+    submittedAt: "2025-01-13 10:25 AM",
+  },
+  {
+    id: 1010,
+    vendorId: "MC-445566",
+    vendorEmail: "vendor11@example.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1280,
+    fsc: 10.71,
+    total: 1417,
+    submittedAt: "2025-01-13 03:50 PM",
+  },
+  {
+    id: 1011,
+    vendorId: "MC-778899",
+    vendorEmail: "vendor12@example.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1270,
+    fsc: 11.11,
+    total: 1411,
+    submittedAt: "2025-01-12 09:30 AM",
+  },
+  {
+    id: 1012,
+    vendorId: "MC-112233",
+    vendorEmail: "vendor10@example.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1240,
+    fsc: 11.11,
+    total: 1378,
+    submittedAt: "2025-01-12 02:15 PM",
+  },
 ]
 
 export default function AdminRatesPage() {
@@ -1388,15 +1520,6 @@ export default function AdminRatesPage() {
               <Sidebar>
                 <SidebarTitle>Select Destination</SidebarTitle>
                 <DestinationList>
-                  <DestinationButton
-                    onClick={() => setSelectedDestination(null)}
-                    $selected={selectedDestination === null}
-                  >
-                    <DestinationName>All Destinations</DestinationName>
-                    <DestinationCount $selected={selectedDestination === null}>
-                      {rates.filter((r) => r.startCity.toLowerCase() === "atlanta").length} rates
-                    </DestinationCount>
-                  </DestinationButton>
                   {atlantaDestinations.map((dest) => {
                     const count = rates.filter(
                       (r) => r.startCity.toLowerCase() === "atlanta" && r.endCity === dest,
