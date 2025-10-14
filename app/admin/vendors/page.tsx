@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import styled from "styled-components"
 import { Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material"
-import { Truck, ArrowLeft, Plus, History, Trash2 } from "lucide-react"
+import { Truck, ArrowLeft, Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react"
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -229,25 +229,67 @@ const EmptyState = styled.div`
   }
 `
 
-const HistoryCard = styled.div`
-  background: white;
-  border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-top: 2rem;
+const AccordionRow = styled.tr<{ $isOpen: boolean }>`
+  background: ${(props) => (props.$isOpen ? "#f8fafc" : "transparent")};
 `
 
-const HistoryTitle = styled.h3`
-  font-size: 1.25rem;
+const AccordionCell = styled.td`
+  padding: 0 !important;
+  border-bottom: ${(props) => (props.colSpan ? "2px solid #e2e8f0" : "1px solid #e2e8f0")};
+`
+
+const AccordionContent = styled.div<{ $isOpen: boolean }>`
+  max-height: ${(props) => (props.$isOpen ? "400px" : "0")};
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+`
+
+const HistoryContainer = styled.div`
+  padding: 1.5rem;
+  background: #ffffff;
+  border-top: 2px solid #e2e8f0;
+`
+
+const HistoryHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
   font-weight: 700;
-  color: #0f172a;
-  margin: 0 0 1.5rem 0;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+`
+
+const HistoryScrollContainer = styled.div`
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
 `
 
 const HistoryList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
 `
 
 const HistoryItem = styled.div`
@@ -257,7 +299,7 @@ const HistoryItem = styled.div`
   border-left: 4px solid #2563eb;
 `
 
-const HistoryHeader = styled.div`
+const HistoryItemHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -267,6 +309,7 @@ const HistoryHeader = styled.div`
 const HistoryRoute = styled.div`
   font-weight: 600;
   color: #0f172a;
+  font-size: 0.875rem;
 `
 
 const HistoryDate = styled.div`
@@ -276,7 +319,7 @@ const HistoryDate = styled.div`
 
 const HistoryDetails = styled.div`
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
   font-size: 0.875rem;
   color: #64748b;
 
@@ -288,6 +331,32 @@ const HistoryDetails = styled.div`
       color: #0f172a;
     }
   }
+`
+
+const ToggleButton = styled.button`
+  padding: 0.5rem;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.5rem;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #334155;
+  }
+`
+
+const EmptyHistory = styled.div`
+  text-align: center;
+  padding: 2rem;
+  color: #94a3b8;
+  font-size: 0.875rem;
 `
 
 interface Vendor {
@@ -311,8 +380,8 @@ interface RateHistory {
 export default function VendorsPage() {
   const router = useRouter()
   const [vendors, setVendors] = useState<Vendor[]>([])
-  const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null)
-  const [rateHistory, setRateHistory] = useState<RateHistory[]>([])
+  const [expandedVendorId, setExpandedVendorId] = useState<number | null>(null)
+  const [vendorHistories, setVendorHistories] = useState<Record<number, RateHistory[]>>({})
   const [openDialog, setOpenDialog] = useState(false)
   const [newVendor, setNewVendor] = useState({
     mcId: "",
@@ -507,6 +576,34 @@ export default function VendorsPage() {
     }
   }, [])
 
+  const loadVendorHistory = (vendor: Vendor) => {
+    const savedRates = JSON.parse(localStorage.getItem("rates") || "[]")
+    const vendorRates = savedRates.filter((rate: any) => rate.vendorId === vendor.mcId)
+    const history: RateHistory[] = vendorRates.map((rate: any) => ({
+      id: rate.id,
+      route: `${rate.startCity} → ${rate.endCity}`,
+      baseRate: `$${rate.baseRate.toFixed(2)}`,
+      fsc: `${rate.fsc.toFixed(2)}%`,
+      total: `$${rate.total.toFixed(2)}`,
+      submittedDate: rate.submittedAt,
+    }))
+    setVendorHistories((prev) => ({
+      ...prev,
+      [vendor.id]: history,
+    }))
+  }
+
+  const toggleVendorHistory = (vendor: Vendor) => {
+    if (expandedVendorId === vendor.id) {
+      setExpandedVendorId(null)
+    } else {
+      setExpandedVendorId(vendor.id)
+      if (!vendorHistories[vendor.id]) {
+        loadVendorHistory(vendor)
+      }
+    }
+  }
+
   const handleAddVendor = () => {
     if (newVendor.mcId && newVendor.email) {
       const vendor: Vendor = {
@@ -533,38 +630,6 @@ export default function VendorsPage() {
       setVendors(updatedVendors)
       localStorage.setItem("vendors", JSON.stringify(updatedVendors))
     }
-  }
-
-  const handleViewHistory = (vendor: Vendor) => {
-    setSelectedVendor(vendor)
-
-    const mockHistory: RateHistory[] = [
-      {
-        id: 1,
-        route: "Atlanta → Nashville, TN",
-        baseRate: "$1250.00",
-        fsc: "15%",
-        total: "$1437.50",
-        submittedDate: "2025-01-10",
-      },
-      {
-        id: 2,
-        route: "Boston → Portland, ME",
-        baseRate: "$850.00",
-        fsc: "12%",
-        total: "$952.00",
-        submittedDate: "2025-01-08",
-      },
-      {
-        id: 3,
-        route: "Philadelphia → New York, NY",
-        baseRate: "$650.00",
-        fsc: "10%",
-        total: "$715.00",
-        submittedDate: "2025-01-05",
-      },
-    ]
-    setRateHistory(mockHistory)
   }
 
   return (
@@ -617,67 +682,81 @@ export default function VendorsPage() {
               </TableHeader>
               <TableBody>
                 {vendors.map((vendor) => (
-                  <TableRow key={vendor.id}>
-                    <TableCell>
-                      <VendorName>{vendor.mcId}</VendorName>
-                    </TableCell>
-                    <TableCell>
-                      <VendorEmail>{vendor.email}</VendorEmail>
-                    </TableCell>
-                    <TableCell>
-                      <StatusBadge $status={vendor.status}>
-                        {vendor.status === "active" ? "Active" : "Inactive"}
-                      </StatusBadge>
-                    </TableCell>
-                    <TableCell>{vendor.totalBids}</TableCell>
-                    <TableCell>{new Date(vendor.joinedDate).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      <ActionButtons>
-                        <IconButton onClick={() => handleViewHistory(vendor)} title="View Rate History">
-                          <History size={18} />
-                        </IconButton>
-                        <IconButton
-                          className="danger"
-                          onClick={() => handleDeleteVendor(vendor.id)}
-                          title="Delete Vendor"
-                        >
-                          <Trash2 size={18} />
-                        </IconButton>
-                      </ActionButtons>
-                    </TableCell>
-                  </TableRow>
+                  <>
+                    <TableRow key={vendor.id}>
+                      <TableCell>
+                        <VendorName>{vendor.mcId}</VendorName>
+                      </TableCell>
+                      <TableCell>
+                        <VendorEmail>{vendor.email}</VendorEmail>
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge $status={vendor.status}>
+                          {vendor.status === "active" ? "Active" : "Inactive"}
+                        </StatusBadge>
+                      </TableCell>
+                      <TableCell>{vendor.totalBids}</TableCell>
+                      <TableCell>{new Date(vendor.joinedDate).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        <ActionButtons>
+                          <ToggleButton
+                            onClick={() => toggleVendorHistory(vendor)}
+                            title={expandedVendorId === vendor.id ? "Hide Rate History" : "View Rate History"}
+                          >
+                            {expandedVendorId === vendor.id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                          </ToggleButton>
+                          <IconButton
+                            className="danger"
+                            onClick={() => handleDeleteVendor(vendor.id)}
+                            title="Delete Vendor"
+                          >
+                            <Trash2 size={18} />
+                          </IconButton>
+                        </ActionButtons>
+                      </TableCell>
+                    </TableRow>
+                    <AccordionRow key={`${vendor.id}-accordion`} $isOpen={expandedVendorId === vendor.id}>
+                      <AccordionCell colSpan={6}>
+                        <AccordionContent $isOpen={expandedVendorId === vendor.id}>
+                          <HistoryContainer>
+                            <HistoryHeader>Rate History - {vendor.mcId}</HistoryHeader>
+                            {vendorHistories[vendor.id] && vendorHistories[vendor.id].length > 0 ? (
+                              <HistoryScrollContainer>
+                                <HistoryList>
+                                  {vendorHistories[vendor.id].map((history) => (
+                                    <HistoryItem key={history.id}>
+                                      <HistoryItemHeader>
+                                        <HistoryRoute>{history.route}</HistoryRoute>
+                                        <HistoryDate>{history.submittedDate}</HistoryDate>
+                                      </HistoryItemHeader>
+                                      <HistoryDetails>
+                                        <span>
+                                          <strong>Base Rate:</strong> {history.baseRate}
+                                        </span>
+                                        <span>
+                                          <strong>FSC:</strong> {history.fsc}
+                                        </span>
+                                        <span>
+                                          <strong>Total:</strong> {history.total}
+                                        </span>
+                                      </HistoryDetails>
+                                    </HistoryItem>
+                                  ))}
+                                </HistoryList>
+                              </HistoryScrollContainer>
+                            ) : (
+                              <EmptyHistory>No bid history available for this vendor</EmptyHistory>
+                            )}
+                          </HistoryContainer>
+                        </AccordionContent>
+                      </AccordionCell>
+                    </AccordionRow>
+                  </>
                 ))}
               </TableBody>
             </VendorsTable>
           )}
         </VendorsCard>
-
-        {selectedVendor && rateHistory.length > 0 && (
-          <HistoryCard>
-            <HistoryTitle>Rate History - {selectedVendor.mcId}</HistoryTitle>
-            <HistoryList>
-              {rateHistory.map((history) => (
-                <HistoryItem key={history.id}>
-                  <HistoryHeader>
-                    <HistoryRoute>{history.route}</HistoryRoute>
-                    <HistoryDate>{new Date(history.submittedDate).toLocaleDateString()}</HistoryDate>
-                  </HistoryHeader>
-                  <HistoryDetails>
-                    <span>
-                      <strong>Base Rate:</strong> {history.baseRate}
-                    </span>
-                    <span>
-                      <strong>FSC:</strong> {history.fsc}
-                    </span>
-                    <span>
-                      <strong>Total:</strong> {history.total}
-                    </span>
-                  </HistoryDetails>
-                </HistoryItem>
-              ))}
-            </HistoryList>
-          </HistoryCard>
-        )}
 
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
           <DialogTitle>Add New Vendor</DialogTitle>
