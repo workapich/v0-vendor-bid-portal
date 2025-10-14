@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import styled from "styled-components"
-import { Truck, ArrowLeft, MapPin, Star } from "lucide-react"
+import { Truck, ArrowLeft, MapPin, Star, CheckCircle2 } from "lucide-react"
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -119,8 +119,8 @@ const RouteText = styled.div`
 `
 
 const FavoriteButton = styled.button`
-  background: ${(props) => (props.className?.includes("favorite") ? "#fbbf24" : "white")};
-  border: 2px solid ${(props) => (props.className?.includes("favorite") ? "#fbbf24" : "#e2e8f0")};
+  background: ${(props) => (props.className?.includes("favorite") ? "#2563eb" : "white")};
+  border: 2px solid ${(props) => (props.className?.includes("favorite") ? "#2563eb" : "#e2e8f0")};
   border-radius: 0.75rem;
   width: 3.5rem;
   height: 3.5rem;
@@ -168,35 +168,73 @@ const DestinationList = styled.div`
   gap: 0.75rem;
 `
 
-const DestinationButton = styled.button`
+const DestinationButton = styled.button<{ $hasSubmittedRates?: boolean }>`
   width: 100%;
   text-align: left;
   padding: 0.75rem 1rem;
   height: 4rem;
   border-radius: 0.75rem;
-  border: 2px solid ${(props) => (props.className?.includes("selected") ? "#2563eb" : "#e2e8f0")};
-  background: ${(props) => (props.className?.includes("selected") ? "linear-gradient(135deg, #2563eb, #1d4ed8)" : "white")};
-  color: ${(props) => (props.className?.includes("selected") ? "white" : "#0f172a")};
+  border: 2px solid ${(props) => {
+    if (props.$hasSubmittedRates) return "#10b981"
+    if (props.className?.includes("selected")) return "#2563eb"
+    return "#e2e8f0"
+  }};
+  background: ${(props) => {
+    if (props.$hasSubmittedRates && props.className?.includes("selected"))
+      return "linear-gradient(135deg, #10b981, #059669)"
+    if (props.$hasSubmittedRates) return "linear-gradient(135deg, #d1fae5, #a7f3d0)"
+    if (props.className?.includes("selected")) return "linear-gradient(135deg, #2563eb, #1d4ed8)"
+    return "white"
+  }};
+  color: ${(props) => {
+    if (props.$hasSubmittedRates && props.className?.includes("selected")) return "white"
+    if (props.$hasSubmittedRates) return "#065f46"
+    if (props.className?.includes("selected")) return "white"
+    return "#0f172a"
+  }};
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
 
   &:hover {
-    border-color: ${(props) => (props.className?.includes("selected") ? "#1d4ed8" : "#cbd5e1")};
-    background: ${(props) => (props.className?.includes("selected") ? "linear-gradient(135deg, #1d4ed8, #1e40af)" : "#f8fafc")};
+    border-color: ${(props) => {
+      if (props.$hasSubmittedRates) return "#059669"
+      if (props.className?.includes("selected")) return "#1d4ed8"
+      return "#cbd5e1"
+    }};
+    background: ${(props) => {
+      if (props.$hasSubmittedRates && props.className?.includes("selected"))
+        return "linear-gradient(135deg, #059669, #047857)"
+      if (props.$hasSubmittedRates) return "linear-gradient(135deg, #a7f3d0, #6ee7b7)"
+      if (props.className?.includes("selected")) return "linear-gradient(135deg, #1d4ed8, #1e40af)"
+      return "#f8fafc"
+    }};
   }
 
   div:first-child {
     font-weight: 600;
-    margin-bottom: 0.25rem;
   }
+`
 
-  div:last-child {
-    font-size: 0.875rem;
-    opacity: 0.8;
-  }
+const DestinationContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`
+
+const DestinationName = styled.div`
+  font-weight: 600;
+`
+
+const SubmittedBadge = styled.div`
+  font-size: 0.75rem;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 `
 
 const FormCard = styled.div`
@@ -297,18 +335,26 @@ const Input = styled.input`
   }
 `
 
-const SubmitButton = styled.button`
+const SubmitButton = styled.button<{ $enabled?: boolean }>`
   padding: 1rem 3rem;
-  background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+  background: ${(props) =>
+    props.$enabled ? "linear-gradient(135deg, #2563eb, #1d4ed8)" : "linear-gradient(135deg, #cbd5e1, #94a3b8)"};
   color: white;
   border: none;
   border-radius: 0.75rem;
   font-size: 1rem;
   font-weight: 700;
-  cursor: not-allowed;
+  cursor: ${(props) => (props.$enabled ? "pointer" : "not-allowed")};
   transition: all 0.2s;
   float: right;
   margin-top: 1rem;
+
+  &:hover {
+    background: ${(props) =>
+      props.$enabled ? "linear-gradient(135deg, #1d4ed8, #1e40af)" : "linear-gradient(135deg, #cbd5e1, #94a3b8)"};
+    transform: ${(props) => (props.$enabled ? "translateY(-2px)" : "none")};
+    box-shadow: ${(props) => (props.$enabled ? "0 4px 12px rgba(37, 99, 235, 0.3)" : "none")};
+  }
 
   &:disabled {
     background: linear-gradient(135deg, #cbd5e1, #94a3b8);
@@ -318,21 +364,21 @@ const SubmitButton = styled.button`
 
 const DESTINATIONS = {
   boston: [
-    { id: 1, name: "Franlin, NH", distance: 95 },
-    { id: 2, name: "Slatersville, RI", distance: 52 },
-    { id: 3, name: "Augustas, GA", distance: 1100 },
-    { id: 4, name: "Portland, ME", distance: 103 },
-    { id: 5, name: "Hartford, CT", distance: 102 },
+    { id: 1, name: "Franlin, NH" },
+    { id: 2, name: "Slatersville, RI" },
+    { id: 3, name: "Augustas, GA" },
+    { id: 4, name: "Portland, ME" },
+    { id: 5, name: "Hartford, CT" },
   ],
   atlanta: [
-    { id: 1, name: "Birmingham, AL", distance: 147 },
-    { id: 2, name: "Charlotte, NC", distance: 244 },
-    { id: 3, name: "Nashville, TN", distance: 250 },
+    { id: 1, name: "Birmingham, AL" },
+    { id: 2, name: "Charlotte, NC" },
+    { id: 3, name: "Nashville, TN" },
   ],
   philadelphia: [
-    { id: 1, name: "New York, NY", distance: 95 },
-    { id: 2, name: "Baltimore, MD", distance: 106 },
-    { id: 3, name: "Washington, DC", distance: 140 },
+    { id: 1, name: "New York, NY" },
+    { id: 2, name: "Baltimore, MD" },
+    { id: 3, name: "Washington, DC" },
   ],
 }
 
@@ -344,6 +390,7 @@ export default function BidPage() {
 
   const [selectedDestination, setSelectedDestination] = useState<number | null>(null)
   const [isFavorite, setIsFavorite] = useState(false)
+  const [submittedRates, setSubmittedRates] = useState<Record<string, any>>({})
   const [formData, setFormData] = useState({
     baseRate: "",
     fsc: "",
@@ -363,7 +410,50 @@ export default function BidPage() {
   useEffect(() => {
     const favorites = JSON.parse(localStorage.getItem("favoriteCities") || "[]")
     setIsFavorite(favorites.includes(cityName))
-  }, [cityName])
+
+    const savedRates = JSON.parse(localStorage.getItem("submittedRates") || "{}")
+    setSubmittedRates(savedRates)
+
+    if (city === "atlanta" && !savedRates["atlanta-3"]) {
+      const atlantaNashvilleRate = {
+        baseRate: "$1250.00",
+        fsc: "15%",
+        total: "$1437.50",
+        optional1: "$50.00",
+        optional2: "",
+        optional3: "",
+        optional4: "",
+        optional5: "",
+        optional6: "",
+        optional7: "",
+        optional8: "",
+      }
+      savedRates["atlanta-3"] = atlantaNashvilleRate
+      localStorage.setItem("submittedRates", JSON.stringify(savedRates))
+      setSubmittedRates(savedRates)
+    }
+
+    if (selectedDestination) {
+      const rateKey = `${city}-${selectedDestination}`
+      if (savedRates[rateKey]) {
+        setFormData(savedRates[rateKey])
+      } else {
+        setFormData({
+          baseRate: "",
+          fsc: "",
+          total: "",
+          optional1: "",
+          optional2: "",
+          optional3: "",
+          optional4: "",
+          optional5: "",
+          optional6: "",
+          optional7: "",
+          optional8: "",
+        })
+      }
+    }
+  }, [cityName, selectedDestination, city])
 
   const toggleFavorite = () => {
     const favorites = JSON.parse(localStorage.getItem("favoriteCities") || "[]")
@@ -418,13 +508,24 @@ export default function BidPage() {
   }
 
   const handleSubmit = () => {
-    if (formData.baseRate && formData.fsc && formData.total) {
+    if (formData.baseRate && formData.fsc && formData.total && selectedDestination) {
+      const savedRates = JSON.parse(localStorage.getItem("submittedRates") || "{}")
+      const rateKey = `${city}-${selectedDestination}`
+      savedRates[rateKey] = formData
+
+      localStorage.setItem("submittedRates", JSON.stringify(savedRates))
+
       alert("Bid submitted successfully!")
       router.push("/cities")
     }
   }
 
   const isFormValid = formData.baseRate && formData.fsc && formData.total
+
+  const hasSubmittedRates = (destId: number) => {
+    const rateKey = `${city}-${destId}`
+    return !!submittedRates[rateKey]
+  }
 
   return (
     <PageContainer>
@@ -469,9 +570,18 @@ export default function BidPage() {
                   key={dest.id}
                   onClick={() => setSelectedDestination(dest.id)}
                   className={selectedDestination === dest.id ? "selected" : ""}
+                  $hasSubmittedRates={hasSubmittedRates(dest.id)}
                 >
-                  <div>{dest.name}</div>
-                  <div>{dest.distance} miles</div>
+                  <DestinationContent>
+                    <DestinationName>{dest.name}</DestinationName>
+                    {hasSubmittedRates(dest.id) && (
+                      <SubmittedBadge>
+                        <CheckCircle2 size={12} />
+                        Rates submitted
+                      </SubmittedBadge>
+                    )}
+                  </DestinationContent>
+                  {hasSubmittedRates(dest.id) && <CheckCircle2 size={20} />}
                 </DestinationButton>
               ))}
             </DestinationList>
@@ -532,7 +642,7 @@ export default function BidPage() {
                   </FieldGridOptional>
                 </FormSection>
 
-                <SubmitButton onClick={handleSubmit} disabled={!isFormValid}>
+                <SubmitButton onClick={handleSubmit} disabled={!isFormValid} $enabled={isFormValid}>
                   Submit Bid
                 </SubmitButton>
               </>
