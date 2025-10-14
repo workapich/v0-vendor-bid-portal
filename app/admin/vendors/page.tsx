@@ -577,7 +577,7 @@ export default function VendorsPage() {
   }, [])
 
   const loadVendorHistory = (vendor: Vendor) => {
-    const savedRates = JSON.parse(localStorage.getItem("rates") || "[]")
+    const savedRates = JSON.parse(localStorage.getItem("submittedRates") || "[]")
     const vendorRates = savedRates.filter((rate: any) => rate.vendorId === vendor.mcId)
     const history: RateHistory[] = vendorRates.map((rate: any) => ({
       id: rate.id,
