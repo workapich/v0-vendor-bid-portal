@@ -577,20 +577,43 @@ export default function VendorsPage() {
   }, [])
 
   const loadVendorHistory = (vendor: Vendor) => {
-    const savedRates = JSON.parse(localStorage.getItem("submittedRates") || "[]")
-    const vendorRates = savedRates.filter((rate: any) => rate.vendorId === vendor.mcId)
-    const history: RateHistory[] = vendorRates.map((rate: any) => ({
-      id: rate.id,
-      route: `${rate.startCity} → ${rate.endCity}`,
-      baseRate: `$${rate.baseRate.toFixed(2)}`,
-      fsc: `${rate.fsc.toFixed(2)}%`,
-      total: `$${rate.total.toFixed(2)}`,
-      submittedDate: rate.submittedAt,
-    }))
-    setVendorHistories((prev) => ({
-      ...prev,
-      [vendor.id]: history,
-    }))
+    try {
+      const savedRatesString = localStorage.getItem("submittedRates")
+      const savedRates = savedRatesString ? JSON.parse(savedRatesString) : []
+
+      // Ensure savedRates is an array
+      if (!Array.isArray(savedRates)) {
+        console.log("[v0] savedRates is not an array:", savedRates)
+        setVendorHistories((prev) => ({
+          ...prev,
+          [vendor.id]: [],
+        }))
+        return
+      }
+
+      const vendorRates = savedRates.filter((rate: any) => rate.vendorId === vendor.mcId)
+      console.log("[v0] Found rates for vendor", vendor.mcId, ":", vendorRates.length)
+
+      const history: RateHistory[] = vendorRates.map((rate: any) => ({
+        id: rate.id,
+        route: `${rate.startCity} → ${rate.endCity}`,
+        baseRate: `$${rate.baseRate.toFixed(2)}`,
+        fsc: `${rate.fsc.toFixed(2)}%`,
+        total: `$${rate.total.toFixed(2)}`,
+        submittedDate: rate.submittedAt,
+      }))
+
+      setVendorHistories((prev) => ({
+        ...prev,
+        [vendor.id]: history,
+      }))
+    } catch (error) {
+      console.error("[v0] Error loading vendor history:", error)
+      setVendorHistories((prev) => ({
+        ...prev,
+        [vendor.id]: [],
+      }))
+    }
   }
 
   const toggleVendorHistory = (vendor: Vendor) => {
