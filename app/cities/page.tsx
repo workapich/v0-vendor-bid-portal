@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import styled from "styled-components"
 import { TextField, Chip, InputAdornment, Button } from "@mui/material"
-import { Search, Truck, LogOut, BarChart3, TrendingUp, Star } from "lucide-react"
+import { Search, Truck, LogOut, TrendingUp, Star, Clock, Users } from "lucide-react"
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -19,7 +19,7 @@ const Header = styled.header`
   padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
-  justify-content: between;
+  justify-content: space-between;
 `
 
 const HeaderContent = styled.div`
@@ -93,7 +93,7 @@ const StatsGrid = styled.div`
   margin-bottom: 2rem;
 
   @media (min-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 `
 
@@ -102,6 +102,51 @@ const StatCard = styled.div`
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
   padding: 1.5rem;
+`
+
+const ActionCard = styled.div`
+  background: linear-gradient(135deg, rgb(239 246 255), rgb(219 234 254));
+  border: 2px solid rgb(191 219 254);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.75rem;
+
+  &:hover {
+    background: linear-gradient(135deg, rgb(219 234 254), rgb(191 219 254));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  }
+`
+
+const ActionCardIcon = styled.div`
+  width: 3rem;
+  height: 3rem;
+  background: rgb(37 99 235);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const ActionCardTitle = styled.h3`
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: rgb(37 99 235);
+  margin: 0;
+`
+
+const ActionCardDescription = styled.p`
+  font-size: 0.875rem;
+  color: rgb(71 85 105);
+  margin: 0;
 `
 
 const StatHeader = styled.div`
@@ -117,16 +162,88 @@ const StatLabel = styled.span`
   color: rgb(71 85 105);
 `
 
-const StatValue = styled.div`
+const StatValueRow = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 2rem;
+  margin-top: 0.5rem;
+`
+
+const StatMainValue = styled.div`
   font-size: 1.875rem;
   font-weight: 700;
   color: rgb(15 23 42);
+`
+
+const StatInlineMetrics = styled.div`
+  display: flex;
+  gap: 1.5rem;
+  align-items: baseline;
+`
+
+const InlineMetric = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+`
+
+const InlineMetricLabel = styled.span`
+  font-size: 0.75rem;
+  color: rgb(100 116 139);
+  font-weight: 500;
+`
+
+const InlineMetricValue = styled.span`
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgb(37 99 235);
 `
 
 const StatDescription = styled.p`
   font-size: 0.875rem;
   color: rgb(100 116 139);
   margin-top: 0.25rem;
+`
+
+const QuickActionsCard = styled.div`
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+`
+
+const QuickActionsTitle = styled.h3`
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgb(15 23 42);
+  margin: 0 0 1rem 0;
+`
+
+const QuickActionsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+`
+
+const QuickActionButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgb(239 246 255), rgb(219 234 254));
+  border: 2px solid rgb(191 219 254);
+  border-radius: 0.5rem;
+  color: rgb(37 99 235);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: linear-gradient(135deg, rgb(219 234 254), rgb(191 219 254));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  }
 `
 
 const ContentCard = styled.div`
@@ -213,8 +330,8 @@ const StyledChip = styled(Chip)`
 const FavoriteStarIcon = styled(Star)`
   width: 1rem;
   height: 1rem;
-  color: rgb(250 204 21);
-  fill: rgb(250 204 21);
+  color: rgb(37 99 235);
+  fill: rgb(37 99 235);
   margin-left: 0.25rem;
 `
 
@@ -290,10 +407,10 @@ export default function CitiesPage() {
   )
 
   const handleCityClick = (cityName: string) => {
-    if (userType === "admin") {
-      router.push(`/admin/rates?city=${cityName}`)
-    } else {
+    if (userType === "vendor") {
       router.push(`/bid/${cityName.toLowerCase().replace(/\s+/g, "-")}`)
+    } else {
+      router.push(`/admin/rates?city=${cityName}`)
     }
   }
 
@@ -305,6 +422,9 @@ export default function CitiesPage() {
   const totalBids = CITIES.reduce((sum, city) => sum + city.totalBids, 0)
   const totalRoutes = CITIES.reduce((sum, city) => sum + city.routes, 0)
   const activeCities = CITIES.length
+
+  const bidsLast24Hours = 23
+  const bidsLast7Days = 147
 
   if (userType === "admin") {
     return (
@@ -349,13 +469,33 @@ export default function CitiesPage() {
           </CardHeader>
 
           <StatsGrid>
+            <ActionCard onClick={() => router.push("/admin/vendors")}>
+              <ActionCardIcon>
+                <Users style={{ width: "1.5rem", height: "1.5rem", color: "white" }} />
+              </ActionCardIcon>
+              <ActionCardTitle>Manage Vendors</ActionCardTitle>
+              <ActionCardDescription>View and create vendors</ActionCardDescription>
+            </ActionCard>
+
             <StatCard>
               <StatHeader>
                 <StatLabel>Total Bids</StatLabel>
-                <BarChart3 style={{ width: "1.25rem", height: "1.25rem", color: "rgb(37 99 235)" }} />
+                <Clock style={{ width: "1.25rem", height: "1.25rem", color: "rgb(37 99 235)" }} />
               </StatHeader>
-              <StatValue>{totalBids}</StatValue>
-              <StatDescription>Across all cities</StatDescription>
+              <StatValueRow>
+                <StatMainValue>{totalBids}</StatMainValue>
+                <StatInlineMetrics>
+                  <InlineMetric>
+                    <InlineMetricLabel>Last 24h:</InlineMetricLabel>
+                    <InlineMetricValue>{bidsLast24Hours}</InlineMetricValue>
+                  </InlineMetric>
+                  <InlineMetric>
+                    <InlineMetricLabel>Last 7d:</InlineMetricLabel>
+                    <InlineMetricValue>{bidsLast7Days}</InlineMetricValue>
+                  </InlineMetric>
+                </StatInlineMetrics>
+              </StatValueRow>
+              <StatDescription>All time submissions</StatDescription>
             </StatCard>
 
             <StatCard>
@@ -363,7 +503,7 @@ export default function CitiesPage() {
                 <StatLabel>Active Routes</StatLabel>
                 <TrendingUp style={{ width: "1.25rem", height: "1.25rem", color: "rgb(37 99 235)" }} />
               </StatHeader>
-              <StatValue>{totalRoutes}</StatValue>
+              <StatMainValue>{totalRoutes}</StatMainValue>
               <StatDescription>Available destinations</StatDescription>
             </StatCard>
 
@@ -372,7 +512,7 @@ export default function CitiesPage() {
                 <StatLabel>Active Cities</StatLabel>
                 <Truck style={{ width: "1.25rem", height: "1.25rem", color: "rgb(37 99 235)" }} />
               </StatHeader>
-              <StatValue>{activeCities}</StatValue>
+              <StatMainValue>{activeCities}</StatMainValue>
               <StatDescription>Serviced locations</StatDescription>
             </StatCard>
           </StatsGrid>
@@ -380,7 +520,7 @@ export default function CitiesPage() {
           <ContentCard>
             <CardHeader>
               <CardTitle>Select City to View Rates</CardTitle>
-              <CardDescription>Click on any city to view all vendor bids and rates</CardDescription>
+              <CardDescription>Click on any city to manage vendors and view bids</CardDescription>
             </CardHeader>
 
             <SearchContainer>

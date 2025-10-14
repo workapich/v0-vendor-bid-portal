@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter, useSearchParams } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import styled from "styled-components"
 import {
   Table,
@@ -17,6 +17,38 @@ import {
   TableSortLabel,
 } from "@mui/material"
 import { Truck, LogOut, Search, Download } from "lucide-react"
+
+const DESTINATIONS: Record<string, Record<number, string>> = {
+  boston: {
+    1: "Franlin, NH",
+    2: "Slatersville, RI",
+    3: "Augustas, GA",
+    4: "Portland, ME",
+    5: "Hartford, CT",
+  },
+  atlanta: {
+    1: "Birmingham, AL",
+    2: "Charlotte, NC",
+    3: "Nashville, TN",
+  },
+  philadelphia: {
+    1: "New York, NY",
+    2: "Baltimore, MD",
+    3: "Washington, DC",
+  },
+}
+
+interface RateData {
+  id: string
+  vendorId: string
+  vendorEmail: string
+  startCity: string
+  endCity: string
+  baseRate: number
+  fsc: number
+  total: number
+  submittedAt: string
+}
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -904,6 +936,424 @@ const MOCK_RATES = [
     total: 800,
     submittedAt: "2025-01-08 11:45 AM",
   },
+  {
+    id: 43,
+    vendorId: "MC-223344",
+    vendorEmail: "vendor13@example.com",
+    startCity: "Atlanta",
+    endCity: "Birmingham, AL",
+    baseRate: 295,
+    fsc: 10.17,
+    total: 325,
+    submittedAt: "2025-01-08 09:15 AM",
+  },
+  {
+    id: 44,
+    vendorId: "MC-556677",
+    vendorEmail: "vendor14@example.com",
+    startCity: "Atlanta",
+    endCity: "Birmingham, AL",
+    baseRate: 270,
+    fsc: 11.11,
+    total: 300,
+    submittedAt: "2025-01-07 03:45 PM",
+  },
+  {
+    id: 45,
+    vendorId: "MC-889900",
+    vendorEmail: "vendor15@example.com",
+    startCity: "Atlanta",
+    endCity: "Charlotte, NC",
+    baseRate: 420,
+    fsc: 9.52,
+    total: 460,
+    submittedAt: "2025-01-08 11:20 AM",
+  },
+  {
+    id: 46,
+    vendorId: "MC-334455",
+    vendorEmail: "vendor16@example.com",
+    startCity: "Atlanta",
+    endCity: "Charlotte, NC",
+    baseRate: 440,
+    fsc: 11.36,
+    total: 490,
+    submittedAt: "2025-01-07 02:10 PM",
+  },
+  {
+    id: 47,
+    vendorId: "MC-667788",
+    vendorEmail: "vendor17@example.com",
+    startCity: "Atlanta",
+    endCity: "Charlotte, NC",
+    baseRate: 460,
+    fsc: 10.87,
+    total: 510,
+    submittedAt: "2025-01-08 08:30 AM",
+  },
+  {
+    id: 48,
+    vendorId: "MC-990011",
+    vendorEmail: "vendor18@example.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1220,
+    fsc: 13.64,
+    total: 1387,
+    submittedAt: "2025-01-08 01:45 PM",
+  },
+  {
+    id: 49,
+    vendorId: "MC-445566",
+    vendorEmail: "vendor11@example.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1230,
+    fsc: 13.04,
+    total: 1390,
+    submittedAt: "2025-01-07 10:25 AM",
+  },
+  {
+    id: 50,
+    vendorId: "MC-778899",
+    vendorEmail: "vendor12@example.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1280,
+    fsc: 10.71,
+    total: 1417,
+    submittedAt: "2025-01-08 03:50 PM",
+  },
+  {
+    id: 51,
+    vendorId: "MC-112233",
+    vendorEmail: "vendor10@example.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1270,
+    fsc: 11.11,
+    total: 1411,
+    submittedAt: "2025-01-07 09:30 AM",
+  },
+  {
+    id: 52,
+    vendorId: "MC-223344",
+    vendorEmail: "vendor13@example.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1240,
+    fsc: 11.11,
+    total: 1378,
+    submittedAt: "2025-01-08 02:15 PM",
+  },
+  {
+    id: 53,
+    vendorId: "MC-556677",
+    vendorEmail: "vendor14@example.com",
+    startCity: "Atlanta",
+    endCity: "Birmingham, AL",
+    baseRate: 285,
+    fsc: 10.71,
+    total: 315,
+    submittedAt: "2025-01-07 11:40 AM",
+  },
+  {
+    id: 54,
+    vendorId: "MC-889900",
+    vendorEmail: "vendor15@example.com",
+    startCity: "Atlanta",
+    endCity: "Birmingham, AL",
+    baseRate: 290,
+    fsc: 11.11,
+    total: 322,
+    submittedAt: "2025-01-08 10:05 AM",
+  },
+  {
+    id: 55,
+    vendorId: "MC-334455",
+    vendorEmail: "vendor16@example.com",
+    startCity: "Atlanta",
+    endCity: "Charlotte, NC",
+    baseRate: 435,
+    fsc: 11.43,
+    total: 485,
+    submittedAt: "2025-01-07 04:20 PM",
+  },
+  {
+    id: 56,
+    vendorId: "MC-667788",
+    vendorEmail: "vendor17@example.com",
+    startCity: "Atlanta",
+    endCity: "Charlotte, NC",
+    baseRate: 455,
+    fsc: 11.11,
+    total: 505,
+    submittedAt: "2025-01-08 09:50 AM",
+  },
+  {
+    id: 57,
+    vendorId: "MC-990011",
+    vendorEmail: "vendor18@example.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1210,
+    fsc: 11.48,
+    total: 1349,
+    submittedAt: "2025-01-07 01:35 PM",
+  },
+  {
+    id: 58,
+    vendorId: "MC-123456",
+    vendorEmail: "vendor1@example.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1250,
+    fsc: 10.0,
+    total: 1375,
+    submittedAt: "2025-01-08 12:25 PM",
+  },
+  {
+    id: 59,
+    vendorId: "MC-789012",
+    vendorEmail: "vendor2@example.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1260,
+    fsc: 10.26,
+    total: 1389,
+    submittedAt: "2025-01-07 08:15 AM",
+  },
+  {
+    id: 60,
+    vendorId: "MC-345678",
+    vendorEmail: "vendor3@example.com",
+    startCity: "Atlanta",
+    endCity: "Birmingham, AL",
+    baseRate: 275,
+    fsc: 11.11,
+    total: 305,
+    submittedAt: "2025-01-08 03:10 PM",
+  },
+  {
+    id: 61,
+    vendorId: "MC-901234",
+    vendorEmail: "vendor4@example.com",
+    startCity: "Atlanta",
+    endCity: "Charlotte, NC",
+    baseRate: 445,
+    fsc: 11.36,
+    total: 495,
+    submittedAt: "2025-01-07 10:55 AM",
+  },
+  {
+    id: 62,
+    vendorId: "MC-567890",
+    vendorEmail: "vendor5@example.com",
+    startCity: "Atlanta",
+    endCity: "Charlotte, NC",
+    baseRate: 430,
+    fsc: 11.11,
+    total: 478,
+    submittedAt: "2025-01-08 11:45 AM",
+  },
+  {
+    id: 63,
+    vendorId: "MC-234567",
+    vendorEmail: "vendor6@example.com",
+    startCity: "Philadelphia",
+    endCity: "New York, NY",
+    baseRate: 180,
+    fsc: 11.11,
+    total: 200,
+    submittedAt: "2025-01-08 09:30 AM",
+  },
+  {
+    id: 64,
+    vendorId: "MC-890123",
+    vendorEmail: "vendor7@example.com",
+    startCity: "Philadelphia",
+    endCity: "New York, NY",
+    baseRate: 175,
+    fsc: 11.43,
+    total: 195,
+    submittedAt: "2025-01-07 02:15 PM",
+  },
+  {
+    id: 65,
+    vendorId: "MC-456789",
+    vendorEmail: "vendor8@example.com",
+    startCity: "Philadelphia",
+    endCity: "Baltimore, MD",
+    baseRate: 220,
+    fsc: 10.91,
+    total: 244,
+    submittedAt: "2025-01-08 10:45 AM",
+  },
+  {
+    id: 66,
+    vendorId: "MC-678901",
+    vendorEmail: "vendor9@example.com",
+    startCity: "Philadelphia",
+    endCity: "Baltimore, MD",
+    baseRate: 215,
+    fsc: 11.63,
+    total: 240,
+    submittedAt: "2025-01-07 03:20 PM",
+  },
+  {
+    id: 67,
+    vendorId: "MC-112233",
+    vendorEmail: "vendor10@example.com",
+    startCity: "Philadelphia",
+    endCity: "Washington, DC",
+    baseRate: 280,
+    fsc: 10.71,
+    total: 310,
+    submittedAt: "2025-01-08 11:55 AM",
+  },
+  {
+    id: 68,
+    vendorId: "MC-445566",
+    vendorEmail: "vendor11@example.com",
+    startCity: "Philadelphia",
+    endCity: "Washington, DC",
+    baseRate: 275,
+    fsc: 11.11,
+    total: 305,
+    submittedAt: "2025-01-07 08:40 AM",
+  },
+  {
+    id: 1001,
+    vendorId: "MC-123456",
+    vendorEmail: "john.smith@transport.com",
+    startCity: "Atlanta",
+    endCity: "Birmingham, AL",
+    baseRate: 280,
+    fsc: 10.71,
+    total: 310,
+    submittedAt: "2025-01-14 02:20 PM",
+  },
+  {
+    id: 1002,
+    vendorId: "MC-789012",
+    vendorEmail: "sarah.j@logistics.com",
+    startCity: "Atlanta",
+    endCity: "Birmingham, AL",
+    baseRate: 295,
+    fsc: 10.17,
+    total: 325,
+    submittedAt: "2025-01-14 09:15 AM",
+  },
+  {
+    id: 1003,
+    vendorId: "MC-345678",
+    vendorEmail: "mike@davisfreight.com",
+    startCity: "Atlanta",
+    endCity: "Birmingham, AL",
+    baseRate: 270,
+    fsc: 11.11,
+    total: 300,
+    submittedAt: "2025-01-13 03:45 PM",
+  },
+  {
+    id: 1004,
+    vendorId: "MC-223344",
+    vendorEmail: "vendor13@example.com",
+    startCity: "Atlanta",
+    endCity: "Birmingham, AL",
+    baseRate: 285,
+    fsc: 10.53,
+    total: 315,
+    submittedAt: "2025-01-13 11:30 AM",
+  },
+  {
+    id: 1005,
+    vendorId: "MC-556677",
+    vendorEmail: "vendor14@example.com",
+    startCity: "Atlanta",
+    endCity: "Birmingham, AL",
+    baseRate: 275,
+    fsc: 10.91,
+    total: 305,
+    submittedAt: "2025-01-12 04:20 PM",
+  },
+  {
+    id: 1006,
+    vendorId: "MC-889900",
+    vendorEmail: "vendor15@example.com",
+    startCity: "Atlanta",
+    endCity: "Birmingham, AL",
+    baseRate: 290,
+    fsc: 10.34,
+    total: 320,
+    submittedAt: "2025-01-12 10:05 AM",
+  },
+  {
+    id: 1007,
+    vendorId: "MC-123456",
+    vendorEmail: "john.smith@transport.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1250,
+    fsc: 15.0,
+    total: 1437.5,
+    submittedAt: "2025-01-14 12:38 PM",
+  },
+  {
+    id: 1008,
+    vendorId: "MC-789012",
+    vendorEmail: "sarah.j@logistics.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1220,
+    fsc: 13.64,
+    total: 1387,
+    submittedAt: "2025-01-14 01:45 PM",
+  },
+  {
+    id: 1009,
+    vendorId: "MC-345678",
+    vendorEmail: "mike@davisfreight.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1230,
+    fsc: 13.04,
+    total: 1390,
+    submittedAt: "2025-01-13 10:25 AM",
+  },
+  {
+    id: 1010,
+    vendorId: "MC-445566",
+    vendorEmail: "vendor11@example.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1280,
+    fsc: 10.71,
+    total: 1417,
+    submittedAt: "2025-01-13 03:50 PM",
+  },
+  {
+    id: 1011,
+    vendorId: "MC-778899",
+    vendorEmail: "vendor12@example.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1270,
+    fsc: 11.11,
+    total: 1411,
+    submittedAt: "2025-01-12 09:30 AM",
+  },
+  {
+    id: 1012,
+    vendorId: "MC-112233",
+    vendorEmail: "vendor10@example.com",
+    startCity: "Atlanta",
+    endCity: "Nashville, TN",
+    baseRate: 1240,
+    fsc: 11.11,
+    total: 1378,
+    submittedAt: "2025-01-12 02:15 PM",
+  },
 ]
 
 export default function AdminRatesPage() {
@@ -912,51 +1362,94 @@ export default function AdminRatesPage() {
   const selectedCity = searchParams.get("city")
 
   const [searchTerm, setSearchTerm] = useState("")
-  const [orderBy, setOrderBy] = useState<keyof (typeof MOCK_RATES)[0]>("submittedAt")
+  const [orderBy, setOrderBy] = useState<keyof RateData>("submittedAt")
   const [order, setOrder] = useState<"asc" | "desc">("desc")
   const [selectedDestination, setSelectedDestination] = useState<string | null>(null)
+  const [rates, setRates] = useState<RateData[]>([])
 
-  const handleSort = (property: keyof (typeof MOCK_RATES)[0]) => {
+  useEffect(() => {
+    const loadRates = () => {
+      const submittedRates = JSON.parse(localStorage.getItem("submittedRates") || "{}")
+      const ratesArray: RateData[] = []
+
+      Object.entries(submittedRates).forEach(([key, value]: [string, any]) => {
+        const [city, destId] = key.split("-")
+        const cityName = city.charAt(0).toUpperCase() + city.slice(1)
+        const destName = DESTINATIONS[city]?.[Number.parseInt(destId)] || "Unknown"
+
+        const baseRate = Number.parseFloat(value.baseRate?.replace(/[^0-9.]/g, "") || "0")
+        const fsc = Number.parseFloat(value.fsc?.replace(/[^0-9.]/g, "") || "0")
+        const total = Number.parseFloat(value.total?.replace(/[^0-9.]/g, "") || "0")
+
+        ratesArray.push({
+          id: key,
+          vendorId: "MC-123456", // Default vendor ID
+          vendorEmail: "vendor@example.com", // Default email
+          startCity: cityName,
+          endCity: destName,
+          baseRate,
+          fsc,
+          total,
+          submittedAt: new Date().toLocaleString("en-US", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+        })
+      })
+
+      setRates(ratesArray)
+    }
+
+    loadRates()
+  }, [])
+
+  const handleSort = (property: keyof RateData) => {
     const isAsc = orderBy === property && order === "asc"
     setOrder(isAsc ? "desc" : "asc")
     setOrderBy(property)
   }
 
-  const filteredRates = MOCK_RATES.filter((rate) => {
-    const matchesCity = selectedCity ? rate.startCity === selectedCity : true
-    const matchesDestination =
-      selectedCity === "Atlanta" && selectedDestination ? rate.endCity === selectedDestination : true
-    const matchesSearch =
-      rate.vendorId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      rate.vendorEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      rate.startCity.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      rate.endCity.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredRates = rates
+    .filter((rate) => {
+      const matchesCity = selectedCity ? rate.startCity.toLowerCase() === selectedCity.toLowerCase() : true
+      const matchesDestination =
+        selectedCity?.toLowerCase() === "atlanta" && selectedDestination ? rate.endCity === selectedDestination : true
+      const matchesSearch =
+        rate.vendorId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        rate.vendorEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        rate.startCity.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        rate.endCity.toLowerCase().includes(searchTerm.toLowerCase())
 
-    return matchesCity && matchesDestination && matchesSearch
-  }).sort((a, b) => {
-    if (selectedCity === "Atlanta" && orderBy === "submittedAt") {
-      const destCompare = a.endCity.localeCompare(b.endCity)
-      if (destCompare !== 0) return destCompare
-      return order === "asc" ? a.submittedAt.localeCompare(b.submittedAt) : b.submittedAt.localeCompare(a.submittedAt)
-    }
+      return matchesCity && matchesDestination && matchesSearch
+    })
+    .sort((a, b) => {
+      if (selectedCity?.toLowerCase() === "atlanta" && orderBy === "submittedAt") {
+        const destCompare = a.endCity.localeCompare(b.endCity)
+        if (destCompare !== 0) return destCompare
+        return order === "asc" ? a.submittedAt.localeCompare(b.submittedAt) : b.submittedAt.localeCompare(a.submittedAt)
+      }
 
-    const aValue = a[orderBy]
-    const bValue = b[orderBy]
+      const aValue = a[orderBy]
+      const bValue = b[orderBy]
 
-    if (typeof aValue === "string" && typeof bValue === "string") {
-      return order === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue)
-    }
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        return order === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue)
+      }
 
-    if (typeof aValue === "number" && typeof bValue === "number") {
-      return order === "asc" ? aValue - bValue : bValue - aValue
-    }
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return order === "asc" ? aValue - bValue : bValue - aValue
+      }
 
-    return 0
-  })
+      return 0
+    })
 
   const atlantaDestinations =
-    selectedCity === "Atlanta"
-      ? Array.from(new Set(MOCK_RATES.filter((r) => r.startCity === "Atlanta").map((r) => r.endCity))).sort()
+    selectedCity?.toLowerCase() === "atlanta"
+      ? Array.from(new Set(rates.filter((r) => r.startCity.toLowerCase() === "atlanta").map((r) => r.endCity))).sort()
       : []
 
   const handleExport = () => {
@@ -1022,22 +1515,15 @@ export default function AdminRatesPage() {
 
       <Main>
         <Container>
-          {selectedCity === "Atlanta" ? (
+          {selectedCity?.toLowerCase() === "atlanta" ? (
             <GridContainer>
               <Sidebar>
                 <SidebarTitle>Select Destination</SidebarTitle>
                 <DestinationList>
-                  <DestinationButton
-                    onClick={() => setSelectedDestination(null)}
-                    $selected={selectedDestination === null}
-                  >
-                    <DestinationName>All Destinations</DestinationName>
-                    <DestinationCount $selected={selectedDestination === null}>
-                      {MOCK_RATES.filter((r) => r.startCity === "Atlanta").length} rates
-                    </DestinationCount>
-                  </DestinationButton>
                   {atlantaDestinations.map((dest) => {
-                    const count = MOCK_RATES.filter((r) => r.startCity === "Atlanta" && r.endCity === dest).length
+                    const count = rates.filter(
+                      (r) => r.startCity.toLowerCase() === "atlanta" && r.endCity === dest,
+                    ).length
                     return (
                       <DestinationButton
                         key={dest}
@@ -1326,11 +1812,7 @@ export default function AdminRatesPage() {
                         <TableRow key={rate.id} hover>
                           <TableCell sx={{ fontFamily: "monospace", fontSize: "0.875rem" }}>{rate.vendorId}</TableCell>
                           <TableCell>{rate.vendorEmail}</TableCell>
-                          {!selectedCity && (
-                            <TableCell>
-                              <span style={{ fontWeight: 500 }}>{rate.startCity}</span>
-                            </TableCell>
-                          )}
+                          {!selectedCity && <TableCell>{rate.startCity}</TableCell>}
                           <TableCell>{rate.endCity}</TableCell>
                           <TableCell sx={{ fontSize: "0.875rem", color: "rgb(71 85 105)" }}>
                             {rate.submittedAt}
@@ -1350,7 +1832,7 @@ export default function AdminRatesPage() {
               {filteredRates.length === 0 && <EmptyState>No rates found matching your search criteria</EmptyState>}
 
               <TableFooter>
-                Showing {filteredRates.length} of {MOCK_RATES.length} total rates
+                Showing {filteredRates.length} of {rates.length} total rates
               </TableFooter>
             </ContentCard>
           )}
