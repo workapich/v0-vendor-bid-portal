@@ -22,7 +22,7 @@ import {
   IconButton,
   DialogContentText,
 } from "@mui/material"
-import { Truck, LogOut, Search, Download, Plus, ChevronDown, ChevronRight, MapPin } from "lucide-react"
+import { Truck, LogOut, Search, Plus, ChevronDown, ChevronRight, MapPin } from "lucide-react"
 
 // Mock data for US cities, needed for Autocomplete
 const US_CITIES = [
@@ -2956,10 +2956,6 @@ export default function AdminRatesPage() {
       ? Array.from(new Set(rates.filter((r) => r.startCity.toLowerCase() === "atlanta").map((r) => r.endCity))).sort()
       : []
 
-  const handleExport = () => {
-    alert("Exporting rates to CSV...")
-  }
-
   const handleLogout = () => {
     router.push("/")
   }
@@ -3037,15 +3033,33 @@ export default function AdminRatesPage() {
             <option value="philadelphia">Philadelphia</option>
           </CitySelector>
 
-          <ActionButton onClick={handleExport}>
-            <Download size={16} />
-            Export
-          </ActionButton>
-
-          <ActionButton onClick={handleLogout}>
+          <button
+            onClick={handleLogout}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              padding: "0.5rem 0.75rem",
+              borderRadius: "0.375rem",
+              border: "1px solid rgb(203 213 225)",
+              backgroundColor: "rgb(255 255 255)",
+              fontSize: "0.875rem",
+              color: "rgb(71 85 105)",
+              cursor: "pointer",
+              transition: "all 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "rgb(148 163 184)"
+              e.currentTarget.style.backgroundColor = "rgb(248 250 252)"
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgb(203 213 225)"
+              e.currentTarget.style.backgroundColor = "rgb(255 255 255)"
+            }}
+          >
             <LogOut size={16} />
             Logout
-          </ActionButton>
+          </button>
         </HeaderActions>
       </Header>
 
