@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
-import styled from "styled-components";
+import { useRouter, useSearchParams } from "next/navigation"
+import { useState, useEffect } from "react"
+import styled from "styled-components"
 import {
   Table,
   TableBody,
@@ -19,9 +19,10 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Autocomplete,
-} from "@mui/material";
-import { Truck, LogOut, Search, Download, Plus } from "lucide-react";
+  IconButton,
+  DialogContentText,
+} from "@mui/material"
+import { Truck, LogOut, Search, Download, Plus, ChevronDown, ChevronRight, MapPin } from "lucide-react"
 
 // Mock data for US cities, needed for Autocomplete
 const US_CITIES = [
@@ -186,7 +187,7 @@ const US_CITIES = [
   "Slatersville, RI",
   "Augustas, GA",
   "Portland, ME",
-];
+]
 
 const DESTINATIONS: Record<string, Record<number, string>> = {
   boston: {
@@ -206,18 +207,26 @@ const DESTINATIONS: Record<string, Record<number, string>> = {
     2: "Baltimore, MD",
     3: "Washington, DC",
   },
-};
+}
 
 interface RateData {
-  id: string;
-  vendorId: string;
-  vendorEmail: string;
-  startCity: string;
-  endCity: string;
-  baseRate: number;
-  fsc: number;
-  total: number;
-  submittedAt: string;
+  id: string
+  vendorId: string
+  vendorEmail: string
+  startCity: string
+  endCity: string
+  baseRate: number
+  fsc: number
+  total: number
+  submittedAt: string
+  optional1?: string
+  optional2?: string
+  optional3?: string
+  optional4?: string
+  optional5?: string
+  optional6?: string
+  optional7?: string
+  optional8?: string
 }
 
 const PageContainer = styled.div`
@@ -229,7 +238,7 @@ const PageContainer = styled.div`
   );
   display: flex;
   flex-direction: column;
-`;
+`
 
 const Header = styled.header`
   background: white;
@@ -239,15 +248,17 @@ const Header = styled.header`
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgb(226 232 240);
-`;
+`
 
-const HeaderContent = styled.div`
+// Modified Header to use flex layout for children
+const HeaderLeft = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
-`;
+`
 
-const LogoCircle = styled.div`
+// Renamed LogoCircle to Logo and adjusted styling
+const Logo = styled.div`
   width: 3rem;
   height: 3rem;
   background: rgb(37 99 235);
@@ -256,59 +267,108 @@ const LogoCircle = styled.div`
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-`;
+  color: white;
+`
 
-const HeaderText = styled.div`
+// Renamed HeaderText to HeaderTitle and adjusted styling
+const HeaderTitle = styled.div`
   display: flex;
   flex-direction: column;
-`;
+  h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: rgb(15 23 42);
+    margin: 0;
+  }
+  p {
+    font-size: 0.875rem;
+    color: rgb(71 85 105);
+    margin: 0;
+  }
+`
 
-const HeaderTitle = styled.h1`
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: rgb(15 23 42);
-  margin: 0;
-`;
-
-const HeaderSubtitle = styled.p`
-  font-size: 0.875rem;
-  color: rgb(71 85 105);
-  margin: 0;
-`;
-
+// Renamed HeaderActions to HeaderActions
 const HeaderActions = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-`;
+`
+
+// Created a styled component for the CitySelector dropdown
+const CitySelector = styled.select`
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid rgb(203 213 225);
+  background-color: rgb(255 255 255);
+  font-size: 0.875rem;
+  color: rgb(71 85 105);
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: rgb(148 163 184);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: rgb(59 130 246);
+    ring: 2px solid rgb(59 130 246);
+    ring-offset: 2px;
+  }
+`
+
+// Created a styled component for the ActionButton
+const ActionButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid rgb(203 213 225);
+  background-color: rgb(255 255 255);
+  font-size: 0.875rem;
+  color: rgb(71 85 105);
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: rgb(148 163 184);
+    background-color: rgb(248 250 252);
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+`
 
 const StatusIndicator = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-`;
+`
 
 const StatusDot = styled.div`
   width: 0.5rem;
   height: 0.5rem;
   background: rgb(34 197 94);
   border-radius: 50%;
-`;
+`
 
 const StatusText = styled.span`
   font-size: 0.875rem;
   color: rgb(71 85 105);
-`;
+`
 
 const Main = styled.main`
   flex: 1;
   padding: 1.5rem;
-`;
+`
 
 const Container = styled.div`
   max-width: 112rem;
   margin: 0 auto;
-`;
+`
 
 const GridContainer = styled.div`
   display: grid;
@@ -318,7 +378,7 @@ const GridContainer = styled.div`
   @media (min-width: 1024px) {
     grid-template-columns: 1fr 3fr;
   }
-`;
+`
 
 const Sidebar = styled.div`
   background: white;
@@ -330,13 +390,13 @@ const Sidebar = styled.div`
   flex-direction: column;
   height: 80vh;
   overflow-y: auto;
-`;
+`
 
 const SidebarTitle = styled.h4`
   font-weight: 600;
   color: rgb(15 23 42);
   margin-bottom: 1rem;
-`;
+`
 
 const DestinationList = styled.div`
   display: flex;
@@ -344,7 +404,7 @@ const DestinationList = styled.div`
   gap: 0.5rem;
   overflow-y: auto;
   flex: 1;
-`;
+`
 
 const DestinationButton = styled.button<{ $selected?: boolean }>`
   width: 100%;
@@ -354,25 +414,22 @@ const DestinationButton = styled.button<{ $selected?: boolean }>`
   border: none;
   cursor: pointer;
   transition: all 0.2s;
-  background: ${(props) =>
-    props.$selected ? "rgb(37 99 235)" : "rgb(241 245 249)"};
+  background: ${(props) => (props.$selected ? "rgb(37 99 235)" : "rgb(241 245 249)")};
   color: ${(props) => (props.$selected ? "white" : "rgb(15 23 42)")};
 
   &:hover {
-    background: ${(props) =>
-      props.$selected ? "rgb(37 99 235)" : "rgb(226 232 240)"};
+    background: ${(props) => (props.$selected ? "rgb(37 99 235)" : "rgb(226 232 240)")};
   }
-`;
+`
 
 const DestinationName = styled.div`
   font-weight: 500;
-`;
+`
 
 const DestinationCount = styled.div<{ $selected?: boolean }>`
   font-size: 0.875rem;
-  color: ${(props) =>
-    props.$selected ? "rgb(191 219 254)" : "rgb(71 85 105)"};
-`;
+  color: ${(props) => (props.$selected ? "rgb(191 219 254)" : "rgb(71 85 105)")};
+`
 
 const ContentCard = styled.div`
   background: white;
@@ -383,52 +440,52 @@ const ContentCard = styled.div`
   height: 80vh;
   display: flex;
   flex-direction: column;
-`;
+`
 
 const CardHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.5rem;
-`;
+`
 
 const CardHeaderText = styled.div`
   display: flex;
   flex-direction: column;
-`;
+`
 
 const CardTitle = styled.h2`
   font-size: 1.5rem;
   font-weight: 700;
   color: rgb(15 23 42);
   margin-bottom: 0.25rem;
-`;
+`
 
 const CardDescription = styled.p`
   color: rgb(71 85 105);
   margin: 0;
-`;
+`
 
 const SearchContainer = styled.div`
   margin-bottom: 1.5rem;
-`;
+`
 
 const TableWrapper = styled.div`
   flex: 1;
   overflow: auto;
-`;
+`
 
 const EmptyState = styled.div`
   text-align: center;
   padding: 3rem 0;
   color: rgb(100 116 139);
-`;
+`
 
 const TableFooter = styled.div`
   margin-top: 1rem;
   font-size: 0.875rem;
   color: rgb(71 85 105);
-`;
+`
 
 const AddDestinationCard = styled.button`
   width: 100%;
@@ -454,7 +511,7 @@ const AddDestinationCard = styled.button`
   svg {
     flex-shrink: 0;
   }
-`;
+`
 
 const MOCK_RATES = [
   {
@@ -2767,52 +2824,42 @@ const MOCK_RATES = [
     total: 350,
     submittedAt: "2025-01-17 02:20 PM",
   },
-];
+]
 
 export default function AdminRatesPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const selectedCity = searchParams.get("city");
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const selectedCity = searchParams.get("city")
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [orderBy, setOrderBy] = useState<keyof RateData>("submittedAt");
-  const [order, setOrder] = useState<"asc" | "desc">("desc");
-  const [selectedDestination, setSelectedDestination] = useState<string | null>(
-    null
-  );
-  const [rates, setRates] = useState<RateData[]>([]);
+  const [searchTerm, setSearchTerm] = useState("")
+  const [orderBy, setOrderBy] = useState<keyof RateData>("submittedAt")
+  const [order, setOrder] = useState<"asc" | "desc">("desc")
+  const [selectedDestination, setSelectedDestination] = useState<string | null>(null)
+  const [rates, setRates] = useState<RateData[]>([])
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
 
-  const [openAddDestDialog, setOpenAddDestDialog] = useState(false);
-  const [newDestination, setNewDestination] = useState<string | null>(null);
-  const [newDestinationInput, setNewDestinationInput] = useState("");
+  const [openAddDestDialog, setOpenAddDestDialog] = useState(false)
+  const [newDestination, setNewDestination] = useState<string | null>(null)
+  const [newDestinationInput, setNewDestinationInput] = useState("")
 
   useEffect(() => {
     const loadRates = () => {
-      const submittedRates = JSON.parse(
-        localStorage.getItem("submittedRates") || "{}"
-      );
-      const ratesArray: RateData[] = [];
+      const submittedRates = JSON.parse(localStorage.getItem("submittedRates") || "{}")
+      const ratesArray: RateData[] = []
 
       Object.entries(submittedRates).forEach(([key, value]: [string, any]) => {
-        const [city, destId] = key.split("-");
-        const cityName = city.charAt(0).toUpperCase() + city.slice(1);
-        const destName =
-          DESTINATIONS[city]?.[Number.parseInt(destId)] || "Unknown";
+        const [city, destId] = key.split("-")
+        const cityName = city.charAt(0).toUpperCase() + city.slice(1)
+        const destName = DESTINATIONS[city]?.[Number.parseInt(destId)] || "Unknown"
 
-        const baseRate = Number.parseFloat(
-          value.baseRate?.replace(/[^0-9.]/g, "") || "0"
-        );
-        const fsc = Number.parseFloat(
-          value.fsc?.replace(/[^0-9.]/g, "") || "0"
-        );
-        const total = Number.parseFloat(
-          value.total?.replace(/[^0-9.]/g, "") || "0"
-        );
+        const baseRate = Number.parseFloat(value.baseRate?.replace(/[^0-9.]/g, "") || "0")
+        const fsc = Number.parseFloat(value.fsc?.replace(/[^0-9.]/g, "") || "0")
+        const total = Number.parseFloat(value.total?.replace(/[^0-9.]/g, "") || "0")
 
         ratesArray.push({
           id: key,
-          vendorId: "MC-123456", // Default vendor ID
-          vendorEmail: "vendor@example.com", // Default email
+          vendorId: "MC-123456",
+          vendorEmail: "vendor@example.com",
           startCity: cityName,
           endCity: destName,
           baseRate,
@@ -2826,100 +2873,99 @@ export default function AdminRatesPage() {
             minute: "2-digit",
             hour12: true,
           }),
-        });
-      });
+          optional1: value.optional1,
+          optional2: value.optional2,
+          optional3: value.optional3,
+          optional4: value.optional4,
+          optional5: value.optional5,
+          optional6: value.optional6,
+          optional7: value.optional7,
+          optional8: value.optional8,
+        })
+      })
 
-      // Combine MOCK_RATES with the loaded rates
-      const allRates = [...MOCK_RATES, ...ratesArray];
+      const allRates = [...MOCK_RATES, ...ratesArray]
 
-      // Ensure unique IDs if necessary, or handle potential overlaps if mock and local storage can have same IDs
       const uniqueRates = allRates.reduce((acc, rate) => {
         if (!acc.some((r) => r.id === String(rate.id))) {
-          acc.push({ ...rate, id: String(rate.id) });
+          acc.push({ ...rate, id: String(rate.id) })
         }
-        return acc;
-      }, [] as RateData[]);
-      ``;
+        return acc
+      }, [] as RateData[])
 
-      setRates(uniqueRates);
-    };
+      setRates(uniqueRates)
+    }
 
-    loadRates();
-  }, []);
+    loadRates()
+  }, [])
+
+  const toggleRowExpansion = (rateId: string) => {
+    setExpandedRows((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(rateId)) {
+        newSet.delete(rateId)
+      } else {
+        newSet.add(rateId)
+      }
+      return newSet
+    })
+  }
 
   const handleSort = (property: keyof RateData) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-  };
+    const isAsc = orderBy === property && order === "asc"
+    setOrder(isAsc ? "desc" : "asc")
+    setOrderBy(property)
+  }
 
   const filteredRates = rates
     .filter((rate) => {
-      const matchesCity = selectedCity
-        ? rate.startCity.toLowerCase() === selectedCity.toLowerCase()
-        : true;
+      const matchesCity = selectedCity ? rate.startCity.toLowerCase() === selectedCity.toLowerCase() : true
       const matchesDestination =
-        selectedCity?.toLowerCase() === "atlanta" && selectedDestination
-          ? rate.endCity === selectedDestination
-          : true;
+        selectedCity?.toLowerCase() === "atlanta" && selectedDestination ? rate.endCity === selectedDestination : true
       const matchesSearch =
         rate.vendorId.toLowerCase().includes(searchTerm.toLowerCase()) ||
         rate.vendorEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
         rate.startCity.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        rate.endCity.toLowerCase().includes(searchTerm.toLowerCase());
+        rate.endCity.toLowerCase().includes(searchTerm.toLowerCase())
 
-      return matchesCity && matchesDestination && matchesSearch;
+      return matchesCity && matchesDestination && matchesSearch
     })
     .sort((a, b) => {
-      if (
-        selectedCity?.toLowerCase() === "atlanta" &&
-        orderBy === "submittedAt"
-      ) {
-        const destCompare = a.endCity.localeCompare(b.endCity);
-        if (destCompare !== 0) return destCompare;
-        return order === "asc"
-          ? a.submittedAt.localeCompare(b.submittedAt)
-          : b.submittedAt.localeCompare(a.submittedAt);
+      if (selectedCity?.toLowerCase() === "atlanta" && orderBy === "submittedAt") {
+        const destCompare = a.endCity.localeCompare(b.endCity)
+        if (destCompare !== 0) return destCompare
+        return order === "asc" ? a.submittedAt.localeCompare(b.submittedAt) : b.submittedAt.localeCompare(a.submittedAt)
       }
 
-      const aValue = a[orderBy];
-      const bValue = b[orderBy];
+      const aValue = a[orderBy]
+      const bValue = b[orderBy]
 
       if (typeof aValue === "string" && typeof bValue === "string") {
-        return order === "asc"
-          ? aValue.localeCompare(bValue)
-          : bValue.localeCompare(aValue);
+        return order === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue)
       }
 
       if (typeof aValue === "number" && typeof bValue === "number") {
-        return order === "asc" ? aValue - bValue : bValue - aValue;
+        return order === "asc" ? aValue - bValue : bValue - aValue
       }
 
-      return 0;
-    });
+      return 0
+    })
 
   const atlantaDestinations =
     selectedCity?.toLowerCase() === "atlanta"
-      ? Array.from(
-          new Set(
-            rates
-              .filter((r) => r.startCity.toLowerCase() === "atlanta")
-              .map((r) => r.endCity)
-          )
-        ).sort()
-      : [];
+      ? Array.from(new Set(rates.filter((r) => r.startCity.toLowerCase() === "atlanta").map((r) => r.endCity))).sort()
+      : []
 
   const handleExport = () => {
-    alert("Exporting rates to CSV...");
-  };
+    alert("Exporting rates to CSV...")
+  }
 
   const handleLogout = () => {
-    router.push("/");
-  };
+    router.push("/")
+  }
 
   const handleAddDestination = () => {
     if (newDestination && selectedCity) {
-      // Add the new destination to the rates list
       const newRate: RateData = {
         id: `${selectedCity.toLowerCase()}-${Date.now()}`,
         vendorId: "PENDING",
@@ -2937,71 +2983,69 @@ export default function AdminRatesPage() {
           minute: "2-digit",
           hour12: true,
         }),
-      };
+      }
 
-      const updatedRates = [...rates, newRate];
-      setRates(updatedRates);
+      const updatedRates = [...rates, newRate]
+      setRates(updatedRates)
 
-      setNewDestination(null);
-      setNewDestinationInput("");
-      setOpenAddDestDialog(false);
+      setNewDestination(null)
+      setNewDestinationInput("")
+      setOpenAddDestDialog(false)
     }
-  };
+  }
+
+  const hasOptionalFields = (rate: RateData) => {
+    return (
+      rate.optional1 ||
+      rate.optional2 ||
+      rate.optional3 ||
+      rate.optional4 ||
+      rate.optional5 ||
+      rate.optional6 ||
+      rate.optional7 ||
+      rate.optional8
+    )
+  }
+
+  const optionalFieldLabels = ["Chassis", "Yard Storage", "Hazmat", "Bond", "Split", "Flip", "Overweight", "Prepull"]
 
   return (
     <PageContainer>
       <Header>
-        <HeaderContent>
-          <LogoCircle>
-            <Truck
-              style={{ width: "1.5rem", height: "1.5rem", color: "white" }}
-            />
-          </LogoCircle>
-          <HeaderText>
-            <HeaderTitle>Vendor Bid Portal</HeaderTitle>
-            <HeaderSubtitle>
-              Admin - Rate Management{selectedCity && ` - ${selectedCity}`}
-            </HeaderSubtitle>
-          </HeaderText>
-        </HeaderContent>
+        <HeaderLeft>
+          <Logo>
+            <Truck size={24} />
+          </Logo>
+          <HeaderTitle>
+            <h1>Vendor Bid Portal</h1>
+            <p>Admin - Rate Management {selectedCity && ` - ${selectedCity}`}</p>
+          </HeaderTitle>
+        </HeaderLeft>
+
         <HeaderActions>
-          <StatusIndicator>
-            <StatusDot />
-            <StatusText>Admin Portal</StatusText>
-          </StatusIndicator>
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={() => router.push("/cities")}
-            sx={{
-              marginLeft: "0.5rem",
-              borderColor: "rgb(148 163 184)",
-              color: "rgb(71 85 105)",
-              "&:hover": {
-                borderColor: "rgb(100 116 139)",
-                backgroundColor: "rgb(248 250 252)",
-              },
+          <CitySelector
+            value={selectedCity || ""}
+            onChange={(e) => {
+              const city = e.target.value || null
+              setSelectedDestination(null)
+              router.push(city ? `/admin/rates?city=${city}` : "/admin/rates")
             }}
           >
-            Back to Cities
-          </Button>
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<LogOut style={{ width: "1rem", height: "1rem" }} />}
-            onClick={handleLogout}
-            sx={{
-              marginLeft: "0.5rem",
-              borderColor: "rgb(148 163 184)",
-              color: "rgb(71 85 105)",
-              "&:hover": {
-                borderColor: "rgb(100 116 139)",
-                backgroundColor: "rgb(248 250 252)",
-              },
-            }}
-          >
+            <option value="">All Cities</option>
+            <option value="boston">Boston</option>
+            <option value="atlanta">Atlanta</option>
+            <option value="philadelphia">Philadelphia</option>
+          </CitySelector>
+
+          <ActionButton onClick={handleExport}>
+            <Download size={16} />
+            Export
+          </ActionButton>
+
+          <ActionButton onClick={handleLogout}>
+            <LogOut size={16} />
             Logout
-          </Button>
+          </ActionButton>
         </HeaderActions>
       </Header>
 
@@ -3018,10 +3062,8 @@ export default function AdminRatesPage() {
                 <DestinationList>
                   {atlantaDestinations.map((dest) => {
                     const count = rates.filter(
-                      (r) =>
-                        r.startCity.toLowerCase() === "atlanta" &&
-                        r.endCity === dest
-                    ).length;
+                      (r) => r.startCity.toLowerCase() === "atlanta" && r.endCity === dest,
+                    ).length
                     return (
                       <DestinationButton
                         key={dest}
@@ -3029,13 +3071,11 @@ export default function AdminRatesPage() {
                         $selected={selectedDestination === dest}
                       >
                         <DestinationName>{dest}</DestinationName>
-                        <DestinationCount
-                          $selected={selectedDestination === dest}
-                        >
+                        <DestinationCount $selected={selectedDestination === dest}>
                           {count} {count === 1 ? "rate" : "rates"}
                         </DestinationCount>
                       </DestinationButton>
-                    );
+                    )
                   })}
                 </DestinationList>
               </Sidebar>
@@ -3055,154 +3095,226 @@ export default function AdminRatesPage() {
                   </CardHeaderText>
                 </CardHeader>
 
-                <SearchContainer>
-                  <TextField
-                    fullWidth
-                    placeholder="Search by vendor ID, email ..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Search
-                            style={{
-                              width: "1.25rem",
-                              height: "1.25rem",
-                              color: "rgb(156 163 175)",
-                            }}
-                          />
-                        </InputAdornment>
-                      ),
-                    }}
-                    variant="outlined"
-                  />
-                </SearchContainer>
-
-                <TableWrapper>
-                  <TableContainer
-                    component={Paper}
-                    variant="outlined"
-                    sx={{ height: "100%" }}
-                  >
-                    <Table stickyHeader>
-                      <TableHead>
-                        <TableRow sx={{ backgroundColor: "rgb(248 250 252)" }}>
-                          <TableCell sx={{ fontWeight: 700 }}>
-                            <TableSortLabel
-                              active={orderBy === "vendorId"}
-                              direction={orderBy === "vendorId" ? order : "asc"}
-                              onClick={() => handleSort("vendorId")}
-                            >
-                              Vendor ID
-                            </TableSortLabel>
-                          </TableCell>
-                          <TableCell sx={{ fontWeight: 700 }}>
-                            <TableSortLabel
-                              active={orderBy === "vendorEmail"}
-                              direction={
-                                orderBy === "vendorEmail" ? order : "asc"
-                              }
-                              onClick={() => handleSort("vendorEmail")}
-                            >
-                              Email
-                            </TableSortLabel>
-                          </TableCell>
-                          <TableCell sx={{ fontWeight: 700 }}>
-                            <TableSortLabel
-                              active={orderBy === "endCity"}
-                              direction={orderBy === "endCity" ? order : "asc"}
-                              onClick={() => handleSort("endCity")}
-                            >
-                              Destination
-                            </TableSortLabel>
-                          </TableCell>
-                          <TableCell sx={{ fontWeight: 700 }}>
-                            <TableSortLabel
-                              active={orderBy === "submittedAt"}
-                              direction={
-                                orderBy === "submittedAt" ? order : "asc"
-                              }
-                              onClick={() => handleSort("submittedAt")}
-                            >
-                              Submitted
-                            </TableSortLabel>
-                          </TableCell>
-                          <TableCell sx={{ fontWeight: 700 }} align="right">
-                            <TableSortLabel
-                              active={orderBy === "baseRate"}
-                              direction={orderBy === "baseRate" ? order : "asc"}
-                              onClick={() => handleSort("baseRate")}
-                            >
-                              Base Rate
-                            </TableSortLabel>
-                          </TableCell>
-                          <TableCell sx={{ fontWeight: 700 }} align="right">
-                            <TableSortLabel
-                              active={orderBy === "fsc"}
-                              direction={orderBy === "fsc" ? order : "asc"}
-                              onClick={() => handleSort("fsc")}
-                            >
-                              FSC %
-                            </TableSortLabel>
-                          </TableCell>
-                          <TableCell sx={{ fontWeight: 700 }} align="right">
-                            <TableSortLabel
-                              active={orderBy === "total"}
-                              direction={orderBy === "total" ? order : "asc"}
-                              onClick={() => handleSort("total")}
-                            >
-                              Total
-                            </TableSortLabel>
-                          </TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {filteredRates.map((rate) => (
-                          <TableRow key={rate.id} hover>
-                            <TableCell
-                              sx={{
-                                fontFamily: "monospace",
-                                fontSize: "0.875rem",
-                              }}
-                            >
-                              {rate.vendorId}
-                            </TableCell>
-                            <TableCell>{rate.vendorEmail}</TableCell>
-                            <TableCell>{rate.endCity}</TableCell>
-                            <TableCell
-                              sx={{
-                                fontSize: "0.875rem",
-                                color: "rgb(71 85 105)",
-                              }}
-                            >
-                              {rate.submittedAt}
-                            </TableCell>
-                            <TableCell align="right">
-                              ${rate.baseRate.toFixed(2)}
-                            </TableCell>
-                            <TableCell align="right">
-                              {rate.fsc.toFixed(2)}%
-                            </TableCell>
-                            <TableCell align="right">
-                              <span
+                {selectedDestination ? (
+                  <>
+                    <SearchContainer>
+                      <TextField
+                        fullWidth
+                        placeholder="Search by vendor ID, email ..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <Search
                                 style={{
-                                  fontWeight: 700,
-                                  color: "rgb(37 99 235)",
+                                  width: "1.25rem",
+                                  height: "1.25rem",
+                                  color: "rgb(156 163 175)",
                                 }}
-                              >
-                                ${rate.total.toFixed(2)}
-                              </span>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </TableWrapper>
+                              />
+                            </InputAdornment>
+                          ),
+                        }}
+                        variant="outlined"
+                      />
+                    </SearchContainer>
 
-                {filteredRates.length === 0 && (
+                    <TableWrapper>
+                      <TableContainer component={Paper} variant="outlined" sx={{ height: "100%" }}>
+                        <Table stickyHeader>
+                          <TableHead>
+                            <TableRow sx={{ backgroundColor: "rgb(248 250 252)" }}>
+                              <TableCell sx={{ fontWeight: 700, width: 50 }}></TableCell>
+                              <TableCell sx={{ fontWeight: 700 }}>
+                                <TableSortLabel
+                                  active={orderBy === "vendorId"}
+                                  direction={orderBy === "vendorId" ? order : "asc"}
+                                  onClick={() => handleSort("vendorId")}
+                                >
+                                  Vendor ID
+                                </TableSortLabel>
+                              </TableCell>
+                              <TableCell sx={{ fontWeight: 700 }}>
+                                <TableSortLabel
+                                  active={orderBy === "vendorEmail"}
+                                  direction={orderBy === "vendorEmail" ? order : "asc"}
+                                  onClick={() => handleSort("vendorEmail")}
+                                >
+                                  Email
+                                </TableSortLabel>
+                              </TableCell>
+                              <TableCell sx={{ fontWeight: 700 }}>
+                                <TableSortLabel
+                                  active={orderBy === "endCity"}
+                                  direction={orderBy === "endCity" ? order : "asc"}
+                                  onClick={() => handleSort("endCity")}
+                                >
+                                  Destination
+                                </TableSortLabel>
+                              </TableCell>
+                              <TableCell sx={{ fontWeight: 700 }}>
+                                <TableSortLabel
+                                  active={orderBy === "submittedAt"}
+                                  direction={orderBy === "submittedAt" ? order : "asc"}
+                                  onClick={() => handleSort("submittedAt")}
+                                >
+                                  Submitted
+                                </TableSortLabel>
+                              </TableCell>
+                              <TableCell sx={{ fontWeight: 700 }} align="right">
+                                <TableSortLabel
+                                  active={orderBy === "baseRate"}
+                                  direction={orderBy === "baseRate" ? order : "asc"}
+                                  onClick={() => handleSort("baseRate")}
+                                >
+                                  Base Rate
+                                </TableSortLabel>
+                              </TableCell>
+                              <TableCell sx={{ fontWeight: 700 }} align="right">
+                                <TableSortLabel
+                                  active={orderBy === "fsc"}
+                                  direction={orderBy === "fsc" ? order : "asc"}
+                                  onClick={() => handleSort("fsc")}
+                                >
+                                  FSC %
+                                </TableSortLabel>
+                              </TableCell>
+                              <TableCell sx={{ fontWeight: 700 }} align="right">
+                                <TableSortLabel
+                                  active={orderBy === "total"}
+                                  direction={orderBy === "total" ? order : "asc"}
+                                  onClick={() => handleSort("total")}
+                                >
+                                  Total
+                                </TableSortLabel>
+                              </TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {filteredRates.map((rate) => (
+                              <>
+                                <TableRow
+                                  key={rate.id}
+                                  hover
+                                  onClick={() => toggleRowExpansion(rate.id)}
+                                  sx={{ cursor: "pointer" }}
+                                >
+                                  <TableCell>
+                                    {hasOptionalFields(rate) && (
+                                      <IconButton size="small">
+                                        {expandedRows.has(rate.id) ? (
+                                          <ChevronDown size={16} />
+                                        ) : (
+                                          <ChevronRight size={16} />
+                                        )}
+                                      </IconButton>
+                                    )}
+                                  </TableCell>
+                                  <TableCell
+                                    sx={{
+                                      fontFamily: "monospace",
+                                      fontSize: "0.875rem",
+                                    }}
+                                  >
+                                    {rate.vendorId}
+                                  </TableCell>
+                                  <TableCell>{rate.vendorEmail}</TableCell>
+                                  <TableCell>{rate.endCity}</TableCell>
+                                  <TableCell
+                                    sx={{
+                                      fontSize: "0.875rem",
+                                      color: "rgb(71 85 105)",
+                                    }}
+                                  >
+                                    {rate.submittedAt}
+                                  </TableCell>
+                                  <TableCell align="right">${rate.baseRate.toFixed(2)}</TableCell>
+                                  <TableCell align="right">{rate.fsc.toFixed(2)}%</TableCell>
+                                  <TableCell align="right">
+                                    <span
+                                      style={{
+                                        fontWeight: 700,
+                                        color: "rgb(37 99 235)",
+                                      }}
+                                    >
+                                      ${rate.total.toFixed(2)}
+                                    </span>
+                                  </TableCell>
+                                </TableRow>
+                                {expandedRows.has(rate.id) && hasOptionalFields(rate) && (
+                                  <TableRow>
+                                    <TableCell
+                                      colSpan={8}
+                                      sx={{
+                                        backgroundColor: "rgb(249 250 251)",
+                                        padding: "1.5rem",
+                                      }}
+                                    >
+                                      <div
+                                        style={{
+                                          display: "grid",
+                                          gridTemplateColumns: "repeat(4, 1fr)",
+                                          gap: "1rem",
+                                        }}
+                                      >
+                                        {optionalFieldLabels.map((label, index) => {
+                                          const fieldKey = `optional${index + 1}` as keyof RateData
+                                          const value = rate[fieldKey]
+                                          if (value) {
+                                            return (
+                                              <div
+                                                key={label}
+                                                style={{
+                                                  display: "flex",
+                                                  flexDirection: "column",
+                                                  gap: "0.25rem",
+                                                }}
+                                              >
+                                                <span
+                                                  style={{
+                                                    fontSize: "0.75rem",
+                                                    fontWeight: 600,
+                                                    color: "rgb(71 85 105)",
+                                                    textTransform: "uppercase",
+                                                  }}
+                                                >
+                                                  {label}
+                                                </span>
+                                                <span
+                                                  style={{
+                                                    fontSize: "0.875rem",
+                                                    fontWeight: 600,
+                                                    color: "rgb(15 23 42)",
+                                                  }}
+                                                >
+                                                  {value}
+                                                </span>
+                                              </div>
+                                            )
+                                          }
+                                          return null
+                                        })}
+                                      </div>
+                                    </TableCell>
+                                  </TableRow>
+                                )}
+                              </>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </TableWrapper>
+
+                    {filteredRates.length === 0 && (
+                      <EmptyState>No rates found matching your search criteria</EmptyState>
+                    )}
+                  </>
+                ) : (
                   <EmptyState>
-                    No rates found matching your search criteria
+                    <MapPin size={48} color="rgb(148 163 184)" />
+                    <h3 style={{ marginTop: "1rem" }}>No Destination Selected</h3>
+                    <p>Please select a destination from the sidebar to view rates</p>
                   </EmptyState>
                 )}
               </ContentCard>
@@ -3213,13 +3325,11 @@ export default function AdminRatesPage() {
                 <CardHeaderText>
                   <CardTitle>
                     {selectedCity
-                      ? `${selectedCity} Vendor Rates`
+                      ? `${selectedCity.charAt(0).toUpperCase() + selectedCity.slice(1)} Vendor Rates`
                       : "All Vendor Rates"}
                   </CardTitle>
                   <CardDescription>
-                    {selectedCity
-                      ? `View and manage bids starting from ${selectedCity}`
-                      : "View and manage all submitted vendor bids"}
+                    {selectedCity ? `Viewing all rates for ${selectedCity}` : "Viewing rates from all cities"}
                   </CardDescription>
                 </CardHeaderText>
               </CardHeader>
@@ -3227,7 +3337,7 @@ export default function AdminRatesPage() {
               <SearchContainer>
                 <TextField
                   fullWidth
-                  placeholder="Search by vendor ID, email..."
+                  placeholder="Search by vendor ID, email, city, or destination..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   InputProps={{
@@ -3252,6 +3362,7 @@ export default function AdminRatesPage() {
                   <Table stickyHeader>
                     <TableHead>
                       <TableRow sx={{ backgroundColor: "rgb(248 250 252)" }}>
+                        <TableCell sx={{ fontWeight: 700, width: 50 }}></TableCell>
                         <TableCell sx={{ fontWeight: 700 }}>
                           <TableSortLabel
                             active={orderBy === "vendorId"}
@@ -3264,9 +3375,7 @@ export default function AdminRatesPage() {
                         <TableCell sx={{ fontWeight: 700 }}>
                           <TableSortLabel
                             active={orderBy === "vendorEmail"}
-                            direction={
-                              orderBy === "vendorEmail" ? order : "asc"
-                            }
+                            direction={orderBy === "vendorEmail" ? order : "asc"}
                             onClick={() => handleSort("vendorEmail")}
                           >
                             Email
@@ -3276,9 +3385,7 @@ export default function AdminRatesPage() {
                           <TableCell sx={{ fontWeight: 700 }}>
                             <TableSortLabel
                               active={orderBy === "startCity"}
-                              direction={
-                                orderBy === "startCity" ? order : "asc"
-                              }
+                              direction={orderBy === "startCity" ? order : "asc"}
                               onClick={() => handleSort("startCity")}
                             >
                               Start City
@@ -3297,9 +3404,7 @@ export default function AdminRatesPage() {
                         <TableCell sx={{ fontWeight: 700 }}>
                           <TableSortLabel
                             active={orderBy === "submittedAt"}
-                            direction={
-                              orderBy === "submittedAt" ? order : "asc"
-                            }
+                            direction={orderBy === "submittedAt" ? order : "asc"}
                             onClick={() => handleSort("submittedAt")}
                           >
                             Submitted
@@ -3336,56 +3441,117 @@ export default function AdminRatesPage() {
                     </TableHead>
                     <TableBody>
                       {filteredRates.map((rate) => (
-                        <TableRow key={rate.id} hover>
-                          <TableCell
-                            sx={{
-                              fontFamily: "monospace",
-                              fontSize: "0.875rem",
-                            }}
+                        <>
+                          <TableRow
+                            key={rate.id}
+                            hover
+                            onClick={() => toggleRowExpansion(rate.id)}
+                            sx={{ cursor: "pointer" }}
                           >
-                            {rate.vendorId}
-                          </TableCell>
-                          <TableCell>{rate.vendorEmail}</TableCell>
-                          {!selectedCity && (
-                            <TableCell>{rate.startCity}</TableCell>
-                          )}
-                          <TableCell>{rate.endCity}</TableCell>
-                          <TableCell
-                            sx={{
-                              fontSize: "0.875rem",
-                              color: "rgb(71 85 105)",
-                            }}
-                          >
-                            {rate.submittedAt}
-                          </TableCell>
-                          <TableCell align="right">
-                            ${rate.baseRate.toFixed(2)}
-                          </TableCell>
-                          <TableCell align="right">
-                            {rate.fsc.toFixed(2)}%
-                          </TableCell>
-                          <TableCell align="right">
-                            <span
-                              style={{
-                                fontWeight: 700,
-                                color: "rgb(37 99 235)",
+                            <TableCell>
+                              {hasOptionalFields(rate) && (
+                                <IconButton size="small">
+                                  {expandedRows.has(rate.id) ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                                </IconButton>
+                              )}
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                fontFamily: "monospace",
+                                fontSize: "0.875rem",
                               }}
                             >
-                              ${rate.total.toFixed(2)}
-                            </span>
-                          </TableCell>
-                        </TableRow>
+                              {rate.vendorId}
+                            </TableCell>
+                            <TableCell>{rate.vendorEmail}</TableCell>
+                            {!selectedCity && <TableCell>{rate.startCity}</TableCell>}
+                            <TableCell>{rate.endCity}</TableCell>
+                            <TableCell
+                              sx={{
+                                fontSize: "0.875rem",
+                                color: "rgb(71 85 105)",
+                              }}
+                            >
+                              {rate.submittedAt}
+                            </TableCell>
+                            <TableCell align="right">${rate.baseRate.toFixed(2)}</TableCell>
+                            <TableCell align="right">{rate.fsc.toFixed(2)}%</TableCell>
+                            <TableCell align="right">
+                              <span
+                                style={{
+                                  fontWeight: 700,
+                                  color: "rgb(37 99 235)",
+                                }}
+                              >
+                                ${rate.total.toFixed(2)}
+                              </span>
+                            </TableCell>
+                          </TableRow>
+                          {expandedRows.has(rate.id) && hasOptionalFields(rate) && (
+                            <TableRow>
+                              <TableCell
+                                colSpan={!selectedCity ? 9 : 8}
+                                sx={{
+                                  backgroundColor: "rgb(249 250 251)",
+                                  padding: "1.5rem",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    display: "grid",
+                                    gridTemplateColumns: "repeat(4, 1fr)",
+                                    gap: "1rem",
+                                  }}
+                                >
+                                  {optionalFieldLabels.map((label, index) => {
+                                    const fieldKey = `optional${index + 1}` as keyof RateData
+                                    const value = rate[fieldKey]
+                                    if (value) {
+                                      return (
+                                        <div
+                                          key={label}
+                                          style={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            gap: "0.25rem",
+                                          }}
+                                        >
+                                          <span
+                                            style={{
+                                              fontSize: "0.75rem",
+                                              fontWeight: 600,
+                                              color: "rgb(71 85 105)",
+                                              textTransform: "uppercase",
+                                            }}
+                                          >
+                                            {label}
+                                          </span>
+                                          <span
+                                            style={{
+                                              fontSize: "0.875rem",
+                                              fontWeight: 600,
+                                              color: "rgb(15 23 42)",
+                                            }}
+                                          >
+                                            {value}
+                                          </span>
+                                        </div>
+                                      )
+                                    }
+                                    return null
+                                  })}
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </>
                       ))}
                     </TableBody>
                   </Table>
                 </TableContainer>
               </TableWrapper>
 
-              {filteredRates.length === 0 && (
-                <EmptyState>
-                  No rates found matching your search criteria
-                </EmptyState>
-              )}
+              {filteredRates.length === 0 && <EmptyState>No rates found matching your search criteria</EmptyState>}
 
               <TableFooter>
                 Showing {filteredRates.length} of {rates.length} total rates
@@ -3395,66 +3561,43 @@ export default function AdminRatesPage() {
         </Container>
       </Main>
 
-      <Dialog
-        open={openAddDestDialog}
-        onClose={() => setOpenAddDestDialog(false)}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={openAddDestDialog} onClose={() => setOpenAddDestDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Add New Destination</DialogTitle>
         <DialogContent>
-          <div style={{ paddingTop: "1rem" }}>
-            <Autocomplete
-              options={US_CITIES}
-              value={newDestination}
-              inputValue={newDestinationInput}
-              onInputChange={(event, newInputValue) => {
-                setNewDestinationInput(newInputValue);
-              }}
-              onChange={(event, newValue) => {
-                setNewDestination(newValue);
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Destination Route"
-                  placeholder="Type at least 3 characters..."
-                />
-              )}
-              filterOptions={(options, state) => {
-                if (state.inputValue.length < 3) return [];
-                return options.filter((option) =>
-                  option.toLowerCase().includes(state.inputValue.toLowerCase())
-                );
-              }}
-              noOptionsText={
-                newDestinationInput.length < 3
-                  ? "Type at least 3 characters"
-                  : "No cities found"
-              }
-            />
-          </div>
+          <DialogContentText>
+            Enter the name of the new destination you want to add to Atlanta routes.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Destination Name"
+            fullWidth
+            variant="outlined"
+            value={newDestinationInput}
+            onChange={(e) => setNewDestinationInput(e.target.value)}
+          />
         </DialogContent>
         <DialogActions>
           <Button
             onClick={() => {
-              setOpenAddDestDialog(false);
-              setNewDestination(null);
-              setNewDestinationInput("");
+              setOpenAddDestDialog(false)
+              setNewDestination(null)
+              setNewDestinationInput("")
             }}
           >
             Cancel
           </Button>
           <Button
-            onClick={handleAddDestination}
+            onClick={() => {
+              setNewDestination(newDestinationInput)
+              handleAddDestination()
+            }}
             variant="contained"
-            color="primary"
-            disabled={!newDestination}
           >
-            Submit
+            Add
           </Button>
         </DialogActions>
       </Dialog>
     </PageContainer>
-  );
+  )
 }
