@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState, useEffect } from "react"
 import styled from "styled-components"
+import Header from "@/components/Header"
 import {
   Table,
   TableBody,
@@ -22,7 +23,7 @@ import {
   IconButton,
   DialogContentText,
 } from "@mui/material"
-import { Truck, LogOut, Search, Plus, ChevronDown, ChevronRight, MapPin } from "lucide-react"
+import { Search, Plus, ChevronDown, ChevronRight, MapPin } from "lucide-react"
 
 // Mock data for US cities, needed for Autocomplete
 const US_CITIES = [
@@ -238,108 +239,6 @@ const PageContainer = styled.div`
   );
   display: flex;
   flex-direction: column;
-`
-
-const Header = styled.header`
-  background: white;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
-  padding: 1rem 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid rgb(226 232 240);
-`
-
-// Modified Header to use flex layout for children
-const HeaderLeft = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-`
-
-// Renamed LogoCircle to Logo and adjusted styling
-const Logo = styled.div`
-  width: 3rem;
-  height: 3rem;
-  background: rgb(37 99 235);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  color: white;
-`
-
-// Renamed HeaderText to HeaderTitle and adjusted styling
-const HeaderTitle = styled.div`
-  display: flex;
-  flex-direction: column;
-  h1 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: rgb(15 23 42);
-    margin: 0;
-  }
-  p {
-    font-size: 0.875rem;
-    color: rgb(71 85 105);
-    margin: 0;
-  }
-`
-
-// Renamed HeaderActions to HeaderActions
-const HeaderActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`
-
-// Created a styled component for the CitySelector dropdown
-const CitySelector = styled.select`
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.375rem;
-  border: 1px solid rgb(203 213 225);
-  background-color: rgb(255 255 255);
-  font-size: 0.875rem;
-  color: rgb(71 85 105);
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    border-color: rgb(148 163 184);
-  }
-
-  &:focus {
-    outline: none;
-    border-color: rgb(59 130 246);
-    ring: 2px solid rgb(59 130 246);
-    ring-offset: 2px;
-  }
-`
-
-// Created a styled component for the ActionButton
-const ActionButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.375rem;
-  border: 1px solid rgb(203 213 225);
-  background-color: rgb(255 255 255);
-  font-size: 0.875rem;
-  color: rgb(71 85 105);
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    border-color: rgb(148 163 184);
-    background-color: rgb(248 250 252);
-  }
-
-  svg {
-    width: 1rem;
-    height: 1rem;
-  }
 `
 
 const StatusIndicator = styled.div`
@@ -2960,6 +2859,10 @@ export default function AdminRatesPage() {
     router.push("/")
   }
 
+  const handleBackToCities = () => {
+    router.push("/cities")
+  }
+
   const handleAddDestination = () => {
     if (newDestination && selectedCity) {
       const newRate: RateData = {
@@ -3007,61 +2910,13 @@ export default function AdminRatesPage() {
 
   return (
     <PageContainer>
-      <Header>
-        <HeaderLeft>
-          <Logo>
-            <Truck size={24} />
-          </Logo>
-          <HeaderTitle>
-            <h1>Vendor Bid Portal</h1>
-            <p>Admin - Rate Management {selectedCity && ` - ${selectedCity}`}</p>
-          </HeaderTitle>
-        </HeaderLeft>
-
-        <HeaderActions>
-          <CitySelector
-            value={selectedCity || ""}
-            onChange={(e) => {
-              const city = e.target.value || null
-              setSelectedDestination(null)
-              router.push(city ? `/admin/rates?city=${city}` : "/admin/rates")
-            }}
-          >
-            <option value="">All Cities</option>
-            <option value="boston">Boston</option>
-            <option value="atlanta">Atlanta</option>
-            <option value="philadelphia">Philadelphia</option>
-          </CitySelector>
-
-          <button
-            onClick={handleLogout}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              padding: "0.5rem 0.75rem",
-              borderRadius: "0.375rem",
-              border: "1px solid rgb(203 213 225)",
-              backgroundColor: "rgb(255 255 255)",
-              fontSize: "0.875rem",
-              color: "rgb(71 85 105)",
-              cursor: "pointer",
-              transition: "all 0.2s",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "rgb(148 163 184)"
-              e.currentTarget.style.backgroundColor = "rgb(248 250 252)"
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "rgb(203 213 225)"
-              e.currentTarget.style.backgroundColor = "rgb(255 255 255)"
-            }}
-          >
-            <LogOut size={16} />
-            Logout
-          </button>
-        </HeaderActions>
-      </Header>
+      <Header
+        subtitle={`Admin - Rate Management${selectedCity ? ` - ${selectedCity.charAt(0).toUpperCase() + selectedCity.slice(1)}` : ""}`}
+        showBackButton={true}
+        showLogoutButton={true}
+        onBack={handleBackToCities}
+        onLogout={handleLogout}
+      />
 
       <Main>
         <Container>
