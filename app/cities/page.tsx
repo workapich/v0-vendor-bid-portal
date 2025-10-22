@@ -3,8 +3,18 @@
 import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import styled from "styled-components"
-import { TextField, Chip, InputAdornment, Button } from "@mui/material"
-import { Search, Truck, LogOut, TrendingUp, Star, Clock, Users } from "lucide-react"
+import {
+  TextField,
+  Chip,
+  InputAdornment,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Autocomplete,
+} from "@mui/material"
+import { Search, Truck, LogOut, TrendingUp, Star, Clock, Users, MapPin } from "lucide-react"
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -381,11 +391,69 @@ const CITIES = [
   { name: "Washington D.C.", routes: 19, newRoutes: 4, totalBids: 51 },
 ]
 
+const US_CITIES = [
+  "New York",
+  "Los Angeles",
+  "Chicago",
+  "Houston",
+  "Phoenix",
+  "Philadelphia",
+  "San Antonio",
+  "San Diego",
+  "Dallas",
+  "San Jose",
+  "Austin",
+  "Jacksonville",
+  "Fort Worth",
+  "Columbus",
+  "Charlotte",
+  "San Francisco",
+  "Indianapolis",
+  "Seattle",
+  "Denver",
+  "Washington",
+  "Boston",
+  "El Paso",
+  "Nashville",
+  "Detroit",
+  "Oklahoma City",
+  "Portland",
+  "Las Vegas",
+  "Memphis",
+  "Louisville",
+  "Baltimore",
+  "Milwaukee",
+  "Albuquerque",
+  "Tucson",
+  "Fresno",
+  "Mesa",
+  "Sacramento",
+  "Atlanta",
+  "Kansas City",
+  "Colorado Springs",
+  "Omaha",
+  "Raleigh",
+  "Miami",
+  "Long Beach",
+  "Virginia Beach",
+  "Oakland",
+  "Minneapolis",
+  "Tulsa",
+  "Tampa",
+  "Arlington",
+  "New Orleans",
+]
+
 export default function CitiesPage() {
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState("")
   const [userType, setUserType] = useState<"vendor" | "admin">("vendor")
   const [favoriteCities, setFavoriteCities] = useState<string[]>([])
+  const [createRouteOpen, setCreateRouteOpen] = useState(false)
+  const [startCity, setStartCity] = useState("")
+  const [endCity, setEndCity] = useState("")
+  const [startCityInput, setStartCityInput] = useState("")
+  const [endCityInput, setEndCityInput] = useState("")
 
   useEffect(() => {
     const type = localStorage.getItem("userType") as "vendor" | "admin"
@@ -425,6 +493,18 @@ export default function CitiesPage() {
 
   const bidsLast24Hours = 23
   const bidsLast7Days = 147
+
+  const handleCreateRoute = () => {
+    if (startCity && endCity) {
+      console.log("Creating route:", { startCity, endCity })
+      // TODO: Add API call to create route
+      setCreateRouteOpen(false)
+      setStartCity("")
+      setEndCity("")
+      setStartCityInput("")
+      setEndCityInput("")
+    }
+  }
 
   if (userType === "admin") {
     return (
@@ -475,6 +555,14 @@ export default function CitiesPage() {
               </ActionCardIcon>
               <ActionCardTitle>Manage Vendors</ActionCardTitle>
               <ActionCardDescription>View and create vendors</ActionCardDescription>
+            </ActionCard>
+
+            <ActionCard onClick={() => setCreateRouteOpen(true)}>
+              <ActionCardIcon>
+                <MapPin style={{ width: "1.5rem", height: "1.5rem", color: "white" }} />
+              </ActionCardIcon>
+              <ActionCardTitle>Create Route</ActionCardTitle>
+              <ActionCardDescription>Add new shipping routes</ActionCardDescription>
             </ActionCard>
 
             <StatCard>
@@ -559,6 +647,107 @@ export default function CitiesPage() {
             {filteredCities.length === 0 && <EmptyState>No cities found matching "{searchTerm}"</EmptyState>}
           </ContentCard>
         </Main>
+
+        <Dialog open={createRouteOpen} onClose={() => setCreateRouteOpen(false)} maxWidth="sm" fullWidth>
+          <DialogTitle sx={{ fontWeight: 700, fontSize: "1.5rem", color: "rgb(15 23 42)" }}>
+            Create New Route
+          </DialogTitle>
+          <DialogContent sx={{ paddingTop: "1.5rem !important" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              <Autocomplete
+                value={startCity}
+                onChange={(event, newValue) => setStartCity(newValue || "")}
+                inputValue={startCityInput}
+                onInputChange={(event, newInputValue) => setStartCityInput(newInputValue)}
+                options={startCityInput.length >= 3 ? US_CITIES : []}
+                noOptionsText={startCityInput.length < 3 ? "Type at least 3 characters" : "No cities found"}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Starting City"
+                    placeholder="Type to search cities..."
+                    variant="outlined"
+                    fullWidth
+                  />
+                )}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "&:hover fieldset": {
+                      borderColor: "rgb(37 99 235)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "rgb(37 99 235)",
+                    },
+                  },
+                }}
+              />
+
+              <Autocomplete
+                value={endCity}
+                onChange={(event, newValue) => setEndCity(newValue || "")}
+                inputValue={endCityInput}
+                onInputChange={(event, newInputValue) => setEndCityInput(newInputValue)}
+                options={endCityInput.length >= 3 ? US_CITIES : []}
+                noOptionsText={endCityInput.length < 3 ? "Type at least 3 characters" : "No cities found"}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Ending City"
+                    placeholder="Type to search cities..."
+                    variant="outlined"
+                    fullWidth
+                  />
+                )}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "&:hover fieldset": {
+                      borderColor: "rgb(37 99 235)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "rgb(37 99 235)",
+                    },
+                  },
+                }}
+              />
+            </div>
+          </DialogContent>
+          <DialogActions sx={{ padding: "1.5rem" }}>
+            <Button
+              onClick={() => {
+                setCreateRouteOpen(false)
+                setStartCity("")
+                setEndCity("")
+                setStartCityInput("")
+                setEndCityInput("")
+              }}
+              sx={{
+                color: "rgb(71 85 105)",
+                "&:hover": {
+                  backgroundColor: "rgb(241 245 249)",
+                },
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCreateRoute}
+              disabled={!startCity || !endCity}
+              variant="contained"
+              sx={{
+                backgroundColor: "rgb(37 99 235)",
+                "&:hover": {
+                  backgroundColor: "rgb(29 78 216)",
+                },
+                "&:disabled": {
+                  backgroundColor: "rgb(226 232 240)",
+                  color: "rgb(148 163 184)",
+                },
+              }}
+            >
+              Create Route
+            </Button>
+          </DialogActions>
+        </Dialog>
       </PageContainer>
     )
   }

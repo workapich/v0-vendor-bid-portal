@@ -5,8 +5,8 @@ import type React from "react"
 import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import styled from "styled-components"
-import { Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Autocomplete } from "@mui/material"
-import { Truck, ArrowLeft, Trash2, ChevronDown, ChevronUp, Upload, Ban, Route } from "lucide-react"
+import { Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material"
+import { Truck, ArrowLeft, Trash2, ChevronDown, ChevronUp, Upload, Ban } from "lucide-react"
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -488,123 +488,6 @@ const HelpText = styled.p`
   margin: 0;
 `
 
-const ActionCardsContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-`
-
-const ActionCard = styled.button`
-  background: white;
-  border: 2px solid #e2e8f0;
-  border-radius: 1rem;
-  padding: 2rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  text-align: center;
-
-  &:hover {
-    border-color: #2563eb;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-    transform: translateY(-2px);
-  }
-`
-
-const ActionCardIcon = styled.div`
-  width: 4rem;
-  height: 4rem;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  border-radius: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-`
-
-const ActionCardTitle = styled.h3`
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-`
-
-const ActionCardDescription = styled.p`
-  font-size: 0.875rem;
-  color: #64748b;
-  margin: 0;
-`
-
-const RoutesList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 1.5rem;
-`
-
-const RouteCard = styled.div`
-  background: #f8fafc;
-  border: 2px solid #e2e8f0;
-  border-radius: 0.75rem;
-  padding: 1.25rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: all 0.2s;
-
-  &:hover {
-    border-color: #cbd5e1;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  }
-`
-
-const RouteInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-`
-
-const RoutePath = styled.div`
-  font-weight: 600;
-  color: #0f172a;
-  font-size: 1rem;
-`
-
-const RouteDate = styled.div`
-  font-size: 0.875rem;
-  color: #64748b;
-`
-
-const DeleteRouteButton = styled.button`
-  padding: 0.5rem;
-  background: white;
-  border: 2px solid #fca5a5;
-  border-radius: 0.5rem;
-  color: #dc2626;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    background: #fee2e2;
-    border-color: #f87171;
-  }
-`
-
-const ModalContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding: 1rem 0;
-  min-width: 500px;
-`
-
 interface Vendor {
   id: number
   mcId: string | null
@@ -623,66 +506,6 @@ interface RateHistory {
   submittedDate: string
 }
 
-interface RouteData {
-  id: number
-  startCity: string
-  endCity: string
-  createdDate: string
-}
-
-const US_CITIES = [
-  "New York, NY",
-  "Los Angeles, CA",
-  "Chicago, IL",
-  "Houston, TX",
-  "Phoenix, AZ",
-  "Philadelphia, PA",
-  "San Antonio, TX",
-  "San Diego, CA",
-  "Dallas, TX",
-  "San Jose, CA",
-  "Austin, TX",
-  "Jacksonville, FL",
-  "Fort Worth, TX",
-  "Columbus, OH",
-  "Charlotte, NC",
-  "San Francisco, CA",
-  "Indianapolis, IN",
-  "Seattle, WA",
-  "Denver, CO",
-  "Washington, DC",
-  "Boston, MA",
-  "El Paso, TX",
-  "Nashville, TN",
-  "Detroit, MI",
-  "Oklahoma City, OK",
-  "Portland, OR",
-  "Las Vegas, NV",
-  "Memphis, TN",
-  "Louisville, KY",
-  "Baltimore, MD",
-  "Milwaukee, WI",
-  "Albuquerque, NM",
-  "Tucson, AZ",
-  "Fresno, CA",
-  "Mesa, AZ",
-  "Sacramento, CA",
-  "Atlanta, GA",
-  "Kansas City, MO",
-  "Colorado Springs, CO",
-  "Omaha, NE",
-  "Raleigh, NC",
-  "Miami, FL",
-  "Long Beach, CA",
-  "Virginia Beach, VA",
-  "Oakland, CA",
-  "Minneapolis, MN",
-  "Tulsa, OK",
-  "Tampa, FL",
-  "Arlington, TX",
-  "New Orleans, LA",
-]
-
 export default function VendorsPage() {
   const router = useRouter()
   const [vendors, setVendors] = useState<Vendor[]>([])
@@ -691,13 +514,6 @@ export default function VendorsPage() {
   const [openDialog, setOpenDialog] = useState(false)
   const [emailInput, setEmailInput] = useState("")
   const [emailList, setEmailList] = useState<string[]>([])
-
-  const [routes, setRoutes] = useState<RouteData[]>([])
-  const [openRouteDialog, setOpenRouteDialog] = useState(false)
-  const [startCity, setStartCity] = useState<string | null>(null)
-  const [endCity, setEndCity] = useState<string | null>(null)
-  const [startCityInput, setStartCityInput] = useState("")
-  const [endCityInput, setEndCityInput] = useState("")
 
   useEffect(() => {
     const savedVendors = JSON.parse(localStorage.getItem("vendors") || "[]")
@@ -885,9 +701,6 @@ export default function VendorsPage() {
       localStorage.setItem("vendors", JSON.stringify(migratedVendors))
       setVendors(migratedVendors)
     }
-
-    const savedRoutes = JSON.parse(localStorage.getItem("routes") || "[]")
-    setRoutes(savedRoutes)
   }, [])
 
   const loadVendorHistory = (vendor: Vendor) => {
@@ -1005,7 +818,7 @@ export default function VendorsPage() {
     if (confirm("Are you sure you want to delete this vendor?")) {
       const updatedVendors = vendors.filter((v) => v.id !== id)
       setVendors(updatedVendors)
-      localStorage.setItem("vendors", JSON.JSON.stringify(updatedVendors))
+      localStorage.setItem("vendors", JSON.stringify(updatedVendors))
     }
   }
 
@@ -1013,36 +826,7 @@ export default function VendorsPage() {
     if (confirm("Are you sure you want to ban this vendor?")) {
       const updatedVendors = vendors.map((v) => (v.id === id ? { ...v, status: "banned" as const } : v))
       setVendors(updatedVendors)
-      localStorage.setItem("vendors", JSON.JSON.stringify(updatedVendors))
-    }
-  }
-
-  const handleAddRoute = () => {
-    if (startCity && endCity) {
-      const newRoute: RouteData = {
-        id: Date.now(),
-        startCity,
-        endCity,
-        createdDate: new Date().toISOString().split("T")[0],
-      }
-
-      const updatedRoutes = [...routes, newRoute]
-      setRoutes(updatedRoutes)
-      localStorage.setItem("routes", JSON.stringify(updatedRoutes))
-
-      setStartCity(null)
-      setEndCity(null)
-      setStartCityInput("")
-      setEndCityInput("")
-      setOpenRouteDialog(false)
-    }
-  }
-
-  const handleDeleteRoute = (id: number) => {
-    if (confirm("Are you sure you want to delete this route?")) {
-      const updatedRoutes = routes.filter((r) => r.id !== id)
-      setRoutes(updatedRoutes)
-      localStorage.setItem("routes", JSON.stringify(updatedRoutes))
+      localStorage.setItem("vendors", JSON.stringify(updatedVendors))
     }
   }
 
@@ -1067,33 +851,20 @@ export default function VendorsPage() {
       <Main>
         <PageHeader>
           <PageTitleSection>
-            <h2>Admin Management</h2>
-            <p>Manage vendors and create shipping routes</p>
+            <h2>Vendor Management</h2>
+            <p>Manage all vendors in the system</p>
           </PageTitleSection>
+          <AddButton onClick={() => setOpenDialog(true)}>
+            <Truck size={18} />
+            Add New Vendor
+          </AddButton>
         </PageHeader>
-
-        <ActionCardsContainer>
-          <ActionCard onClick={() => setOpenDialog(true)}>
-            <ActionCardIcon>
-              <Truck size={32} />
-            </ActionCardIcon>
-            <ActionCardTitle>Manage Vendors</ActionCardTitle>
-            <ActionCardDescription>Add, view, and manage all vendors in the system</ActionCardDescription>
-          </ActionCard>
-          <ActionCard onClick={() => setOpenRouteDialog(true)}>
-            <ActionCardIcon>
-              <Route size={32} />
-            </ActionCardIcon>
-            <ActionCardTitle>Create Route</ActionCardTitle>
-            <ActionCardDescription>Create new shipping routes between cities</ActionCardDescription>
-          </ActionCard>
-        </ActionCardsContainer>
 
         <VendorsCard>
           {vendors.length === 0 ? (
             <EmptyState>
               <h3>No Vendors Found</h3>
-              <p>Click "Manage Vendors" to create your first vendor</p>
+              <p>Click "Add New Vendor" to create your first vendor</p>
             </EmptyState>
           ) : (
             <TableContainer>
@@ -1191,68 +962,6 @@ export default function VendorsPage() {
             </TableContainer>
           )}
         </VendorsCard>
-
-        <Dialog open={openRouteDialog} onClose={() => setOpenRouteDialog(false)} maxWidth="md" fullWidth>
-          <DialogTitle>Create New Route</DialogTitle>
-          <DialogContent>
-            <ModalContent>
-              <Autocomplete
-                options={US_CITIES}
-                value={startCity}
-                inputValue={startCityInput}
-                onInputChange={(event, newInputValue) => {
-                  setStartCityInput(newInputValue)
-                }}
-                onChange={(event, newValue) => {
-                  setStartCity(newValue)
-                }}
-                renderInput={(params) => (
-                  <TextField {...params} label="Starting Position" placeholder="Type at least 3 characters..." />
-                )}
-                filterOptions={(options, state) => {
-                  if (state.inputValue.length < 3) return []
-                  return options.filter((option) => option.toLowerCase().includes(state.inputValue.toLowerCase()))
-                }}
-                noOptionsText={startCityInput.length < 3 ? "Type at least 3 characters" : "No cities found"}
-              />
-              <Autocomplete
-                options={US_CITIES}
-                value={endCity}
-                inputValue={endCityInput}
-                onInputChange={(event, newInputValue) => {
-                  setEndCityInput(newInputValue)
-                }}
-                onChange={(event, newValue) => {
-                  setEndCity(newValue)
-                }}
-                renderInput={(params) => (
-                  <TextField {...params} label="Ending Position" placeholder="Type at least 3 characters..." />
-                )}
-                filterOptions={(options, state) => {
-                  if (state.inputValue.length < 3) return []
-                  return options.filter((option) => option.toLowerCase().includes(state.inputValue.toLowerCase()))
-                }}
-                noOptionsText={endCityInput.length < 3 ? "Type at least 3 characters" : "No cities found"}
-              />
-            </ModalContent>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={() => {
-                setOpenRouteDialog(false)
-                setStartCity(null)
-                setEndCity(null)
-                setStartCityInput("")
-                setEndCityInput("")
-              }}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleAddRoute} variant="contained" color="primary" disabled={!startCity || !endCity}>
-              Submit
-            </Button>
-          </DialogActions>
-        </Dialog>
 
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
           <DialogTitle>Add New Vendor(s)</DialogTitle>
