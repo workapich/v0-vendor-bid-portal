@@ -429,20 +429,23 @@ const AddDestinationCard = styled.button`
   padding: 1rem;
   border-radius: 0.5rem;
   border: 2px dashed #2563eb;
+  background: #eff6ff;
   cursor: pointer;
   transition: all 0.2s;
-  background: white;
-  margin-bottom: 1rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   color: #2563eb;
   font-weight: 600;
+  margin-bottom: 1rem;
 
   &:hover {
-    background: #eff6ff;
+    background: #dbeafe;
     border-color: #1d4ed8;
+  }
+
+  svg {
+    flex-shrink: 0;
   }
 `
 
@@ -1982,9 +1985,9 @@ const MOCK_RATES = [
     vendorEmail: "vendor17@example.com",
     startCity: "Seattle",
     endCity: "Spokane, WA",
-    baseRate: 455,
-    fsc: 10.99,
-    total: 505,
+    baseRate: 448,
+    fsc: 11.16,
+    total: 498,
     submittedAt: "2025-01-10 02:10 PM",
   },
   {
@@ -2772,6 +2775,7 @@ export default function AdminRatesPage() {
 
   const [openAddDestDialog, setOpenAddDestDialog] = useState(false)
   const [newDestination, setNewDestination] = useState<string | null>(null)
+  const [newDestinationInput, setNewDestinationInput] = useState("")
 
   useEffect(() => {
     const loadRates = () => {
@@ -2903,6 +2907,7 @@ export default function AdminRatesPage() {
       setRates(updatedRates)
 
       setNewDestination(null)
+      setNewDestinationInput("")
       setOpenAddDestDialog(false)
     }
   }
@@ -3297,11 +3302,21 @@ export default function AdminRatesPage() {
             <Autocomplete
               options={US_CITIES}
               value={newDestination}
-              onChange={(event, newValue) => setNewDestination(newValue)}
+              inputValue={newDestinationInput}
+              onInputChange={(event, newInputValue) => {
+                setNewDestinationInput(newInputValue)
+              }}
+              onChange={(event, newValue) => {
+                setNewDestination(newValue)
+              }}
               renderInput={(params) => (
-                <TextField {...params} label="Destination Route" placeholder="Type to search cities..." />
+                <TextField {...params} label="Destination Route" placeholder="Type at least 3 characters..." />
               )}
-              freeSolo={false}
+              filterOptions={(options, state) => {
+                if (state.inputValue.length < 3) return []
+                return options.filter((option) => option.toLowerCase().includes(state.inputValue.toLowerCase()))
+              }}
+              noOptionsText={newDestinationInput.length < 3 ? "Type at least 3 characters" : "No cities found"}
             />
           </div>
         </DialogContent>
@@ -3310,6 +3325,7 @@ export default function AdminRatesPage() {
             onClick={() => {
               setOpenAddDestDialog(false)
               setNewDestination(null)
+              setNewDestinationInput("")
             }}
           >
             Cancel
