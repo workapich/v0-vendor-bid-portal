@@ -1,7 +1,9 @@
 "use client"
 
+import React from "react"
+
 import { useRouter, useSearchParams } from "next/navigation"
-import { useState, useEffect, React } from "react" // Added React import
+import { useState, useEffect } from "react" // Changed React import
 import styled from "styled-components"
 import {
   Table,
