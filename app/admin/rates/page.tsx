@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
-import styled from "styled-components";
+import { useRouter, useSearchParams } from "next/navigation"
+import { useState, useEffect, React } from "react" // Added React import
+import styled from "styled-components"
 import {
   Table,
   TableBody,
@@ -20,8 +20,12 @@ import {
   DialogContent,
   DialogActions,
   Autocomplete,
-} from "@mui/material";
-import { Truck, LogOut, Search, Download, Plus } from "lucide-react";
+  Typography,
+  Box,
+  Collapse,
+  IconButton,
+} from "@mui/material"
+import { Truck, LogOut, Search, Download, Plus, ChevronDown } from "lucide-react" // Added ChevronDown
 
 // Mock data for US cities, needed for Autocomplete
 const US_CITIES = [
@@ -186,7 +190,7 @@ const US_CITIES = [
   "Slatersville, RI",
   "Augustas, GA",
   "Portland, ME",
-];
+]
 
 const DESTINATIONS: Record<string, Record<number, string>> = {
   boston: {
@@ -206,18 +210,25 @@ const DESTINATIONS: Record<string, Record<number, string>> = {
     2: "Baltimore, MD",
     3: "Washington, DC",
   },
-};
+}
 
 interface RateData {
-  id: string;
-  vendorId: string;
-  vendorEmail: string;
-  startCity: string;
-  endCity: string;
-  baseRate: number;
-  fsc: number;
-  total: number;
-  submittedAt: string;
+  id: string
+  vendorId: string
+  vendorEmail: string
+  startCity: string
+  endCity: string
+  baseRate: number
+  fsc: number
+  total: number
+  submittedAt: string
+  notes?: string
+  equipmentType?: string
+  transitTime?: string
+  insuranceCoverage?: string
+  specialRequirements?: string
+  contactPhone?: string
+  companyName?: string
 }
 
 const PageContainer = styled.div`
@@ -229,7 +240,7 @@ const PageContainer = styled.div`
   );
   display: flex;
   flex-direction: column;
-`;
+`
 
 const Header = styled.header`
   background: white;
@@ -239,13 +250,13 @@ const Header = styled.header`
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgb(226 232 240);
-`;
+`
 
 const HeaderContent = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
-`;
+`
 
 const LogoCircle = styled.div`
   width: 3rem;
@@ -256,59 +267,59 @@ const LogoCircle = styled.div`
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-`;
+`
 
 const HeaderText = styled.div`
   display: flex;
   flex-direction: column;
-`;
+`
 
 const HeaderTitle = styled.h1`
   font-size: 1.25rem;
   font-weight: 700;
   color: rgb(15 23 42);
   margin: 0;
-`;
+`
 
 const HeaderSubtitle = styled.p`
   font-size: 0.875rem;
   color: rgb(71 85 105);
   margin: 0;
-`;
+`
 
 const HeaderActions = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-`;
+`
 
 const StatusIndicator = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-`;
+`
 
 const StatusDot = styled.div`
   width: 0.5rem;
   height: 0.5rem;
   background: rgb(34 197 94);
   border-radius: 50%;
-`;
+`
 
 const StatusText = styled.span`
   font-size: 0.875rem;
   color: rgb(71 85 105);
-`;
+`
 
 const Main = styled.main`
   flex: 1;
   padding: 1.5rem;
-`;
+`
 
 const Container = styled.div`
   max-width: 112rem;
   margin: 0 auto;
-`;
+`
 
 const GridContainer = styled.div`
   display: grid;
@@ -318,7 +329,7 @@ const GridContainer = styled.div`
   @media (min-width: 1024px) {
     grid-template-columns: 1fr 3fr;
   }
-`;
+`
 
 const Sidebar = styled.div`
   background: white;
@@ -330,13 +341,13 @@ const Sidebar = styled.div`
   flex-direction: column;
   height: 80vh;
   overflow-y: auto;
-`;
+`
 
 const SidebarTitle = styled.h4`
   font-weight: 600;
   color: rgb(15 23 42);
   margin-bottom: 1rem;
-`;
+`
 
 const DestinationList = styled.div`
   display: flex;
@@ -344,7 +355,7 @@ const DestinationList = styled.div`
   gap: 0.5rem;
   overflow-y: auto;
   flex: 1;
-`;
+`
 
 const DestinationButton = styled.button<{ $selected?: boolean }>`
   width: 100%;
@@ -354,25 +365,22 @@ const DestinationButton = styled.button<{ $selected?: boolean }>`
   border: none;
   cursor: pointer;
   transition: all 0.2s;
-  background: ${(props) =>
-    props.$selected ? "rgb(37 99 235)" : "rgb(241 245 249)"};
+  background: ${(props) => (props.$selected ? "rgb(37 99 235)" : "rgb(241 245 249)")};
   color: ${(props) => (props.$selected ? "white" : "rgb(15 23 42)")};
 
   &:hover {
-    background: ${(props) =>
-      props.$selected ? "rgb(37 99 235)" : "rgb(226 232 240)"};
+    background: ${(props) => (props.$selected ? "rgb(37 99 235)" : "rgb(226 232 240)")};
   }
-`;
+`
 
 const DestinationName = styled.div`
   font-weight: 500;
-`;
+`
 
 const DestinationCount = styled.div<{ $selected?: boolean }>`
   font-size: 0.875rem;
-  color: ${(props) =>
-    props.$selected ? "rgb(191 219 254)" : "rgb(71 85 105)"};
-`;
+  color: ${(props) => (props.$selected ? "rgb(191 219 254)" : "rgb(71 85 105)")};
+`
 
 const ContentCard = styled.div`
   background: white;
@@ -383,52 +391,52 @@ const ContentCard = styled.div`
   height: 80vh;
   display: flex;
   flex-direction: column;
-`;
+`
 
 const CardHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.5rem;
-`;
+`
 
 const CardHeaderText = styled.div`
   display: flex;
   flex-direction: column;
-`;
+`
 
 const CardTitle = styled.h2`
   font-size: 1.5rem;
   font-weight: 700;
   color: rgb(15 23 42);
   margin-bottom: 0.25rem;
-`;
+`
 
 const CardDescription = styled.p`
   color: rgb(71 85 105);
   margin: 0;
-`;
+`
 
 const SearchContainer = styled.div`
   margin-bottom: 1.5rem;
-`;
+`
 
 const TableWrapper = styled.div`
   flex: 1;
   overflow: auto;
-`;
+`
 
 const EmptyState = styled.div`
   text-align: center;
   padding: 3rem 0;
   color: rgb(100 116 139);
-`;
+`
 
 const TableFooter = styled.div`
   margin-top: 1rem;
   font-size: 0.875rem;
   color: rgb(71 85 105);
-`;
+`
 
 const AddDestinationCard = styled.button`
   width: 100%;
@@ -454,7 +462,7 @@ const AddDestinationCard = styled.button`
   svg {
     flex-shrink: 0;
   }
-`;
+`
 
 const MOCK_RATES = [
   {
@@ -467,6 +475,11 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 500,
     submittedAt: "2025-01-08 10:30 AM",
+    notes: "Expedited delivery available",
+    equipmentType: "53' Dry Van",
+    transitTime: "2-3 business days",
+    insuranceCoverage: "$100,000",
+    contactPhone: "(555) 123-4567",
   },
   {
     id: 2,
@@ -478,6 +491,9 @@ const MOCK_RATES = [
     fsc: 12.5,
     total: 360,
     submittedAt: "2025-01-09 08:15 AM",
+    equipmentType: "48' Flatbed",
+    transitTime: "1-2 business days",
+    companyName: "Smith Transport LLC",
   },
   {
     id: 3,
@@ -489,6 +505,9 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 600,
     submittedAt: "2025-01-09 11:45 AM",
+    notes: "Temperature controlled available",
+    equipmentType: "53' Reefer",
+    specialRequirements: "Temperature monitoring required",
   },
   {
     id: 4,
@@ -500,6 +519,8 @@ const MOCK_RATES = [
     fsc: 10.71,
     total: 310,
     submittedAt: "2025-01-07 02:20 PM",
+    transitTime: "Same day delivery",
+    insuranceCoverage: "$250,000",
   },
   {
     id: 5,
@@ -511,6 +532,8 @@ const MOCK_RATES = [
     fsc: 12.5,
     total: 540,
     submittedAt: "2025-01-10 09:30 AM",
+    equipmentType: "53' Dry Van",
+    contactPhone: "(555) 987-6543",
   },
   {
     id: 6,
@@ -522,6 +545,8 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 700,
     submittedAt: "2025-01-10 02:15 PM",
+    notes: "Fragile items, handle with care",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 7,
@@ -533,6 +558,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 200,
     submittedAt: "2025-01-08 11:15 AM",
+    transitTime: "2-3 business days",
   },
   {
     id: 8,
@@ -544,6 +570,8 @@ const MOCK_RATES = [
     fsc: 10.94,
     total: 355,
     submittedAt: "2025-01-08 11:15 AM",
+    equipmentType: "40' Flatbed",
+    insuranceCoverage: "$50,000",
   },
   {
     id: 9,
@@ -555,6 +583,9 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 2000,
     submittedAt: "2025-01-08 09:45 AM",
+    notes: "Long haul, requires 2 drivers",
+    transitTime: "5-7 business days",
+    specialRequirements: "Team drivers needed",
   },
   {
     id: 10,
@@ -566,6 +597,8 @@ const MOCK_RATES = [
     fsc: 10.71,
     total: 310,
     submittedAt: "2025-01-07 02:20 PM",
+    transitTime: "Same day delivery",
+    insuranceCoverage: "$250,000",
   },
   {
     id: 11,
@@ -577,6 +610,8 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 200,
     submittedAt: "2025-01-06 01:30 PM",
+    equipmentType: "53' Dry Van",
+    contactPhone: "(555) 111-2222",
   },
   {
     id: 12,
@@ -588,6 +623,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 400,
     submittedAt: "2025-01-11 10:20 AM",
+    companyName: "John Smith Logistics",
   },
   {
     id: 13,
@@ -599,6 +635,8 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 450,
     submittedAt: "2025-01-11 03:45 PM",
+    notes: "Urgent delivery required",
+    specialRequirements: "Liftgate service needed",
   },
   {
     id: 14,
@@ -610,6 +648,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 200,
     submittedAt: "2025-01-08 09:45 AM",
+    transitTime: "Next day delivery",
   },
   {
     id: 15,
@@ -621,6 +660,8 @@ const MOCK_RATES = [
     fsc: 10.53,
     total: 420,
     submittedAt: "2025-01-08 01:10 PM",
+    equipmentType: "53' Dry Van",
+    contactPhone: "(555) 333-4444",
   },
   {
     id: 16,
@@ -632,6 +673,7 @@ const MOCK_RATES = [
     fsc: 9.09,
     total: 240,
     submittedAt: "2025-01-08 03:45 PM",
+    notes: "Competitive rate",
   },
   {
     id: 17,
@@ -643,6 +685,7 @@ const MOCK_RATES = [
     fsc: 13.33,
     total: 170,
     submittedAt: "2025-01-08 02:30 PM",
+    transitTime: "Same day",
   },
   {
     id: 18,
@@ -654,6 +697,8 @@ const MOCK_RATES = [
     fsc: 11.76,
     total: 380,
     submittedAt: "2025-01-07 04:15 PM",
+    equipmentType: "53' Dry Van",
+    insuranceCoverage: "$150,000",
   },
   {
     id: 19,
@@ -665,6 +710,7 @@ const MOCK_RATES = [
     fsc: 9.52,
     total: 460,
     submittedAt: "2025-01-07 11:20 AM",
+    companyName: "Miami Freight Solutions",
   },
   {
     id: 20,
@@ -676,6 +722,7 @@ const MOCK_RATES = [
     fsc: 10.34,
     total: 320,
     submittedAt: "2025-01-08 08:50 AM",
+    contactPhone: "(555) 555-5555",
   },
   {
     id: 21,
@@ -687,6 +734,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 200,
     submittedAt: "2025-01-06 01:30 PM",
+    specialRequirements: "Blind shipment",
   },
   {
     id: 22,
@@ -698,6 +746,7 @@ const MOCK_RATES = [
     fsc: 15.38,
     total: 300,
     submittedAt: "2025-01-06 10:45 AM",
+    transitTime: "3-4 hours",
   },
   {
     id: 23,
@@ -709,6 +758,8 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 800,
     submittedAt: "2025-01-06 02:40 PM",
+    equipmentType: "53' Dry Van",
+    insuranceCoverage: "$500,000",
   },
   {
     id: 24,
@@ -720,6 +771,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 250,
     submittedAt: "2025-01-12 08:30 AM",
+    companyName: "LA Trucking Co.",
   },
   {
     id: 25,
@@ -731,6 +783,8 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 550,
     submittedAt: "2025-01-12 01:15 PM",
+    notes: "High volume freight",
+    specialRequirements: "Team drivers preferred",
   },
   {
     id: 26,
@@ -742,6 +796,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 400,
     submittedAt: "2025-01-08 10:20 AM",
+    transitTime: "Same day",
   },
   {
     id: 27,
@@ -753,6 +808,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 600,
     submittedAt: "2025-01-07 10:25 AM",
+    equipmentType: "53' Reefer",
   },
   {
     id: 28,
@@ -764,6 +820,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 500,
     submittedAt: "2025-01-08 08:15 AM",
+    companyName: "Emerald City Logistics",
   },
   {
     id: 29,
@@ -775,6 +832,7 @@ const MOCK_RATES = [
     fsc: 12.5,
     total: 360,
     submittedAt: "2025-01-07 04:35 PM",
+    contactPhone: "(555) 777-8888",
   },
   {
     id: 30,
@@ -786,6 +844,7 @@ const MOCK_RATES = [
     fsc: 10.53,
     total: 420,
     submittedAt: "2025-01-08 02:10 PM",
+    insuranceCoverage: "$200,000",
   },
   {
     id: 31,
@@ -797,6 +856,7 @@ const MOCK_RATES = [
     fsc: 9.52,
     total: 460,
     submittedAt: "2025-01-07 11:45 AM",
+    notes: "Expedited service requested",
   },
   {
     id: 32,
@@ -808,6 +868,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 700,
     submittedAt: "2025-01-08 09:55 AM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 33,
@@ -819,6 +880,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 800,
     submittedAt: "2025-01-06 03:30 PM",
+    companyName: "Rocky Mountain Transport",
   },
   {
     id: 34,
@@ -830,6 +892,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 500,
     submittedAt: "2025-01-08 10:40 AM",
+    contactPhone: "(555) 444-5555",
   },
   {
     id: 35,
@@ -841,6 +904,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 600,
     submittedAt: "2025-01-07 09:50 AM",
+    specialRequirements: "Temperature sensitive",
   },
   {
     id: 36,
@@ -852,6 +916,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 350,
     submittedAt: "2025-01-13 09:00 AM",
+    transitTime: "Next day",
   },
   {
     id: 37,
@@ -863,6 +928,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 550,
     submittedAt: "2025-01-13 02:30 PM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 38,
@@ -874,6 +940,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 400,
     submittedAt: "2025-01-08 01:30 PM",
+    companyName: "Texas Freight Movers",
   },
   {
     id: 39,
@@ -885,6 +952,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 500,
     submittedAt: "2025-01-07 03:10 PM",
+    contactPhone: "(555) 666-7777",
   },
   {
     id: 40,
@@ -896,6 +964,7 @@ const MOCK_RATES = [
     fsc: 10.53,
     total: 420,
     submittedAt: "2025-01-05 03:20 PM",
+    insuranceCoverage: "$300,000",
   },
   {
     id: 41,
@@ -907,6 +976,7 @@ const MOCK_RATES = [
     fsc: 14.29,
     total: 160,
     submittedAt: "2025-01-08 12:40 PM",
+    notes: "Local delivery",
   },
   {
     id: 42,
@@ -918,6 +988,7 @@ const MOCK_RATES = [
     fsc: 9.52,
     total: 230,
     submittedAt: "2025-01-08 04:20 PM",
+    transitTime: "2 hours",
   },
   {
     id: 43,
@@ -929,6 +1000,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 300,
     submittedAt: "2025-01-07 08:30 AM",
+    equipmentType: "Flatbed",
   },
   {
     id: 44,
@@ -940,6 +1012,7 @@ const MOCK_RATES = [
     fsc: 11.43,
     total: 390,
     submittedAt: "2025-01-08 10:15 AM",
+    companyName: "Midwest Carriers",
   },
   {
     id: 45,
@@ -951,6 +1024,7 @@ const MOCK_RATES = [
     fsc: 10.42,
     total: 530,
     submittedAt: "2025-01-07 01:45 PM",
+    contactPhone: "(555) 222-3333",
   },
   {
     id: 46,
@@ -962,6 +1036,7 @@ const MOCK_RATES = [
     fsc: 12.5,
     total: 360,
     submittedAt: "2025-01-08 11:30 AM",
+    insuranceCoverage: "$100,000",
   },
   {
     id: 47,
@@ -973,6 +1048,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 500,
     submittedAt: "2025-01-07 03:10 PM",
+    specialRequirements: "Team drivers required",
   },
   {
     id: 48,
@@ -984,6 +1060,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 600,
     submittedAt: "2025-01-08 09:20 AM",
+    notes: "Expedited delivery",
   },
   {
     id: 49,
@@ -995,6 +1072,8 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 800,
     submittedAt: "2025-01-06 02:40 PM",
+    equipmentType: "53' Dry Van",
+    insuranceCoverage: "$500,000",
   },
   {
     id: 50,
@@ -1006,6 +1085,7 @@ const MOCK_RATES = [
     fsc: 10.53,
     total: 420,
     submittedAt: "2025-01-08 01:50 PM",
+    companyName: "Sunshine Freight",
   },
   {
     id: 51,
@@ -1017,6 +1097,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 600,
     submittedAt: "2025-01-07 10:25 AM",
+    contactPhone: "(555) 888-9999",
   },
   {
     id: 52,
@@ -1028,6 +1109,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 500,
     submittedAt: "2025-01-08 08:15 AM",
+    specialRequirements: "Must have liftgate",
   },
   {
     id: 53,
@@ -1039,6 +1121,7 @@ const MOCK_RATES = [
     fsc: 12.5,
     total: 360,
     submittedAt: "2025-01-07 04:35 PM",
+    notes: "Cross-border shipment",
   },
   {
     id: 54,
@@ -1050,6 +1133,7 @@ const MOCK_RATES = [
     fsc: 10.53,
     total: 420,
     submittedAt: "2025-01-08 02:10 PM",
+    transitTime: "Overnight",
   },
   {
     id: 55,
@@ -1061,6 +1145,7 @@ const MOCK_RATES = [
     fsc: 9.52,
     total: 460,
     submittedAt: "2025-01-07 11:45 AM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 56,
@@ -1072,6 +1157,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 700,
     submittedAt: "2025-01-08 09:55 AM",
+    companyName: "Desert Deliveries",
   },
   {
     id: 57,
@@ -1083,6 +1169,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 800,
     submittedAt: "2025-01-06 03:30 PM",
+    contactPhone: "(555) 121-3434",
   },
   {
     id: 58,
@@ -1094,6 +1181,7 @@ const MOCK_RATES = [
     fsc: 10.0,
     total: 440,
     submittedAt: "2025-01-08 12:25 PM",
+    insuranceCoverage: "$200,000",
   },
   {
     id: 59,
@@ -1105,6 +1193,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 500,
     submittedAt: "2025-01-14 10:45 AM",
+    specialRequirements: "Team drivers required",
   },
   {
     id: 60,
@@ -1116,6 +1205,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 550,
     submittedAt: "2025-01-14 03:20 PM",
+    notes: "High volume lane",
   },
   {
     id: 61,
@@ -1127,6 +1217,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 350,
     submittedAt: "2025-01-09 08:30 AM",
+    transitTime: "Next day",
   },
   {
     id: 62,
@@ -1138,6 +1229,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 500,
     submittedAt: "2025-01-08 03:10 PM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 63,
@@ -1149,6 +1241,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 200,
     submittedAt: "2025-01-08 09:30 AM",
+    companyName: "Philly Freight",
   },
   {
     id: 64,
@@ -1160,6 +1253,7 @@ const MOCK_RATES = [
     fsc: 11.43,
     total: 195,
     submittedAt: "2025-01-07 02:15 PM",
+    contactPhone: "(555) 777-9999",
   },
   {
     id: 65,
@@ -1171,6 +1265,7 @@ const MOCK_RATES = [
     fsc: 10.91,
     total: 244,
     submittedAt: "2025-01-08 10:45 AM",
+    insuranceCoverage: "$100,000",
   },
   {
     id: 66,
@@ -1182,6 +1277,7 @@ const MOCK_RATES = [
     fsc: 11.63,
     total: 240,
     submittedAt: "2025-01-07 03:20 PM",
+    specialRequirements: "Liftgate required",
   },
   {
     id: 67,
@@ -1193,6 +1289,7 @@ const MOCK_RATES = [
     fsc: 10.71,
     total: 310,
     submittedAt: "2025-01-08 11:55 AM",
+    notes: "Expedited service",
   },
   {
     id: 68,
@@ -1204,6 +1301,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 305,
     submittedAt: "2025-01-07 08:40 AM",
+    transitTime: "Same day",
   },
   {
     id: 69,
@@ -1215,6 +1313,7 @@ const MOCK_RATES = [
     fsc: 10.87,
     total: 510,
     submittedAt: "2025-01-09 09:20 AM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 70,
@@ -1226,6 +1325,7 @@ const MOCK_RATES = [
     fsc: 12.12,
     total: 370,
     submittedAt: "2025-01-09 10:45 AM",
+    companyName: "Quick Ship Logistics",
   },
   {
     id: 71,
@@ -1237,6 +1337,7 @@ const MOCK_RATES = [
     fsc: 10.26,
     total: 430,
     submittedAt: "2025-01-09 02:15 PM",
+    contactPhone: "(555) 555-1111",
   },
   {
     id: 72,
@@ -1248,6 +1349,7 @@ const MOCK_RATES = [
     fsc: 10.71,
     total: 310,
     submittedAt: "2025-01-09 11:30 AM",
+    insuranceCoverage: "$150,000",
   },
   {
     id: 73,
@@ -1259,6 +1361,7 @@ const MOCK_RATES = [
     fsc: 13.79,
     total: 165,
     submittedAt: "2025-01-09 03:40 PM",
+    specialRequirements: "Urgent delivery",
   },
   {
     id: 74,
@@ -1270,6 +1373,7 @@ const MOCK_RATES = [
     fsc: 9.09,
     total: 240,
     submittedAt: "2025-01-09 01:20 PM",
+    notes: "Local delivery, quick turnaround",
   },
   {
     id: 75,
@@ -1281,6 +1385,7 @@ const MOCK_RATES = [
     fsc: 10.81,
     total: 410,
     submittedAt: "2025-01-09 08:50 AM",
+    transitTime: "2-3 business days",
   },
   {
     id: 76,
@@ -1292,6 +1397,7 @@ const MOCK_RATES = [
     fsc: 12.12,
     total: 370,
     submittedAt: "2025-01-09 04:10 PM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 77,
@@ -1303,6 +1409,7 @@ const MOCK_RATES = [
     fsc: 10.26,
     total: 215,
     submittedAt: "2025-01-09 12:05 PM",
+    companyName: "Fast Haul Inc.",
   },
   {
     id: 78,
@@ -1314,6 +1421,8 @@ const MOCK_RATES = [
     fsc: 10.81,
     total: 2050,
     submittedAt: "2025-01-09 09:35 AM",
+    contactPhone: "(555) 666-1111",
+    insuranceCoverage: "$1,000,000",
   },
   {
     id: 79,
@@ -1325,6 +1434,7 @@ const MOCK_RATES = [
     fsc: 10.53,
     total: 315,
     submittedAt: "2025-01-09 10:20 AM",
+    specialRequirements: "Temperature control required",
   },
   {
     id: 80,
@@ -1336,6 +1446,7 @@ const MOCK_RATES = [
     fsc: 10.91,
     total: 305,
     submittedAt: "2025-01-09 02:45 PM",
+    notes: "Competitive pricing",
   },
   {
     id: 81,
@@ -1347,6 +1458,7 @@ const MOCK_RATES = [
     fsc: 11.49,
     total: 485,
     submittedAt: "2025-01-09 11:15 AM",
+    transitTime: "Same day",
   },
   {
     id: 82,
@@ -1358,6 +1470,7 @@ const MOCK_RATES = [
     fsc: 11.76,
     total: 475,
     submittedAt: "2025-01-09 03:30 PM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 83,
@@ -1369,6 +1482,7 @@ const MOCK_RATES = [
     fsc: 10.28,
     total: 1395,
     submittedAt: "2025-01-09 09:50 AM",
+    companyName: "Southern Haulers",
   },
   {
     id: 84,
@@ -1380,6 +1494,8 @@ const MOCK_RATES = [
     fsc: 11.24,
     total: 1385,
     submittedAt: "2025-01-09 01:40 PM",
+    contactPhone: "(555) 888-2222",
+    insuranceCoverage: "$750,000",
   },
   {
     id: 85,
@@ -1391,6 +1507,7 @@ const MOCK_RATES = [
     fsc: 13.33,
     total: 255,
     submittedAt: "2025-01-09 10:55 AM",
+    specialRequirements: "Team drivers needed",
   },
   {
     id: 86,
@@ -1402,6 +1519,7 @@ const MOCK_RATES = [
     fsc: 10.91,
     total: 305,
     submittedAt: "2025-01-09 02:20 PM",
+    notes: "Expedited delivery available",
   },
   {
     id: 87,
@@ -1413,6 +1531,7 @@ const MOCK_RATES = [
     fsc: 10.91,
     total: 610,
     submittedAt: "2025-01-09 11:45 AM",
+    transitTime: "1-2 business days",
   },
   {
     id: 88,
@@ -1424,6 +1543,7 @@ const MOCK_RATES = [
     fsc: 11.27,
     total: 395,
     submittedAt: "2025-01-09 03:10 PM",
+    equipmentType: "53' Reefer",
   },
   {
     id: 89,
@@ -1435,6 +1555,7 @@ const MOCK_RATES = [
     fsc: 11.29,
     total: 690,
     submittedAt: "2025-01-09 09:25 AM",
+    companyName: "Deep South Carriers",
   },
   {
     id: 90,
@@ -1446,6 +1567,8 @@ const MOCK_RATES = [
     fsc: 11.24,
     total: 495,
     submittedAt: "2025-01-09 01:55 PM",
+    contactPhone: "(555) 999-0000",
+    insuranceCoverage: "$300,000",
   },
   {
     id: 91,
@@ -1457,6 +1580,7 @@ const MOCK_RATES = [
     fsc: 10.96,
     total: 810,
     submittedAt: "2025-01-09 10:30 AM",
+    specialRequirements: "Temperature sensitive items",
   },
   {
     id: 92,
@@ -1468,6 +1592,7 @@ const MOCK_RATES = [
     fsc: 10.81,
     total: 205,
     submittedAt: "2025-01-09 11:20 AM",
+    notes: "Blind shipment possible",
   },
   {
     id: 93,
@@ -1479,6 +1604,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 250,
     submittedAt: "2025-01-09 02:35 PM",
+    transitTime: "2-3 hours",
   },
   {
     id: 94,
@@ -1490,6 +1616,7 @@ const MOCK_RATES = [
     fsc: 10.53,
     total: 315,
     submittedAt: "2025-01-09 09:40 AM",
+    equipmentType: "Flatbed",
   },
   {
     id: 95,
@@ -1501,6 +1628,7 @@ const MOCK_RATES = [
     fsc: 10.91,
     total: 610,
     submittedAt: "2025-01-09 03:25 PM",
+    companyName: "Keystone Freight",
   },
   {
     id: 96,
@@ -1512,6 +1640,8 @@ const MOCK_RATES = [
     fsc: 10.99,
     total: 505,
     submittedAt: "2025-01-10 08:15 AM",
+    contactPhone: "(555) 444-7777",
+    insuranceCoverage: "$200,000",
   },
   {
     id: 97,
@@ -1523,6 +1653,7 @@ const MOCK_RATES = [
     fsc: 11.54,
     total: 363,
     submittedAt: "2025-01-10 09:30 AM",
+    specialRequirements: "Fragile items",
   },
   {
     id: 98,
@@ -1534,6 +1665,7 @@ const MOCK_RATES = [
     fsc: 10.39,
     total: 425,
     submittedAt: "2025-01-10 10:45 AM",
+    notes: "Expedited delivery",
   },
   {
     id: 99,
@@ -1545,6 +1677,7 @@ const MOCK_RATES = [
     fsc: 10.91,
     total: 305,
     submittedAt: "2025-01-10 11:20 AM",
+    transitTime: "1-2 business days",
   },
   {
     id: 100,
@@ -1556,6 +1689,7 @@ const MOCK_RATES = [
     fsc: 13.33,
     total: 170,
     submittedAt: "2025-01-10 01:15 PM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 101,
@@ -1567,6 +1701,7 @@ const MOCK_RATES = [
     fsc: 9.3,
     total: 235,
     submittedAt: "2025-01-10 02:30 PM",
+    companyName: "New England Trucking",
   },
   {
     id: 102,
@@ -1578,6 +1713,8 @@ const MOCK_RATES = [
     fsc: 10.96,
     total: 405,
     submittedAt: "2025-01-10 03:45 PM",
+    contactPhone: "(555) 222-5555",
+    insuranceCoverage: "$300,000",
   },
   {
     id: 103,
@@ -1589,6 +1726,7 @@ const MOCK_RATES = [
     fsc: 12.31,
     total: 365,
     submittedAt: "2025-01-10 08:50 AM",
+    specialRequirements: "Team drivers needed",
   },
   {
     id: 104,
@@ -1600,6 +1738,7 @@ const MOCK_RATES = [
     fsc: 10.0,
     total: 220,
     submittedAt: "2025-01-10 10:10 AM",
+    notes: "Local delivery",
   },
   {
     id: 105,
@@ -1611,6 +1750,7 @@ const MOCK_RATES = [
     fsc: 10.99,
     total: 2020,
     submittedAt: "2025-01-10 11:35 AM",
+    transitTime: "5-7 business days",
   },
   {
     id: 106,
@@ -1622,6 +1762,7 @@ const MOCK_RATES = [
     fsc: 10.34,
     total: 320,
     submittedAt: "2025-01-10 09:15 AM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 107,
@@ -1633,6 +1774,7 @@ const MOCK_RATES = [
     fsc: 10.71,
     total: 310,
     submittedAt: "2025-01-10 01:40 PM",
+    companyName: "South East Transport",
   },
   {
     id: 108,
@@ -1644,6 +1786,8 @@ const MOCK_RATES = [
     fsc: 11.63,
     total: 480,
     submittedAt: "2025-01-10 10:25 AM",
+    contactPhone: "(555) 333-7777",
+    insuranceCoverage: "$250,000",
   },
   {
     id: 109,
@@ -1655,6 +1799,7 @@ const MOCK_RATES = [
     fsc: 11.24,
     total: 495,
     submittedAt: "2025-01-10 02:50 PM",
+    specialRequirements: "Temperature monitoring",
   },
   {
     id: 110,
@@ -1666,6 +1811,7 @@ const MOCK_RATES = [
     fsc: 10.76,
     total: 1390,
     submittedAt: "2025-01-10 08:35 AM",
+    notes: "High volume lane",
   },
   {
     id: 111,
@@ -1677,6 +1823,7 @@ const MOCK_RATES = [
     fsc: 11.34,
     total: 1375,
     submittedAt: "2025-01-10 11:50 AM",
+    transitTime: "3-4 business days",
   },
   {
     id: 112,
@@ -1688,6 +1835,7 @@ const MOCK_RATES = [
     fsc: 10.59,
     total: 1410,
     submittedAt: "2025-01-10 03:20 PM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 113,
@@ -1699,6 +1847,7 @@ const MOCK_RATES = [
     fsc: 12.77,
     total: 265,
     submittedAt: "2025-01-10 09:45 AM",
+    companyName: "Tennessee Freight",
   },
   {
     id: 114,
@@ -1710,6 +1859,8 @@ const MOCK_RATES = [
     fsc: 10.53,
     total: 315,
     submittedAt: "2025-01-10 01:10 PM",
+    contactPhone: "(555) 111-5555",
+    insuranceCoverage: "$200,000",
   },
   {
     id: 115,
@@ -1721,6 +1872,7 @@ const MOCK_RATES = [
     fsc: 11.01,
     total: 605,
     submittedAt: "2025-01-10 10:35 AM",
+    specialRequirements: "Team drivers",
   },
   {
     id: 116,
@@ -1732,6 +1884,7 @@ const MOCK_RATES = [
     fsc: 10.96,
     total: 405,
     submittedAt: "2025-01-10 02:25 PM",
+    notes: "Expedited service",
   },
   {
     id: 117,
@@ -1743,6 +1896,7 @@ const MOCK_RATES = [
     fsc: 11.2,
     total: 695,
     submittedAt: "2025-01-10 08:55 AM",
+    transitTime: "2-3 business days",
   },
   {
     id: 118,
@@ -1754,6 +1908,7 @@ const MOCK_RATES = [
     fsc: 10.99,
     total: 505,
     submittedAt: "2025-01-10 11:40 AM",
+    equipmentType: "53' Reefer",
   },
   {
     id: 119,
@@ -1765,6 +1920,7 @@ const MOCK_RATES = [
     fsc: 10.88,
     total: 815,
     submittedAt: "2025-01-10 03:05 PM",
+    companyName: "Florida Freightways",
   },
   {
     id: 120,
@@ -1776,6 +1932,8 @@ const MOCK_RATES = [
     fsc: 10.53,
     total: 210,
     submittedAt: "2025-01-10 09:20 AM",
+    contactPhone: "(555) 888-1111",
+    insuranceCoverage: "$100,000",
   },
   {
     id: 121,
@@ -1787,6 +1945,7 @@ const MOCK_RATES = [
     fsc: 10.87,
     total: 255,
     submittedAt: "2025-01-10 01:45 PM",
+    specialRequirements: "Liftgate service",
   },
   {
     id: 122,
@@ -1798,6 +1957,7 @@ const MOCK_RATES = [
     fsc: 10.34,
     total: 320,
     submittedAt: "2025-01-10 10:15 AM",
+    notes: "Urgent delivery",
   },
   {
     id: 123,
@@ -1809,6 +1969,7 @@ const MOCK_RATES = [
     fsc: 11.01,
     total: 605,
     submittedAt: "2025-01-10 02:40 PM",
+    transitTime: "Next day",
   },
   {
     id: 124,
@@ -1820,6 +1981,7 @@ const MOCK_RATES = [
     fsc: 8.89,
     total: 245,
     submittedAt: "2025-01-10 08:25 AM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 125,
@@ -1831,6 +1993,7 @@ const MOCK_RATES = [
     fsc: 11.27,
     total: 395,
     submittedAt: "2025-01-10 11:30 AM",
+    companyName: "Great Lakes Logistics",
   },
   {
     id: 126,
@@ -1842,6 +2005,8 @@ const MOCK_RATES = [
     fsc: 10.31,
     total: 535,
     submittedAt: "2025-01-10 03:15 PM",
+    contactPhone: "(555) 999-4444",
+    insuranceCoverage: "$400,000",
   },
   {
     id: 127,
@@ -1853,6 +2018,7 @@ const MOCK_RATES = [
     fsc: 11.01,
     total: 605,
     submittedAt: "2025-01-10 09:50 AM",
+    specialRequirements: "Temperature sensitive",
   },
   {
     id: 128,
@@ -1864,6 +2030,7 @@ const MOCK_RATES = [
     fsc: 12.9,
     total: 175,
     submittedAt: "2025-01-10 01:25 PM",
+    notes: "Local delivery, quick turnaround",
   },
   {
     id: 129,
@@ -1875,6 +2042,7 @@ const MOCK_RATES = [
     fsc: 12.31,
     total: 365,
     submittedAt: "2025-01-10 10:40 AM",
+    transitTime: "Same day",
   },
   {
     id: 130,
@@ -1886,6 +2054,7 @@ const MOCK_RATES = [
     fsc: 10.99,
     total: 505,
     submittedAt: "2025-01-10 02:55 PM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 131,
@@ -1897,6 +2066,7 @@ const MOCK_RATES = [
     fsc: 10.39,
     total: 425,
     submittedAt: "2025-01-10 08:45 AM",
+    companyName: "Gulf Coast Logistics",
   },
   {
     id: 132,
@@ -1908,6 +2078,8 @@ const MOCK_RATES = [
     fsc: 11.02,
     total: 705,
     submittedAt: "2025-01-10 11:55 AM",
+    contactPhone: "(555) 777-1212",
+    insuranceCoverage: "$500,000",
   },
   {
     id: 133,
@@ -1919,6 +2091,7 @@ const MOCK_RATES = [
     fsc: 11.59,
     total: 385,
     submittedAt: "2025-01-10 03:30 PM",
+    specialRequirements: "Team drivers required",
   },
   {
     id: 134,
@@ -1930,6 +2103,7 @@ const MOCK_RATES = [
     fsc: 11.01,
     total: 605,
     submittedAt: "2025-01-10 09:10 AM",
+    notes: "High volume lane",
   },
   {
     id: 135,
@@ -1941,6 +2115,7 @@ const MOCK_RATES = [
     fsc: 11.03,
     total: 805,
     submittedAt: "2025-01-10 01:35 PM",
+    transitTime: "1-2 business days",
   },
   {
     id: 136,
@@ -1952,6 +2127,7 @@ const MOCK_RATES = [
     fsc: 9.41,
     total: 465,
     submittedAt: "2025-01-10 10:50 AM",
+    equipmentType: "53' Reefer",
   },
   {
     id: 137,
@@ -1963,6 +2139,7 @@ const MOCK_RATES = [
     fsc: 10.39,
     total: 425,
     submittedAt: "2025-01-10 03:00 PM",
+    companyName: "Florida Express Freight",
   },
   {
     id: 138,
@@ -1974,6 +2151,8 @@ const MOCK_RATES = [
     fsc: 11.01,
     total: 605,
     submittedAt: "2025-01-10 08:20 AM",
+    contactPhone: "(555) 555-9999",
+    insuranceCoverage: "$300,000",
   },
   {
     id: 139,
@@ -1985,6 +2164,7 @@ const MOCK_RATES = [
     fsc: 10.17,
     total: 325,
     submittedAt: "2025-01-10 11:45 AM",
+    specialRequirements: "Team drivers needed",
   },
   {
     id: 140,
@@ -1996,6 +2176,7 @@ const MOCK_RATES = [
     fsc: 11.16,
     total: 498,
     submittedAt: "2025-01-10 02:10 PM",
+    notes: "Expedited service available",
   },
   {
     id: 141,
@@ -2007,6 +2188,7 @@ const MOCK_RATES = [
     fsc: 12.31,
     total: 365,
     submittedAt: "2025-01-10 09:35 AM",
+    transitTime: "1-2 business days",
   },
   {
     id: 142,
@@ -2018,6 +2200,7 @@ const MOCK_RATES = [
     fsc: 10.81,
     total: 205,
     submittedAt: "2025-01-10 01:50 PM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 143,
@@ -2029,6 +2212,7 @@ const MOCK_RATES = [
     fsc: 10.39,
     total: 425,
     submittedAt: "2025-01-10 10:25 AM",
+    companyName: "Northeast Carriers",
   },
   {
     id: 144,
@@ -2040,6 +2224,8 @@ const MOCK_RATES = [
     fsc: 9.41,
     total: 465,
     submittedAt: "2025-01-10 03:40 PM",
+    contactPhone: "(555) 123-7890",
+    insuranceCoverage: "$400,000",
   },
   {
     id: 145,
@@ -2051,6 +2237,7 @@ const MOCK_RATES = [
     fsc: 15.09,
     total: 305,
     submittedAt: "2025-01-10 08:30 AM",
+    specialRequirements: "Team drivers needed",
   },
   {
     id: 146,
@@ -2062,6 +2249,7 @@ const MOCK_RATES = [
     fsc: 11.02,
     total: 705,
     submittedAt: "2025-01-10 12:00 PM",
+    notes: "High volume lane",
   },
   {
     id: 147,
@@ -2073,6 +2261,7 @@ const MOCK_RATES = [
     fsc: 10.26,
     total: 215,
     submittedAt: "2025-01-10 02:45 PM",
+    transitTime: "1-2 hours",
   },
   {
     id: 148,
@@ -2084,6 +2273,7 @@ const MOCK_RATES = [
     fsc: 11.03,
     total: 805,
     submittedAt: "2025-01-10 09:15 AM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 149,
@@ -2095,6 +2285,7 @@ const MOCK_RATES = [
     fsc: 10.81,
     total: 205,
     submittedAt: "2025-01-10 01:20 PM",
+    companyName: "Bay Area Logistics",
   },
   {
     id: 150,
@@ -2106,6 +2297,8 @@ const MOCK_RATES = [
     fsc: 11.03,
     total: 805,
     submittedAt: "2025-01-10 10:55 AM",
+    contactPhone: "(555) 456-7890",
+    insuranceCoverage: "$600,000",
   },
   {
     id: 151,
@@ -2117,6 +2310,7 @@ const MOCK_RATES = [
     fsc: 13.33,
     total: 255,
     submittedAt: "2025-01-10 03:25 PM",
+    specialRequirements: "Team drivers required",
   },
   {
     id: 152,
@@ -2128,6 +2322,7 @@ const MOCK_RATES = [
     fsc: 10.71,
     total: 310,
     submittedAt: "2025-01-14 02:20 PM",
+    notes: "Competitive pricing",
   },
   {
     id: 153,
@@ -2139,6 +2334,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 250,
     submittedAt: "2025-01-15 09:15 AM",
+    transitTime: "3-4 hours",
   },
   {
     id: 154,
@@ -2150,6 +2346,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 150,
     submittedAt: "2025-01-15 11:30 AM",
+    equipmentType: "Flatbed",
   },
   {
     id: 155,
@@ -2161,6 +2358,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 200,
     submittedAt: "2025-01-15 02:45 PM",
+    companyName: "SF Bay Trucking",
   },
   {
     id: 156,
@@ -2172,6 +2370,8 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 600,
     submittedAt: "2025-01-14 09:30 AM",
+    contactPhone: "(555) 876-5432",
+    insuranceCoverage: "$500,000",
   },
   {
     id: 157,
@@ -2183,6 +2383,7 @@ const MOCK_RATES = [
     fsc: 9.52,
     total: 460,
     submittedAt: "2025-01-14 11:45 AM",
+    specialRequirements: "Liftgate service",
   },
   {
     id: 158,
@@ -2194,6 +2395,7 @@ const MOCK_RATES = [
     fsc: 15.0,
     total: 1437.5,
     submittedAt: "2025-01-14 12:38 PM",
+    notes: "High volume lane",
   },
   {
     id: 159,
@@ -2205,6 +2407,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 550,
     submittedAt: "2025-01-16 08:00 AM",
+    transitTime: "2-3 business days",
   },
   {
     id: 160,
@@ -2216,6 +2419,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 500,
     submittedAt: "2025-01-16 10:30 AM",
+    equipmentType: "53' Reefer",
   },
   {
     id: 161,
@@ -2227,6 +2431,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 250,
     submittedAt: "2025-01-16 01:15 PM",
+    companyName: "Pacific Northwest Haulers",
   },
   {
     id: 162,
@@ -2238,6 +2443,8 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 800,
     submittedAt: "2025-01-14 02:45 PM",
+    contactPhone: "(555) 321-0987",
+    insuranceCoverage: "$800,000",
   },
   {
     id: 163,
@@ -2249,6 +2456,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 400,
     submittedAt: "2025-01-14 01:30 PM",
+    specialRequirements: "Team drivers required",
   },
   {
     id: 164,
@@ -2260,6 +2468,7 @@ const MOCK_RATES = [
     fsc: 11.76,
     total: 475,
     submittedAt: "2025-01-14 10:20 AM",
+    notes: "Competitive pricing",
   },
   {
     id: 165,
@@ -2271,6 +2480,7 @@ const MOCK_RATES = [
     fsc: 11.36,
     total: 490,
     submittedAt: "2025-01-14 02:35 PM",
+    transitTime: "Same day",
   },
   {
     id: 166,
@@ -2282,6 +2492,7 @@ const MOCK_RATES = [
     fsc: 10.99,
     total: 202,
     submittedAt: "2025-01-14 09:45 AM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 167,
@@ -2293,6 +2504,7 @@ const MOCK_RATES = [
     fsc: 11.01,
     total: 242,
     submittedAt: "2025-01-14 11:50 AM",
+    companyName: "Mid-Atlantic Transport",
   },
   {
     id: 168,
@@ -2304,6 +2516,8 @@ const MOCK_RATES = [
     fsc: 10.64,
     total: 312,
     submittedAt: "2025-01-14 03:15 PM",
+    contactPhone: "(555) 987-3210",
+    insuranceCoverage: "$250,000",
   },
   {
     id: 169,
@@ -2315,6 +2529,7 @@ const MOCK_RATES = [
     fsc: 11.16,
     total: 498,
     submittedAt: "2025-01-14 08:30 AM",
+    specialRequirements: "Liftgate service needed",
   },
   {
     id: 170,
@@ -2326,6 +2541,7 @@ const MOCK_RATES = [
     fsc: 11.01,
     total: 353,
     submittedAt: "2025-01-14 10:40 AM",
+    notes: "Expedited delivery available",
   },
   {
     id: 171,
@@ -2337,6 +2553,7 @@ const MOCK_RATES = [
     fsc: 10.58,
     total: 418,
     submittedAt: "2025-01-14 01:55 PM",
+    transitTime: "2-3 business days",
   },
   {
     id: 172,
@@ -2348,6 +2565,7 @@ const MOCK_RATES = [
     fsc: 11.19,
     total: 298,
     submittedAt: "2025-01-14 03:20 PM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 173,
@@ -2359,6 +2577,7 @@ const MOCK_RATES = [
     fsc: 9.17,
     total: 238,
     submittedAt: "2025-01-14 09:10 AM",
+    companyName: "Great Lakes Freight",
   },
   {
     id: 174,
@@ -2370,6 +2589,8 @@ const MOCK_RATES = [
     fsc: 11.49,
     total: 388,
     submittedAt: "2025-01-14 11:25 AM",
+    contactPhone: "(555) 654-3210",
+    insuranceCoverage: "$350,000",
   },
   {
     id: 175,
@@ -2381,6 +2602,7 @@ const MOCK_RATES = [
     fsc: 10.46,
     total: 528,
     submittedAt: "2025-01-14 02:40 PM",
+    specialRequirements: "Team drivers required",
   },
   {
     id: 176,
@@ -2392,6 +2614,7 @@ const MOCK_RATES = [
     fsc: 13.51,
     total: 168,
     submittedAt: "2025-01-14 08:55 AM",
+    notes: "Local delivery, quick turnaround",
   },
   {
     id: 177,
@@ -2403,6 +2626,7 @@ const MOCK_RATES = [
     fsc: 12.58,
     total: 358,
     submittedAt: "2025-01-14 10:30 AM",
+    transitTime: "Same day",
   },
   {
     id: 178,
@@ -2414,6 +2638,7 @@ const MOCK_RATES = [
     fsc: 11.16,
     total: 498,
     submittedAt: "2025-01-14 01:15 PM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 179,
@@ -2425,6 +2650,7 @@ const MOCK_RATES = [
     fsc: 11.83,
     total: 378,
     submittedAt: "2025-01-14 09:35 AM",
+    companyName: "SoCal Logistics",
   },
   {
     id: 180,
@@ -2436,6 +2662,8 @@ const MOCK_RATES = [
     fsc: 11.15,
     total: 598,
     submittedAt: "2025-01-14 11:50 AM",
+    contactPhone: "(555) 123-4567",
+    insuranceCoverage: "$500,000",
   },
   {
     id: 181,
@@ -2447,6 +2675,7 @@ const MOCK_RATES = [
     fsc: 9.57,
     total: 458,
     submittedAt: "2025-01-14 10:05 AM",
+    specialRequirements: "Team drivers required",
   },
   {
     id: 182,
@@ -2458,6 +2687,7 @@ const MOCK_RATES = [
     fsc: 10.58,
     total: 418,
     submittedAt: "2025-01-14 02:20 PM",
+    notes: "Expedited delivery",
   },
   {
     id: 183,
@@ -2469,6 +2699,7 @@ const MOCK_RATES = [
     fsc: 10.42,
     total: 318,
     submittedAt: "2025-01-14 08:45 AM",
+    transitTime: "Next day",
   },
   {
     id: 184,
@@ -2480,6 +2711,7 @@ const MOCK_RATES = [
     fsc: 11.16,
     total: 498,
     submittedAt: "2025-01-14 11:10 AM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 185,
@@ -2491,6 +2723,7 @@ const MOCK_RATES = [
     fsc: 11.24,
     total: 198,
     submittedAt: "2025-01-14 01:35 PM",
+    companyName: "NY Metro Freight",
   },
   {
     id: 186,
@@ -2502,6 +2735,8 @@ const MOCK_RATES = [
     fsc: 10.58,
     total: 418,
     submittedAt: "2025-01-14 03:50 PM",
+    contactPhone: "(555) 789-0123",
+    insuranceCoverage: "$300,000",
   },
   {
     id: 187,
@@ -2513,6 +2748,7 @@ const MOCK_RATES = [
     fsc: 15.5,
     total: 298,
     submittedAt: "2025-01-14 09:25 AM",
+    specialRequirements: "Team drivers needed",
   },
   {
     id: 188,
@@ -2524,6 +2760,7 @@ const MOCK_RATES = [
     fsc: 10.64,
     total: 208,
     submittedAt: "2025-01-14 11:40 AM",
+    notes: "Local delivery, quick turnaround",
   },
   {
     id: 189,
@@ -2535,6 +2772,7 @@ const MOCK_RATES = [
     fsc: 10.58,
     total: 418,
     submittedAt: "2025-01-14 02:05 PM",
+    transitTime: "Same day",
   },
   {
     id: 190,
@@ -2546,6 +2784,7 @@ const MOCK_RATES = [
     fsc: 11.24,
     total: 198,
     submittedAt: "2025-01-14 08:20 AM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 191,
@@ -2557,6 +2796,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 600,
     submittedAt: "2025-01-12 11:20 AM",
+    companyName: "Midwest Trucking Co.",
   },
   {
     id: 192,
@@ -2568,6 +2808,8 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 500,
     submittedAt: "2025-01-12 02:45 PM",
+    contactPhone: "(555) 210-9876",
+    insuranceCoverage: "$400,000",
   },
   {
     id: 193,
@@ -2579,6 +2821,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 600,
     submittedAt: "2025-01-13 09:15 AM",
+    specialRequirements: "Team drivers required",
   },
   {
     id: 194,
@@ -2590,6 +2833,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 200,
     submittedAt: "2025-01-13 10:30 AM",
+    notes: "Local delivery",
   },
   {
     id: 195,
@@ -2601,6 +2845,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 100,
     submittedAt: "2025-01-13 01:50 PM",
+    transitTime: "1 hour",
   },
   {
     id: 196,
@@ -2612,6 +2857,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 150,
     submittedAt: "2025-01-13 03:25 PM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 197,
@@ -2623,6 +2869,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 100,
     submittedAt: "2025-01-14 08:40 AM",
+    companyName: "South Beach Freight",
   },
   {
     id: 198,
@@ -2634,6 +2881,8 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 600,
     submittedAt: "2025-01-14 11:15 AM",
+    contactPhone: "(555) 321-6543",
+    insuranceCoverage: "$700,000",
   },
   {
     id: 199,
@@ -2645,6 +2894,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 150,
     submittedAt: "2025-01-14 02:30 PM",
+    specialRequirements: "Team drivers required",
   },
   {
     id: 200,
@@ -2656,6 +2906,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 500,
     submittedAt: "2025-01-15 09:00 AM",
+    notes: "Expedited service available",
   },
   {
     id: 201,
@@ -2667,6 +2918,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 300,
     submittedAt: "2025-01-15 10:45 AM",
+    transitTime: "Next day",
   },
   {
     id: 202,
@@ -2678,6 +2930,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 350,
     submittedAt: "2025-01-15 01:20 PM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 203,
@@ -2689,6 +2942,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 400,
     submittedAt: "2025-01-15 03:55 PM",
+    companyName: "Hoosier Haulers",
   },
   {
     id: 204,
@@ -2700,6 +2954,8 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 250,
     submittedAt: "2025-01-16 08:10 AM",
+    contactPhone: "(555) 567-8901",
+    insuranceCoverage: "$200,000",
   },
   {
     id: 205,
@@ -2711,6 +2967,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 400,
     submittedAt: "2025-01-16 10:35 AM",
+    specialRequirements: "Team drivers required",
   },
   {
     id: 206,
@@ -2722,6 +2979,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 350,
     submittedAt: "2025-01-16 01:50 PM",
+    notes: "Expedited delivery available",
   },
   {
     id: 207,
@@ -2733,6 +2991,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 100,
     submittedAt: "2025-01-16 03:15 PM",
+    transitTime: "1-2 hours",
   },
   {
     id: 208,
@@ -2744,6 +3003,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 150,
     submittedAt: "2025-01-17 09:30 AM",
+    equipmentType: "53' Dry Van",
   },
   {
     id: 209,
@@ -2755,6 +3015,7 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 600,
     submittedAt: "2025-01-17 11:45 AM",
+    companyName: "Washington State Freight",
   },
   {
     id: 210,
@@ -2766,48 +3027,40 @@ const MOCK_RATES = [
     fsc: 11.11,
     total: 350,
     submittedAt: "2025-01-17 02:20 PM",
+    contactPhone: "(555) 789-1234",
+    insuranceCoverage: "$150,000",
   },
-];
+]
 
 export default function AdminRatesPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const selectedCity = searchParams.get("city");
+  const router = useRouter()
+  // Changed initial selectedCity to null to show all rates by default
+  const [selectedCity, setSelectedCity] = useState<string | null>(null)
+  const searchParams = useSearchParams() // Keep for potential future use, but selectedCity is now controlled by state
+  const [searchTerm, setSearchTerm] = useState("")
+  const [orderBy, setOrderBy] = useState<keyof RateData>("submittedAt")
+  const [order, setOrder] = useState<"asc" | "desc">("desc")
+  const [selectedDestination, setSelectedDestination] = useState<string | null>(null)
+  const [rates, setRates] = useState<RateData[]>([])
+  const [expandedRow, setExpandedRow] = useState<string | null>(null)
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [orderBy, setOrderBy] = useState<keyof RateData>("submittedAt");
-  const [order, setOrder] = useState<"asc" | "desc">("desc");
-  const [selectedDestination, setSelectedDestination] = useState<string | null>(
-    null
-  );
-  const [rates, setRates] = useState<RateData[]>([]);
-
-  const [openAddDestDialog, setOpenAddDestDialog] = useState(false);
-  const [newDestination, setNewDestination] = useState<string | null>(null);
-  const [newDestinationInput, setNewDestinationInput] = useState("");
+  const [openAddDestDialog, setOpenAddDestDialog] = useState(false)
+  const [newDestination, setNewDestination] = useState<string | null>(null)
+  const [newDestinationInput, setNewDestinationInput] = useState("")
 
   useEffect(() => {
     const loadRates = () => {
-      const submittedRates = JSON.parse(
-        localStorage.getItem("submittedRates") || "{}"
-      );
-      const ratesArray: RateData[] = [];
+      const submittedRates = JSON.parse(localStorage.getItem("submittedRates") || "{}")
+      const ratesArray: RateData[] = []
 
       Object.entries(submittedRates).forEach(([key, value]: [string, any]) => {
-        const [city, destId] = key.split("-");
-        const cityName = city.charAt(0).toUpperCase() + city.slice(1);
-        const destName =
-          DESTINATIONS[city]?.[Number.parseInt(destId)] || "Unknown";
+        const [city, destId] = key.split("-")
+        const cityName = city.charAt(0).toUpperCase() + city.slice(1)
+        const destName = DESTINATIONS[city]?.[Number.parseInt(destId)] || "Unknown"
 
-        const baseRate = Number.parseFloat(
-          value.baseRate?.replace(/[^0-9.]/g, "") || "0"
-        );
-        const fsc = Number.parseFloat(
-          value.fsc?.replace(/[^0-9.]/g, "") || "0"
-        );
-        const total = Number.parseFloat(
-          value.total?.replace(/[^0-9.]/g, "") || "0"
-        );
+        const baseRate = Number.parseFloat(value.baseRate?.replace(/[^0-9.]/g, "") || "0")
+        const fsc = Number.parseFloat(value.fsc?.replace(/[^0-9.]/g, "") || "0")
+        const total = Number.parseFloat(value.total?.replace(/[^0-9.]/g, "") || "0")
 
         ratesArray.push({
           id: key,
@@ -2826,96 +3079,94 @@ export default function AdminRatesPage() {
             minute: "2-digit",
             hour12: true,
           }),
-        });
-      });
+          // Add optional fields from value if available, otherwise undefined
+          notes: value.notes,
+          equipmentType: value.equipmentType,
+          transitTime: value.transitTime,
+          insuranceCoverage: value.insuranceCoverage,
+          specialRequirements: value.specialRequirements,
+          contactPhone: value.contactPhone,
+          companyName: value.companyName,
+        })
+      })
 
       // Combine MOCK_RATES with the loaded rates
-      const allRates = [...MOCK_RATES, ...ratesArray];
+      const allRates = [...MOCK_RATES, ...ratesArray]
 
       // Ensure unique IDs if necessary, or handle potential overlaps if mock and local storage can have same IDs
       const uniqueRates = allRates.reduce((acc, rate) => {
         if (!acc.some((r) => r.id === String(rate.id))) {
-          acc.push({ ...rate, id: String(rate.id) });
+          acc.push({ ...rate, id: String(rate.id) })
         }
-        return acc;
-      }, [] as RateData[]);
-      ``;
+        return acc
+      }, [] as RateData[])
 
-      setRates(uniqueRates);
-    };
+      setRates(uniqueRates)
+    }
 
-    loadRates();
-  }, []);
+    loadRates()
+  }, [])
 
   const handleSort = (property: keyof RateData) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-  };
+    const isAsc = orderBy === property && order === "asc"
+    setOrder(isAsc ? "desc" : "asc")
+    setOrderBy(property)
+  }
 
   const filteredRates = rates
     .filter((rate) => {
-      const matchesCity = selectedCity
-        ? rate.startCity.toLowerCase() === selectedCity.toLowerCase()
-        : true;
+      const matchesCity = selectedCity ? rate.startCity.toLowerCase() === selectedCity.toLowerCase() : true
       const matchesDestination =
-        selectedCity?.toLowerCase() === "atlanta" && selectedDestination
-          ? rate.endCity === selectedDestination
-          : true;
+        selectedCity?.toLowerCase() === "atlanta" && selectedDestination ? rate.endCity === selectedDestination : true
       const matchesSearch =
         rate.vendorId.toLowerCase().includes(searchTerm.toLowerCase()) ||
         rate.vendorEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
         rate.startCity.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        rate.endCity.toLowerCase().includes(searchTerm.toLowerCase());
+        rate.endCity.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (rate.companyName && rate.companyName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (rate.notes && rate.notes.toLowerCase().includes(searchTerm.toLowerCase()))
 
-      return matchesCity && matchesDestination && matchesSearch;
+      return matchesCity && matchesDestination && matchesSearch
     })
     .sort((a, b) => {
-      if (
-        selectedCity?.toLowerCase() === "atlanta" &&
-        orderBy === "submittedAt"
-      ) {
-        const destCompare = a.endCity.localeCompare(b.endCity);
-        if (destCompare !== 0) return destCompare;
+      // Special sorting for Atlanta destinations
+      if (selectedCity?.toLowerCase() === "atlanta" && orderBy === "submittedAt") {
+        const destCompare = a.endCity.localeCompare(b.endCity)
+        if (destCompare !== 0) return destCompare
+        // If destinations are the same, sort by submittedAt
         return order === "asc"
-          ? a.submittedAt.localeCompare(b.submittedAt)
-          : b.submittedAt.localeCompare(a.submittedAt);
+          ? new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime()
+          : new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
       }
 
-      const aValue = a[orderBy];
-      const bValue = b[orderBy];
+      // General sorting
+      const aValue = a[orderBy]
+      const bValue = b[orderBy]
 
       if (typeof aValue === "string" && typeof bValue === "string") {
-        return order === "asc"
-          ? aValue.localeCompare(bValue)
-          : bValue.localeCompare(aValue);
+        return order === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue)
       }
 
       if (typeof aValue === "number" && typeof bValue === "number") {
-        return order === "asc" ? aValue - bValue : bValue - aValue;
+        return order === "asc" ? aValue - bValue : bValue - aValue
       }
 
-      return 0;
-    });
+      // Handle cases where orderBy might not be applicable to all types or is missing
+      return 0
+    })
 
   const atlantaDestinations =
     selectedCity?.toLowerCase() === "atlanta"
-      ? Array.from(
-          new Set(
-            rates
-              .filter((r) => r.startCity.toLowerCase() === "atlanta")
-              .map((r) => r.endCity)
-          )
-        ).sort()
-      : [];
+      ? Array.from(new Set(rates.filter((r) => r.startCity.toLowerCase() === "atlanta").map((r) => r.endCity))).sort()
+      : []
 
   const handleExport = () => {
-    alert("Exporting rates to CSV...");
-  };
+    alert("Exporting rates to CSV...")
+  }
 
   const handleLogout = () => {
-    router.push("/");
-  };
+    router.push("/")
+  }
 
   const handleAddDestination = () => {
     if (newDestination && selectedCity) {
@@ -2937,30 +3188,45 @@ export default function AdminRatesPage() {
           minute: "2-digit",
           hour12: true,
         }),
-      };
+      }
 
-      const updatedRates = [...rates, newRate];
-      setRates(updatedRates);
+      const updatedRates = [...rates, newRate]
+      setRates(updatedRates)
 
-      setNewDestination(null);
-      setNewDestinationInput("");
-      setOpenAddDestDialog(false);
+      setNewDestination(null)
+      setNewDestinationInput("")
+      setOpenAddDestDialog(false)
     }
-  };
+  }
+
+  const handleRowClick = (rateId: string) => {
+    setExpandedRow(expandedRow === rateId ? null : rateId)
+  }
+
+  const hasOptionalDetails = (rate: RateData) => {
+    return !!(
+      rate.notes ||
+      rate.equipmentType ||
+      rate.transitTime ||
+      rate.insuranceCoverage ||
+      rate.specialRequirements ||
+      rate.contactPhone ||
+      rate.companyName
+    )
+  }
 
   return (
     <PageContainer>
       <Header>
         <HeaderContent>
           <LogoCircle>
-            <Truck
-              style={{ width: "1.5rem", height: "1.5rem", color: "white" }}
-            />
+            <Truck style={{ width: "1.5rem", height: "1.5rem", color: "white" }} />
           </LogoCircle>
           <HeaderText>
             <HeaderTitle>Vendor Bid Portal</HeaderTitle>
             <HeaderSubtitle>
-              Admin - Rate Management{selectedCity && ` - ${selectedCity}`}
+              Admin - Rate Management
+              {selectedCity && ` - ${selectedCity}`}
             </HeaderSubtitle>
           </HeaderText>
         </HeaderContent>
@@ -3018,10 +3284,8 @@ export default function AdminRatesPage() {
                 <DestinationList>
                   {atlantaDestinations.map((dest) => {
                     const count = rates.filter(
-                      (r) =>
-                        r.startCity.toLowerCase() === "atlanta" &&
-                        r.endCity === dest
-                    ).length;
+                      (r) => r.startCity.toLowerCase() === "atlanta" && r.endCity === dest,
+                    ).length
                     return (
                       <DestinationButton
                         key={dest}
@@ -3029,13 +3293,11 @@ export default function AdminRatesPage() {
                         $selected={selectedDestination === dest}
                       >
                         <DestinationName>{dest}</DestinationName>
-                        <DestinationCount
-                          $selected={selectedDestination === dest}
-                        >
+                        <DestinationCount $selected={selectedDestination === dest}>
                           {count} {count === 1 ? "rate" : "rates"}
                         </DestinationCount>
                       </DestinationButton>
-                    );
+                    )
                   })}
                 </DestinationList>
               </Sidebar>
@@ -3058,7 +3320,7 @@ export default function AdminRatesPage() {
                 <SearchContainer>
                   <TextField
                     fullWidth
-                    placeholder="Search by vendor ID, email ..."
+                    placeholder="Search by vendor ID, email, company name..." // Added company name to placeholder
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     InputProps={{
@@ -3079,11 +3341,7 @@ export default function AdminRatesPage() {
                 </SearchContainer>
 
                 <TableWrapper>
-                  <TableContainer
-                    component={Paper}
-                    variant="outlined"
-                    sx={{ height: "100%" }}
-                  >
+                  <TableContainer component={Paper} variant="outlined" sx={{ height: "100%" }}>
                     <Table stickyHeader>
                       <TableHead>
                         <TableRow sx={{ backgroundColor: "rgb(248 250 252)" }}>
@@ -3099,9 +3357,7 @@ export default function AdminRatesPage() {
                           <TableCell sx={{ fontWeight: 700 }}>
                             <TableSortLabel
                               active={orderBy === "vendorEmail"}
-                              direction={
-                                orderBy === "vendorEmail" ? order : "asc"
-                              }
+                              direction={orderBy === "vendorEmail" ? order : "asc"}
                               onClick={() => handleSort("vendorEmail")}
                             >
                               Email
@@ -3119,9 +3375,7 @@ export default function AdminRatesPage() {
                           <TableCell sx={{ fontWeight: 700 }}>
                             <TableSortLabel
                               active={orderBy === "submittedAt"}
-                              direction={
-                                orderBy === "submittedAt" ? order : "asc"
-                              }
+                              direction={orderBy === "submittedAt" ? order : "asc"}
                               onClick={() => handleSort("submittedAt")}
                             >
                               Submitted
@@ -3154,80 +3408,262 @@ export default function AdminRatesPage() {
                               Total
                             </TableSortLabel>
                           </TableCell>
+                          {/* Added an empty header cell for the expand/collapse icon */}
+                          <TableCell />
                         </TableRow>
                       </TableHead>
                       <TableBody>
                         {filteredRates.map((rate) => (
-                          <TableRow key={rate.id} hover>
-                            <TableCell
+                          <React.Fragment key={rate.id}>
+                            <TableRow
+                              hover
+                              onClick={() => handleRowClick(rate.id)}
                               sx={{
-                                fontFamily: "monospace",
-                                fontSize: "0.875rem",
+                                cursor: hasOptionalDetails(rate) ? "pointer" : "default",
+                                backgroundColor: expandedRow === rate.id ? "rgb(239 246 255)" : "inherit",
+                                "& > *": { borderBottom: "unset" },
                               }}
                             >
-                              {rate.vendorId}
-                            </TableCell>
-                            <TableCell>{rate.vendorEmail}</TableCell>
-                            <TableCell>{rate.endCity}</TableCell>
-                            <TableCell
-                              sx={{
-                                fontSize: "0.875rem",
-                                color: "rgb(71 85 105)",
-                              }}
-                            >
-                              {rate.submittedAt}
-                            </TableCell>
-                            <TableCell align="right">
-                              ${rate.baseRate.toFixed(2)}
-                            </TableCell>
-                            <TableCell align="right">
-                              {rate.fsc.toFixed(2)}%
-                            </TableCell>
-                            <TableCell align="right">
-                              <span
-                                style={{
-                                  fontWeight: 700,
-                                  color: "rgb(37 99 235)",
+                              <TableCell
+                                sx={{
+                                  fontFamily: "monospace",
+                                  fontSize: "0.875rem",
                                 }}
                               >
-                                ${rate.total.toFixed(2)}
-                              </span>
-                            </TableCell>
-                          </TableRow>
+                                {rate.vendorId}
+                              </TableCell>
+                              <TableCell>{rate.vendorEmail}</TableCell>
+                              <TableCell>{rate.endCity}</TableCell>
+                              <TableCell
+                                sx={{
+                                  fontSize: "0.875rem",
+                                  color: "rgb(71 85 105)",
+                                }}
+                              >
+                                {rate.submittedAt}
+                              </TableCell>
+                              <TableCell align="right">${rate.baseRate.toFixed(2)}</TableCell>
+                              <TableCell align="right">{rate.fsc.toFixed(2)}%</TableCell>
+                              <TableCell align="right">
+                                <span
+                                  style={{
+                                    fontWeight: 700,
+                                    color: "rgb(37 99 235)",
+                                  }}
+                                >
+                                  ${rate.total.toFixed(2)}
+                                </span>
+                              </TableCell>
+                              {/* Added IconButton for collapsing/expanding row */}
+                              <TableCell>
+                                {hasOptionalDetails(rate) && (
+                                  <IconButton size="small" onClick={() => handleRowClick(rate.id)}>
+                                    <ChevronDown
+                                      size={18}
+                                      style={{
+                                        transform: expandedRow === rate.id ? "rotate(180deg)" : "rotate(0deg)",
+                                        transition: "transform 0.2s ease",
+                                      }}
+                                    />
+                                  </IconButton>
+                                )}
+                              </TableCell>
+                            </TableRow>
+                            {hasOptionalDetails(rate) && (
+                              <TableRow>
+                                <TableCell
+                                  style={{ paddingBottom: 0, paddingTop: 0 }}
+                                  colSpan={8} // Increased colSpan to accommodate the new expand/collapse cell
+                                >
+                                  <Collapse in={expandedRow === rate.id} timeout="auto" unmountOnExit>
+                                    <Box sx={{ margin: 2 }}>
+                                      <Typography
+                                        variant="h6"
+                                        gutterBottom
+                                        component="div"
+                                        sx={{
+                                          fontWeight: 600,
+                                          color: "rgb(15 23 42)",
+                                          marginBottom: 2,
+                                        }}
+                                      >
+                                        Additional Bid Details
+                                      </Typography>
+                                      <Box
+                                        sx={{
+                                          display: "grid",
+                                          gridTemplateColumns: {
+                                            xs: "1fr",
+                                            sm: "1fr 1fr",
+                                            md: "1fr 1fr 1fr",
+                                          },
+                                          gap: 2,
+                                        }}
+                                      >
+                                        {rate.companyName && (
+                                          <Box>
+                                            <Typography
+                                              variant="body2"
+                                              sx={{
+                                                fontWeight: 600,
+                                                color: "rgb(71 85 105)",
+                                                marginBottom: 0.5,
+                                              }}
+                                            >
+                                              Company Name
+                                            </Typography>
+                                            <Typography variant="body2">{rate.companyName}</Typography>
+                                          </Box>
+                                        )}
+                                        {rate.equipmentType && (
+                                          <Box>
+                                            <Typography
+                                              variant="body2"
+                                              sx={{
+                                                fontWeight: 600,
+                                                color: "rgb(71 85 105)",
+                                                marginBottom: 0.5,
+                                              }}
+                                            >
+                                              Equipment Type
+                                            </Typography>
+                                            <Typography variant="body2">{rate.equipmentType}</Typography>
+                                          </Box>
+                                        )}
+                                        {rate.transitTime && (
+                                          <Box>
+                                            <Typography
+                                              variant="body2"
+                                              sx={{
+                                                fontWeight: 600,
+                                                color: "rgb(71 85 105)",
+                                                marginBottom: 0.5,
+                                              }}
+                                            >
+                                              Transit Time
+                                            </Typography>
+                                            <Typography variant="body2">{rate.transitTime}</Typography>
+                                          </Box>
+                                        )}
+                                        {rate.insuranceCoverage && (
+                                          <Box>
+                                            <Typography
+                                              variant="body2"
+                                              sx={{
+                                                fontWeight: 600,
+                                                color: "rgb(71 85 105)",
+                                                marginBottom: 0.5,
+                                              }}
+                                            >
+                                              Insurance Coverage
+                                            </Typography>
+                                            <Typography variant="body2">{rate.insuranceCoverage}</Typography>
+                                          </Box>
+                                        )}
+                                        {rate.contactPhone && (
+                                          <Box>
+                                            <Typography
+                                              variant="body2"
+                                              sx={{
+                                                fontWeight: 600,
+                                                color: "rgb(71 85 105)",
+                                                marginBottom: 0.5,
+                                              }}
+                                            >
+                                              Contact Phone
+                                            </Typography>
+                                            <Typography variant="body2">{rate.contactPhone}</Typography>
+                                          </Box>
+                                        )}
+                                        {rate.specialRequirements && (
+                                          <Box>
+                                            <Typography
+                                              variant="body2"
+                                              sx={{
+                                                fontWeight: 600,
+                                                color: "rgb(71 85 105)",
+                                                marginBottom: 0.5,
+                                              }}
+                                            >
+                                              Special Requirements
+                                            </Typography>
+                                            <Typography variant="body2">{rate.specialRequirements}</Typography>
+                                          </Box>
+                                        )}
+                                      </Box>
+                                      {rate.notes && (
+                                        <Box sx={{ marginTop: 2 }}>
+                                          <Typography
+                                            variant="body2"
+                                            sx={{
+                                              fontWeight: 600,
+                                              color: "rgb(71 85 105)",
+                                              marginBottom: 0.5,
+                                            }}
+                                          >
+                                            Notes
+                                          </Typography>
+                                          <Typography
+                                            variant="body2"
+                                            sx={{
+                                              padding: 1.5,
+                                              backgroundColor: "rgb(248 250 252)",
+                                              borderRadius: 1,
+                                            }}
+                                          >
+                                            {rate.notes}
+                                          </Typography>
+                                        </Box>
+                                      )}
+                                    </Box>
+                                  </Collapse>
+                                </TableCell>
+                              </TableRow>
+                            )}
+                          </React.Fragment>
                         ))}
                       </TableBody>
                     </Table>
                   </TableContainer>
                 </TableWrapper>
 
-                {filteredRates.length === 0 && (
-                  <EmptyState>
-                    No rates found matching your search criteria
-                  </EmptyState>
-                )}
+                {filteredRates.length === 0 && <EmptyState>No rates found matching your search criteria</EmptyState>}
               </ContentCard>
             </GridContainer>
           ) : (
             <ContentCard>
               <CardHeader>
                 <CardHeaderText>
-                  <CardTitle>
-                    {selectedCity
-                      ? `${selectedCity} Vendor Rates`
-                      : "All Vendor Rates"}
-                  </CardTitle>
+                  <CardTitle>{selectedCity ? `${selectedCity} Vendor Rates` : "All Vendor Rates"}</CardTitle>
                   <CardDescription>
                     {selectedCity
                       ? `View and manage bids starting from ${selectedCity}`
                       : "View and manage all submitted vendor bids"}
                   </CardDescription>
                 </CardHeaderText>
+                {/* Export button moved here */}
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<Download style={{ width: "1rem", height: "1rem" }} />}
+                  onClick={handleExport}
+                  sx={{
+                    borderColor: "rgb(148 163 184)",
+                    color: "rgb(71 85 105)",
+                    "&:hover": {
+                      borderColor: "rgb(100 116 139)",
+                      backgroundColor: "rgb(248 250 252)",
+                    },
+                  }}
+                >
+                  Export
+                </Button>
               </CardHeader>
 
               <SearchContainer>
                 <TextField
                   fullWidth
-                  placeholder="Search by vendor ID, email..."
+                  placeholder="Search by vendor ID, email, company name..." // Added company name to placeholder
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   InputProps={{
@@ -3264,9 +3700,7 @@ export default function AdminRatesPage() {
                         <TableCell sx={{ fontWeight: 700 }}>
                           <TableSortLabel
                             active={orderBy === "vendorEmail"}
-                            direction={
-                              orderBy === "vendorEmail" ? order : "asc"
-                            }
+                            direction={orderBy === "vendorEmail" ? order : "asc"}
                             onClick={() => handleSort("vendorEmail")}
                           >
                             Email
@@ -3276,9 +3710,7 @@ export default function AdminRatesPage() {
                           <TableCell sx={{ fontWeight: 700 }}>
                             <TableSortLabel
                               active={orderBy === "startCity"}
-                              direction={
-                                orderBy === "startCity" ? order : "asc"
-                              }
+                              direction={orderBy === "startCity" ? order : "asc"}
                               onClick={() => handleSort("startCity")}
                             >
                               Start City
@@ -3297,9 +3729,7 @@ export default function AdminRatesPage() {
                         <TableCell sx={{ fontWeight: 700 }}>
                           <TableSortLabel
                             active={orderBy === "submittedAt"}
-                            direction={
-                              orderBy === "submittedAt" ? order : "asc"
-                            }
+                            direction={orderBy === "submittedAt" ? order : "asc"}
                             onClick={() => handleSort("submittedAt")}
                           >
                             Submitted
@@ -3332,60 +3762,227 @@ export default function AdminRatesPage() {
                             Total
                           </TableSortLabel>
                         </TableCell>
+                        {/* Added an empty header cell for the expand/collapse icon */}
+                        <TableCell />
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {filteredRates.map((rate) => (
-                        <TableRow key={rate.id} hover>
-                          <TableCell
+                        <React.Fragment key={rate.id}>
+                          <TableRow
+                            hover
+                            onClick={() => handleRowClick(rate.id)}
                             sx={{
-                              fontFamily: "monospace",
-                              fontSize: "0.875rem",
+                              cursor: hasOptionalDetails(rate) ? "pointer" : "default",
+                              backgroundColor: expandedRow === rate.id ? "rgb(239 246 255)" : "inherit",
+                              "& > *": { borderBottom: "unset" },
                             }}
                           >
-                            {rate.vendorId}
-                          </TableCell>
-                          <TableCell>{rate.vendorEmail}</TableCell>
-                          {!selectedCity && (
-                            <TableCell>{rate.startCity}</TableCell>
-                          )}
-                          <TableCell>{rate.endCity}</TableCell>
-                          <TableCell
-                            sx={{
-                              fontSize: "0.875rem",
-                              color: "rgb(71 85 105)",
-                            }}
-                          >
-                            {rate.submittedAt}
-                          </TableCell>
-                          <TableCell align="right">
-                            ${rate.baseRate.toFixed(2)}
-                          </TableCell>
-                          <TableCell align="right">
-                            {rate.fsc.toFixed(2)}%
-                          </TableCell>
-                          <TableCell align="right">
-                            <span
-                              style={{
-                                fontWeight: 700,
-                                color: "rgb(37 99 235)",
+                            <TableCell
+                              sx={{
+                                fontFamily: "monospace",
+                                fontSize: "0.875rem",
                               }}
                             >
-                              ${rate.total.toFixed(2)}
-                            </span>
-                          </TableCell>
-                        </TableRow>
+                              {rate.vendorId}
+                            </TableCell>
+                            <TableCell>{rate.vendorEmail}</TableCell>
+                            {!selectedCity && <TableCell>{rate.startCity}</TableCell>}
+                            <TableCell>{rate.endCity}</TableCell>
+                            <TableCell
+                              sx={{
+                                fontSize: "0.875rem",
+                                color: "rgb(71 85 105)",
+                              }}
+                            >
+                              {rate.submittedAt}
+                            </TableCell>
+                            <TableCell align="right">${rate.baseRate.toFixed(2)}</TableCell>
+                            <TableCell align="right">{rate.fsc.toFixed(2)}%</TableCell>
+                            <TableCell align="right">
+                              <span
+                                style={{
+                                  fontWeight: 700,
+                                  color: "rgb(37 99 235)",
+                                }}
+                              >
+                                ${rate.total.toFixed(2)}
+                              </span>
+                            </TableCell>
+                            {/* Added IconButton for collapsing/expanding row */}
+                            <TableCell>
+                              {hasOptionalDetails(rate) && (
+                                <IconButton size="small" onClick={() => handleRowClick(rate.id)}>
+                                  <ChevronDown
+                                    size={18}
+                                    style={{
+                                      transform: expandedRow === rate.id ? "rotate(180deg)" : "rotate(0deg)",
+                                      transition: "transform 0.2s ease",
+                                    }}
+                                  />
+                                </IconButton>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                          {hasOptionalDetails(rate) && (
+                            <TableRow>
+                              <TableCell
+                                style={{ paddingBottom: 0, paddingTop: 0 }}
+                                colSpan={9} // Increased colSpan to accommodate the new expand/collapse cell
+                              >
+                                <Collapse in={expandedRow === rate.id} timeout="auto" unmountOnExit>
+                                  <Box sx={{ margin: 2 }}>
+                                    <Typography
+                                      variant="h6"
+                                      gutterBottom
+                                      component="div"
+                                      sx={{
+                                        fontWeight: 600,
+                                        color: "rgb(15 23 42)",
+                                        marginBottom: 2,
+                                      }}
+                                    >
+                                      Additional Bid Details
+                                    </Typography>
+                                    <Box
+                                      sx={{
+                                        display: "grid",
+                                        gridTemplateColumns: {
+                                          xs: "1fr",
+                                          sm: "1fr 1fr",
+                                          md: "1fr 1fr 1fr",
+                                        },
+                                        gap: 2,
+                                      }}
+                                    >
+                                      {rate.companyName && (
+                                        <Box>
+                                          <Typography
+                                            variant="body2"
+                                            sx={{
+                                              fontWeight: 600,
+                                              color: "rgb(71 85 105)",
+                                              marginBottom: 0.5,
+                                            }}
+                                          >
+                                            Company Name
+                                          </Typography>
+                                          <Typography variant="body2">{rate.companyName}</Typography>
+                                        </Box>
+                                      )}
+                                      {rate.equipmentType && (
+                                        <Box>
+                                          <Typography
+                                            variant="body2"
+                                            sx={{
+                                              fontWeight: 600,
+                                              color: "rgb(71 85 105)",
+                                              marginBottom: 0.5,
+                                            }}
+                                          >
+                                            Equipment Type
+                                          </Typography>
+                                          <Typography variant="body2">{rate.equipmentType}</Typography>
+                                        </Box>
+                                      )}
+                                      {rate.transitTime && (
+                                        <Box>
+                                          <Typography
+                                            variant="body2"
+                                            sx={{
+                                              fontWeight: 600,
+                                              color: "rgb(71 85 105)",
+                                              marginBottom: 0.5,
+                                            }}
+                                          >
+                                            Transit Time
+                                          </Typography>
+                                          <Typography variant="body2">{rate.transitTime}</Typography>
+                                        </Box>
+                                      )}
+                                      {rate.insuranceCoverage && (
+                                        <Box>
+                                          <Typography
+                                            variant="body2"
+                                            sx={{
+                                              fontWeight: 600,
+                                              color: "rgb(71 85 105)",
+                                              marginBottom: 0.5,
+                                            }}
+                                          >
+                                            Insurance Coverage
+                                          </Typography>
+                                          <Typography variant="body2">{rate.insuranceCoverage}</Typography>
+                                        </Box>
+                                      )}
+                                      {rate.contactPhone && (
+                                        <Box>
+                                          <Typography
+                                            variant="body2"
+                                            sx={{
+                                              fontWeight: 600,
+                                              color: "rgb(71 85 105)",
+                                              marginBottom: 0.5,
+                                            }}
+                                          >
+                                            Contact Phone
+                                          </Typography>
+                                          <Typography variant="body2">{rate.contactPhone}</Typography>
+                                        </Box>
+                                      )}
+                                      {rate.specialRequirements && (
+                                        <Box>
+                                          <Typography
+                                            variant="body2"
+                                            sx={{
+                                              fontWeight: 600,
+                                              color: "rgb(71 85 105)",
+                                              marginBottom: 0.5,
+                                            }}
+                                          >
+                                            Special Requirements
+                                          </Typography>
+                                          <Typography variant="body2">{rate.specialRequirements}</Typography>
+                                        </Box>
+                                      )}
+                                    </Box>
+                                    {rate.notes && (
+                                      <Box sx={{ marginTop: 2 }}>
+                                        <Typography
+                                          variant="body2"
+                                          sx={{
+                                            fontWeight: 600,
+                                            color: "rgb(71 85 105)",
+                                            marginBottom: 0.5,
+                                          }}
+                                        >
+                                          Notes
+                                        </Typography>
+                                        <Typography
+                                          variant="body2"
+                                          sx={{
+                                            padding: 1.5,
+                                            backgroundColor: "rgb(248 250 252)",
+                                            borderRadius: 1,
+                                          }}
+                                        >
+                                          {rate.notes}
+                                        </Typography>
+                                      </Box>
+                                    )}
+                                  </Box>
+                                </Collapse>
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </React.Fragment>
                       ))}
                     </TableBody>
                   </Table>
                 </TableContainer>
               </TableWrapper>
 
-              {filteredRates.length === 0 && (
-                <EmptyState>
-                  No rates found matching your search criteria
-                </EmptyState>
-              )}
+              {filteredRates.length === 0 && <EmptyState>No rates found matching your search criteria</EmptyState>}
 
               <TableFooter>
                 Showing {filteredRates.length} of {rates.length} total rates
@@ -3395,12 +3992,7 @@ export default function AdminRatesPage() {
         </Container>
       </Main>
 
-      <Dialog
-        open={openAddDestDialog}
-        onClose={() => setOpenAddDestDialog(false)}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={openAddDestDialog} onClose={() => setOpenAddDestDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Add New Destination</DialogTitle>
         <DialogContent>
           <div style={{ paddingTop: "1rem" }}>
@@ -3409,52 +4001,37 @@ export default function AdminRatesPage() {
               value={newDestination}
               inputValue={newDestinationInput}
               onInputChange={(event, newInputValue) => {
-                setNewDestinationInput(newInputValue);
+                setNewDestinationInput(newInputValue)
               }}
               onChange={(event, newValue) => {
-                setNewDestination(newValue);
+                setNewDestination(newValue)
               }}
               renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Destination Route"
-                  placeholder="Type at least 3 characters..."
-                />
+                <TextField {...params} label="Destination Route" placeholder="Type at least 3 characters..." />
               )}
               filterOptions={(options, state) => {
-                if (state.inputValue.length < 3) return [];
-                return options.filter((option) =>
-                  option.toLowerCase().includes(state.inputValue.toLowerCase())
-                );
+                if (state.inputValue.length < 3) return []
+                return options.filter((option) => option.toLowerCase().includes(state.inputValue.toLowerCase()))
               }}
-              noOptionsText={
-                newDestinationInput.length < 3
-                  ? "Type at least 3 characters"
-                  : "No cities found"
-              }
+              noOptionsText={newDestinationInput.length < 3 ? "Type at least 3 characters" : "No cities found"}
             />
           </div>
         </DialogContent>
         <DialogActions>
           <Button
             onClick={() => {
-              setOpenAddDestDialog(false);
-              setNewDestination(null);
-              setNewDestinationInput("");
+              setOpenAddDestDialog(false)
+              setNewDestination(null)
+              setNewDestinationInput("")
             }}
           >
             Cancel
           </Button>
-          <Button
-            onClick={handleAddDestination}
-            variant="contained"
-            color="primary"
-            disabled={!newDestination}
-          >
+          <Button onClick={handleAddDestination} variant="contained" color="primary" disabled={!newDestination}>
             Submit
           </Button>
         </DialogActions>
       </Dialog>
     </PageContainer>
-  );
+  )
 }
