@@ -1,17 +1,32 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
-import styled from "styled-components"
-import { Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material"
-import { Truck, ArrowLeft, Trash2, ChevronDown, ChevronUp, Upload, Ban } from "lucide-react"
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import styled from "styled-components";
+import {
+  Button,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
+import {
+  Truck,
+  ArrowLeft,
+  Trash2,
+  ChevronDown,
+  ChevronUp,
+  Upload,
+  Ban,
+} from "lucide-react";
 
 const PageContainer = styled.div`
   min-height: 100vh;
   background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-`
+`;
 
 const Header = styled.header`
   background: white;
@@ -20,13 +35,13 @@ const Header = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`
+`;
 
 const HeaderLeft = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
-`
+`;
 
 const Logo = styled.div`
   width: 3rem;
@@ -37,7 +52,7 @@ const Logo = styled.div`
   align-items: center;
   justify-content: center;
   color: white;
-`
+`;
 
 const HeaderTitle = styled.div`
   h1 {
@@ -51,7 +66,7 @@ const HeaderTitle = styled.div`
     color: #64748b;
     margin: 0;
   }
-`
+`;
 
 const BackButton = styled.button`
   display: flex;
@@ -70,20 +85,20 @@ const BackButton = styled.button`
     background: #f8fafc;
     border-color: #cbd5e1;
   }
-`
+`;
 
 const Main = styled.main`
   padding: 2rem;
   max-width: 1400px;
   margin: 0 auto;
-`
+`;
 
 const PageHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 2rem;
-`
+`;
 
 const PageTitleSection = styled.div`
   h2 {
@@ -97,7 +112,7 @@ const PageTitleSection = styled.div`
     color: #64748b;
     margin: 0;
   }
-`
+`;
 
 const AddButton = styled.button`
   display: flex;
@@ -117,14 +132,14 @@ const AddButton = styled.button`
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
   }
-`
+`;
 
 const VendorsCard = styled.div`
   background: white;
   border-radius: 1rem;
   padding: 2rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-`
+`;
 
 const TableContainer = styled.div`
   max-height: 65vh;
@@ -148,17 +163,17 @@ const TableContainer = styled.div`
   &::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
   }
-`
+`;
 
 const VendorsTable = styled.table`
   width: 100%;
   border-collapse: collapse;
-`
+`;
 
 const TableHeader = styled.thead`
   background: #f8fafc;
   border-bottom: 2px solid #e2e8f0;
-`
+`;
 
 const TableHeaderCell = styled.th`
   padding: 1rem;
@@ -168,9 +183,9 @@ const TableHeaderCell = styled.th`
   color: #334155;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-`
+`;
 
-const TableBody = styled.tbody``
+const TableBody = styled.tbody``;
 
 const TableRow = styled.tr`
   border-bottom: 1px solid #e2e8f0;
@@ -179,23 +194,23 @@ const TableRow = styled.tr`
   &:hover {
     background: #f8fafc;
   }
-`
+`;
 
 const TableCell = styled.td`
   padding: 1rem;
   color: #0f172a;
-`
+`;
 
 const VendorName = styled.div`
   font-weight: 600;
   color: #0f172a;
-`
+`;
 
 const VendorEmail = styled.div`
   font-size: 0.875rem;
   color: #64748b;
   margin-top: 0.25rem;
-`
+`;
 
 const StatusBadge = styled.span<{ $status: string }>`
   display: inline-block;
@@ -204,21 +219,21 @@ const StatusBadge = styled.span<{ $status: string }>`
   font-size: 0.75rem;
   font-weight: 600;
   background: ${(props) => {
-    if (props.$status === "active") return "#d1fae5"
-    if (props.$status === "banned") return "#fecaca"
-    return "#fee2e2"
+    if (props.$status === "active") return "#d1fae5";
+    if (props.$status === "banned") return "#e9d5ff";
+    return "#fee2e2";
   }};
   color: ${(props) => {
-    if (props.$status === "active") return "#065f46"
-    if (props.$status === "banned") return "#7f1d1d"
-    return "#991b1b"
+    if (props.$status === "active") return "#065f46";
+    if (props.$status === "banned") return "#581c87";
+    return "#991b1b";
   }};
-`
+`;
 
 const ActionButtons = styled.div`
   display: flex;
   gap: 0.5rem;
-`
+`;
 
 const IconButton = styled.button`
   padding: 0.5rem;
@@ -243,7 +258,7 @@ const IconButton = styled.button`
     border-color: #fca5a5;
     color: #991b1b;
   }
-`
+`;
 
 const EmptyState = styled.div`
   text-align: center;
@@ -261,28 +276,29 @@ const EmptyState = styled.div`
     margin: 0;
     font-size: 0.875rem;
   }
-`
+`;
 
 const AccordionRow = styled.tr<{ $isOpen: boolean }>`
   background: ${(props) => (props.$isOpen ? "#f8fafc" : "transparent")};
-`
+`;
 
 const AccordionCell = styled.td`
   padding: 0 !important;
-  border-bottom: ${(props) => (props.colSpan ? "2px solid #e2e8f0" : "1px solid #e2e8f0")};
-`
+  border-bottom: ${(props) =>
+    props.colSpan ? "2px solid #e2e8f0" : "1px solid #e2e8f0"};
+`;
 
 const AccordionContent = styled.div<{ $isOpen: boolean }>`
   max-height: ${(props) => (props.$isOpen ? "400px" : "0")};
   overflow: hidden;
   transition: max-height 0.3s ease-in-out;
-`
+`;
 
 const HistoryContainer = styled.div`
   padding: 1.5rem;
   background: #ffffff;
   border-top: 2px solid #e2e8f0;
-`
+`;
 
 const HistoryHeader = styled.div`
   display: flex;
@@ -294,7 +310,7 @@ const HistoryHeader = styled.div`
   color: #334155;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-`
+`;
 
 const HistoryScrollContainer = styled.div`
   max-height: 300px;
@@ -318,38 +334,38 @@ const HistoryScrollContainer = styled.div`
   &::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
   }
-`
+`;
 
 const HistoryList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-`
+`;
 
 const HistoryItem = styled.div`
   padding: 1rem;
   background: #f8fafc;
   border-radius: 0.5rem;
   border-left: 4px solid #2563eb;
-`
+`;
 
 const HistoryItemHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.5rem;
-`
+`;
 
 const HistoryRoute = styled.div`
   font-weight: 600;
   color: #0f172a;
   font-size: 0.875rem;
-`
+`;
 
 const HistoryDate = styled.div`
   font-size: 0.75rem;
   color: #64748b;
-`
+`;
 
 const HistoryDetails = styled.div`
   display: flex;
@@ -365,7 +381,7 @@ const HistoryDetails = styled.div`
       color: #0f172a;
     }
   }
-`
+`;
 
 const ToggleButton = styled.button`
   padding: 0.5rem;
@@ -384,14 +400,14 @@ const ToggleButton = styled.button`
     border-color: #cbd5e1;
     color: #334155;
   }
-`
+`;
 
 const EmptyHistory = styled.div`
   text-align: center;
   padding: 2rem;
   color: #94a3b8;
   font-size: 0.875rem;
-`
+`;
 
 const BanButton = styled.button`
   padding: 0.5rem;
@@ -410,14 +426,14 @@ const BanButton = styled.button`
     border-color: #f87171;
     color: #991b1b;
   }
-`
+`;
 
 const EmailInputSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
   margin-top: 1rem;
-`
+`;
 
 const EmailChipsContainer = styled.div`
   display: flex;
@@ -428,7 +444,7 @@ const EmailChipsContainer = styled.div`
   border-radius: 0.5rem;
   min-height: 3rem;
   background: #f8fafc;
-`
+`;
 
 const EmailChip = styled.div`
   display: flex;
@@ -440,7 +456,7 @@ const EmailChip = styled.div`
   border-radius: 9999px;
   font-size: 0.875rem;
   font-weight: 500;
-`
+`;
 
 const RemoveChipButton = styled.button`
   background: none;
@@ -456,7 +472,7 @@ const RemoveChipButton = styled.button`
   &:hover {
     opacity: 0.8;
   }
-`
+`;
 
 const CSVUploadButton = styled.label`
   display: flex;
@@ -480,43 +496,45 @@ const CSVUploadButton = styled.label`
   input {
     display: none;
   }
-`
+`;
 
 const HelpText = styled.p`
   font-size: 0.875rem;
   color: #64748b;
   margin: 0;
-`
+`;
 
 interface Vendor {
-  id: number
-  mcId: string | null
-  email: string
-  status: "active" | "inactive" | "banned"
-  totalBids: number
-  joinedDate: string
+  id: number;
+  mcId: string | null;
+  email: string;
+  status: "active" | "inactive" | "banned";
+  totalBids: number;
+  joinedDate: string;
 }
 
 interface RateHistory {
-  id: number
-  route: string
-  baseRate: string
-  fsc: string
-  total: string
-  submittedDate: string
+  id: number;
+  route: string;
+  baseRate: string;
+  fsc: string;
+  total: string;
+  submittedDate: string;
 }
 
 export default function VendorsPage() {
-  const router = useRouter()
-  const [vendors, setVendors] = useState<Vendor[]>([])
-  const [expandedVendorId, setExpandedVendorId] = useState<number | null>(null)
-  const [vendorHistories, setVendorHistories] = useState<Record<number, RateHistory[]>>({})
-  const [openDialog, setOpenDialog] = useState(false)
-  const [emailInput, setEmailInput] = useState("")
-  const [emailList, setEmailList] = useState<string[]>([])
+  const router = useRouter();
+  const [vendors, setVendors] = useState<Vendor[]>([]);
+  const [expandedVendorId, setExpandedVendorId] = useState<number | null>(null);
+  const [vendorHistories, setVendorHistories] = useState<
+    Record<number, RateHistory[]>
+  >({});
+  const [openDialog, setOpenDialog] = useState(false);
+  const [emailInput, setEmailInput] = useState("");
+  const [emailList, setEmailList] = useState<string[]>([]);
 
   useEffect(() => {
-    const savedVendors = JSON.parse(localStorage.getItem("vendors") || "[]")
+    const savedVendors = JSON.parse(localStorage.getItem("vendors") || "[]");
     if (savedVendors.length === 0) {
       const defaultVendors: Vendor[] = [
         {
@@ -679,46 +697,56 @@ export default function VendorsPage() {
           totalBids: 30,
           joinedDate: "2024-03-15",
         },
-      ]
-      localStorage.setItem("vendors", JSON.stringify(defaultVendors))
-      setVendors(defaultVendors)
+      ];
+      localStorage.setItem("vendors", JSON.stringify(defaultVendors));
+      setVendors(defaultVendors);
     } else {
       const migratedVendors = savedVendors.map((vendor: Vendor) => {
         if (!vendor.mcId || vendor.mcId === "") {
           if (vendor.email === "john.smith@transport.com") {
-            return { ...vendor, mcId: "MC-123456" }
+            return { ...vendor, mcId: "MC-123456" };
           } else if (vendor.email === "sarah.j@logistics.com") {
-            return { ...vendor, mcId: "MC-789012" }
+            return { ...vendor, mcId: "MC-789012" };
           } else if (vendor.email === "mike@davisfreight.com") {
-            return { ...vendor, mcId: "MC-345678" }
+            return { ...vendor, mcId: "MC-345678" };
           } else {
-            return { ...vendor, mcId: `MC-${Math.floor(100000 + Math.random() * 900000)}` }
+            return {
+              ...vendor,
+              mcId: `MC-${Math.floor(100000 + Math.random() * 900000)}`,
+            };
           }
         }
-        return vendor
-      })
+        return vendor;
+      });
 
-      localStorage.setItem("vendors", JSON.stringify(migratedVendors))
-      setVendors(migratedVendors)
+      localStorage.setItem("vendors", JSON.stringify(migratedVendors));
+      setVendors(migratedVendors);
     }
-  }, [])
+  }, []);
 
   const loadVendorHistory = (vendor: Vendor) => {
     try {
-      const savedRatesString = localStorage.getItem("submittedRates")
-      const savedRates = savedRatesString ? JSON.parse(savedRatesString) : []
+      const savedRatesString = localStorage.getItem("submittedRates");
+      const savedRates = savedRatesString ? JSON.parse(savedRatesString) : [];
 
       if (!Array.isArray(savedRates)) {
-        console.log("[v0] savedRates is not an array:", savedRates)
+        console.log("[v0] savedRates is not an array:", savedRates);
         setVendorHistories((prev) => ({
           ...prev,
           [vendor.id]: [],
-        }))
-        return
+        }));
+        return;
       }
 
-      const vendorRates = savedRates.filter((rate: any) => rate.vendorId === vendor.mcId)
-      console.log("[v0] Found rates for vendor", vendor.mcId, ":", vendorRates.length)
+      const vendorRates = savedRates.filter(
+        (rate: any) => rate.vendorId === vendor.mcId
+      );
+      console.log(
+        "[v0] Found rates for vendor",
+        vendor.mcId,
+        ":",
+        vendorRates.length
+      );
 
       const history: RateHistory[] = vendorRates.map((rate: any) => ({
         id: rate.id,
@@ -727,71 +755,71 @@ export default function VendorsPage() {
         fsc: `${rate.fsc.toFixed(2)}%`,
         total: `$${rate.total.toFixed(2)}`,
         submittedDate: rate.submittedAt,
-      }))
+      }));
 
       setVendorHistories((prev) => ({
         ...prev,
         [vendor.id]: history,
-      }))
+      }));
     } catch (error) {
-      console.error("[v0] Error loading vendor history:", error)
+      console.error("[v0] Error loading vendor history:", error);
       setVendorHistories((prev) => ({
         ...prev,
         [vendor.id]: [],
-      }))
+      }));
     }
-  }
+  };
 
   const toggleVendorHistory = (vendor: Vendor) => {
     if (expandedVendorId === vendor.id) {
-      setExpandedVendorId(null)
+      setExpandedVendorId(null);
     } else {
-      setExpandedVendorId(vendor.id)
+      setExpandedVendorId(vendor.id);
       if (!vendorHistories[vendor.id]) {
-        loadVendorHistory(vendor)
+        loadVendorHistory(vendor);
       }
     }
-  }
+  };
 
   const handleAddEmail = (email: string) => {
-    const trimmedEmail = email.trim()
+    const trimmedEmail = email.trim();
     if (trimmedEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
       if (!emailList.includes(trimmedEmail)) {
-        setEmailList([...emailList, trimmedEmail])
+        setEmailList([...emailList, trimmedEmail]);
       }
-      setEmailInput("")
+      setEmailInput("");
     }
-  }
+  };
 
   const handleEmailKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault()
-      handleAddEmail(emailInput)
+      e.preventDefault();
+      handleAddEmail(emailInput);
     }
-  }
+  };
 
   const handleRemoveEmail = (emailToRemove: string) => {
-    setEmailList(emailList.filter((email) => email !== emailToRemove))
-  }
+    setEmailList(emailList.filter((email) => email !== emailToRemove));
+  };
 
   const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onload = (event) => {
-        const text = event.target?.result as string
+        const text = event.target?.result as string;
         const emails = text
           .split(/[\n,;]/)
           .map((email) => email.trim())
-          .filter((email) => email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+          .filter((email) => email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
 
-        const uniqueEmails = [...new Set([...emailList, ...emails])]
-        setEmailList(uniqueEmails)
-      }
-      reader.readAsText(file)
+        const uniqueEmails = [...new Set([...emailList, ...emails])];
+        setEmailList(uniqueEmails);
+      };
+      reader.readAsText(file);
     }
-    e.target.value = ""
-  }
+    e.target.value = "";
+  };
 
   const handleAddVendor = () => {
     if (emailList.length > 0) {
@@ -802,33 +830,43 @@ export default function VendorsPage() {
         status: "inactive",
         totalBids: 0,
         joinedDate: new Date().toISOString().split("T")[0],
-      }))
+      }));
 
-      const updatedVendors = [...vendors, ...newVendors]
-      setVendors(updatedVendors)
-      localStorage.setItem("vendors", JSON.stringify(updatedVendors))
+      const updatedVendors = [...vendors, ...newVendors];
+      setVendors(updatedVendors);
+      localStorage.setItem("vendors", JSON.stringify(updatedVendors));
 
-      setEmailList([])
-      setEmailInput("")
-      setOpenDialog(false)
+      setEmailList([]);
+      setEmailInput("");
+      setOpenDialog(false);
     }
-  }
+  };
 
   const handleDeleteVendor = (id: number) => {
     if (confirm("Are you sure you want to delete this vendor?")) {
-      const updatedVendors = vendors.filter((v) => v.id !== id)
-      setVendors(updatedVendors)
-      localStorage.setItem("vendors", JSON.stringify(updatedVendors))
+      const updatedVendors = vendors.filter((v) => v.id !== id);
+      setVendors(updatedVendors);
+      localStorage.setItem("vendors", JSON.stringify(updatedVendors));
     }
-  }
+  };
 
   const handleBanVendor = (id: number) => {
     if (confirm("Are you sure you want to ban this vendor?")) {
-      const updatedVendors = vendors.map((v) => (v.id === id ? { ...v, status: "banned" as const } : v))
-      setVendors(updatedVendors)
-      localStorage.setItem("vendors", JSON.stringify(updatedVendors))
+      const updatedVendors = vendors.map((v) =>
+        v.id === id
+          ? {
+              ...v,
+              status: (v.status === "banned" ? "active" : "banned") as
+                | "active"
+                | "banned",
+            }
+          : v
+      );
+
+      setVendors(updatedVendors);
+      localStorage.setItem("vendors", JSON.stringify(updatedVendors));
     }
-  }
+  };
 
   return (
     <PageContainer>
@@ -891,24 +929,44 @@ export default function VendorsPage() {
                         </TableCell>
                         <TableCell>
                           <StatusBadge $status={vendor.status}>
-                            {vendor.status === "active" ? "Active" : vendor.status === "banned" ? "Banned" : "Inactive"}
+                            {vendor.status === "active"
+                              ? "Active"
+                              : vendor.status === "banned"
+                              ? "Banned"
+                              : "Inactive"}
                           </StatusBadge>
                         </TableCell>
                         <TableCell>{vendor.totalBids}</TableCell>
-                        <TableCell>{new Date(vendor.joinedDate).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          {new Date(vendor.joinedDate).toLocaleDateString()}
+                        </TableCell>
                         <TableCell>
                           <ActionButtons>
                             <ToggleButton
                               onClick={() => toggleVendorHistory(vendor)}
-                              title={expandedVendorId === vendor.id ? "Hide Rate History" : "View Rate History"}
+                              title={
+                                expandedVendorId === vendor.id
+                                  ? "Hide Rate History"
+                                  : "View Rate History"
+                              }
                             >
-                              {expandedVendorId === vendor.id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                              {expandedVendorId === vendor.id ? (
+                                <ChevronUp size={18} />
+                              ) : (
+                                <ChevronDown size={18} />
+                              )}
                             </ToggleButton>
-                            {vendor.status !== "banned" && (
-                              <BanButton onClick={() => handleBanVendor(vendor.id)} title="Ban Vendor">
-                                <Ban size={18} />
-                              </BanButton>
-                            )}
+
+                            <BanButton
+                              onClick={() => handleBanVendor(vendor.id)}
+                              title={
+                                vendor.status !== "banned"
+                                  ? "Ban Vendor"
+                                  : "UnBan Vendor"
+                              }
+                            >
+                              <Ban size={18} />
+                            </BanButton>
                             <IconButton
                               className="danger"
                               onClick={() => handleDeleteVendor(vendor.id)}
@@ -919,37 +977,56 @@ export default function VendorsPage() {
                           </ActionButtons>
                         </TableCell>
                       </TableRow>
-                      <AccordionRow key={`${vendor.id}-accordion`} $isOpen={expandedVendorId === vendor.id}>
+                      <AccordionRow
+                        key={`${vendor.id}-accordion`}
+                        $isOpen={expandedVendorId === vendor.id}
+                      >
                         <AccordionCell colSpan={6}>
-                          <AccordionContent $isOpen={expandedVendorId === vendor.id}>
+                          <AccordionContent
+                            $isOpen={expandedVendorId === vendor.id}
+                          >
                             <HistoryContainer>
-                              <HistoryHeader>Rate History - {vendor.mcId}</HistoryHeader>
-                              {vendorHistories[vendor.id] && vendorHistories[vendor.id].length > 0 ? (
+                              <HistoryHeader>
+                                Rate History - {vendor.mcId}
+                              </HistoryHeader>
+                              {vendorHistories[vendor.id] &&
+                              vendorHistories[vendor.id].length > 0 ? (
                                 <HistoryScrollContainer>
                                   <HistoryList>
-                                    {vendorHistories[vendor.id].map((history) => (
-                                      <HistoryItem key={history.id}>
-                                        <HistoryItemHeader>
-                                          <HistoryRoute>{history.route}</HistoryRoute>
-                                          <HistoryDate>{history.submittedDate}</HistoryDate>
-                                        </HistoryItemHeader>
-                                        <HistoryDetails>
-                                          <span>
-                                            <strong>Base Rate:</strong> {history.baseRate}
-                                          </span>
-                                          <span>
-                                            <strong>FSC:</strong> {history.fsc}
-                                          </span>
-                                          <span>
-                                            <strong>Total:</strong> {history.total}
-                                          </span>
-                                        </HistoryDetails>
-                                      </HistoryItem>
-                                    ))}
+                                    {vendorHistories[vendor.id].map(
+                                      (history) => (
+                                        <HistoryItem key={history.id}>
+                                          <HistoryItemHeader>
+                                            <HistoryRoute>
+                                              {history.route}
+                                            </HistoryRoute>
+                                            <HistoryDate>
+                                              {history.submittedDate}
+                                            </HistoryDate>
+                                          </HistoryItemHeader>
+                                          <HistoryDetails>
+                                            <span>
+                                              <strong>Base Rate:</strong>{" "}
+                                              {history.baseRate}
+                                            </span>
+                                            <span>
+                                              <strong>FSC:</strong>{" "}
+                                              {history.fsc}
+                                            </span>
+                                            <span>
+                                              <strong>Total:</strong>{" "}
+                                              {history.total}
+                                            </span>
+                                          </HistoryDetails>
+                                        </HistoryItem>
+                                      )
+                                    )}
                                   </HistoryList>
                                 </HistoryScrollContainer>
                               ) : (
-                                <EmptyHistory>No bid history available for this vendor</EmptyHistory>
+                                <EmptyHistory>
+                                  No bid history available for this vendor
+                                </EmptyHistory>
                               )}
                             </HistoryContainer>
                           </AccordionContent>
@@ -963,7 +1040,12 @@ export default function VendorsPage() {
           )}
         </VendorsCard>
 
-        <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
+        <Dialog
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+          maxWidth="sm"
+          fullWidth
+        >
           <DialogTitle>Add New Vendor(s)</DialogTitle>
           <DialogContent>
             <EmailInputSection>
@@ -983,7 +1065,11 @@ export default function VendorsPage() {
                   {emailList.map((email) => (
                     <EmailChip key={email}>
                       {email}
-                      <RemoveChipButton onClick={() => handleRemoveEmail(email)}>×</RemoveChipButton>
+                      <RemoveChipButton
+                        onClick={() => handleRemoveEmail(email)}
+                      >
+                        ×
+                      </RemoveChipButton>
                     </EmailChip>
                   ))}
                 </EmailChipsContainer>
@@ -991,27 +1077,42 @@ export default function VendorsPage() {
               <CSVUploadButton>
                 <Upload size={18} />
                 Import from CSV
-                <input type="file" accept=".csv,.txt" onChange={handleCSVUpload} />
+                <input
+                  type="file"
+                  accept=".csv,.txt"
+                  onChange={handleCSVUpload}
+                />
               </CSVUploadButton>
-              <HelpText>Upload a CSV file with email addresses (one per line or comma-separated)</HelpText>
+              <HelpText>
+                Upload a CSV file with email addresses (one per line or
+                comma-separated)
+              </HelpText>
             </EmailInputSection>
           </DialogContent>
           <DialogActions>
             <Button
               onClick={() => {
-                setOpenDialog(false)
-                setEmailList([])
-                setEmailInput("")
+                setOpenDialog(false);
+                setEmailList([]);
+                setEmailInput("");
               }}
             >
               Cancel
             </Button>
-            <Button onClick={handleAddVendor} variant="contained" color="primary" disabled={emailList.length === 0}>
-              Add {emailList.length > 0 ? `${emailList.length} Vendor${emailList.length > 1 ? "s" : ""}` : "Vendor"}
+            <Button
+              onClick={handleAddVendor}
+              variant="contained"
+              color="primary"
+              disabled={emailList.length === 0}
+            >
+              Add{" "}
+              {emailList.length > 0
+                ? `${emailList.length} Vendor${emailList.length > 1 ? "s" : ""}`
+                : "Vendor"}
             </Button>
           </DialogActions>
         </Dialog>
       </Main>
     </PageContainer>
-  )
+  );
 }

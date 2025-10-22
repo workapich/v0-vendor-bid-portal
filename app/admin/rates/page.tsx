@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useRouter, useSearchParams } from "next/navigation"
-import { useState, useEffect } from "react"
-import styled from "styled-components"
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import styled from "styled-components";
 import {
   Table,
   TableBody,
@@ -20,8 +20,8 @@ import {
   DialogContent,
   DialogActions,
   Autocomplete,
-} from "@mui/material"
-import { Truck, LogOut, Search, Download, Plus } from "lucide-react"
+} from "@mui/material";
+import { Truck, LogOut, Search, Download, Plus } from "lucide-react";
 
 // Mock data for US cities, needed for Autocomplete
 const US_CITIES = [
@@ -186,7 +186,7 @@ const US_CITIES = [
   "Slatersville, RI",
   "Augustas, GA",
   "Portland, ME",
-]
+];
 
 const DESTINATIONS: Record<string, Record<number, string>> = {
   boston: {
@@ -206,26 +206,30 @@ const DESTINATIONS: Record<string, Record<number, string>> = {
     2: "Baltimore, MD",
     3: "Washington, DC",
   },
-}
+};
 
 interface RateData {
-  id: string
-  vendorId: string
-  vendorEmail: string
-  startCity: string
-  endCity: string
-  baseRate: number
-  fsc: number
-  total: number
-  submittedAt: string
+  id: string;
+  vendorId: string;
+  vendorEmail: string;
+  startCity: string;
+  endCity: string;
+  baseRate: number;
+  fsc: number;
+  total: number;
+  submittedAt: string;
 }
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(to bottom right, rgb(248 250 252), rgb(226 232 240));
+  background: linear-gradient(
+    to bottom right,
+    rgb(248 250 252),
+    rgb(226 232 240)
+  );
   display: flex;
   flex-direction: column;
-`
+`;
 
 const Header = styled.header`
   background: white;
@@ -235,13 +239,13 @@ const Header = styled.header`
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgb(226 232 240);
-`
+`;
 
 const HeaderContent = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
-`
+`;
 
 const LogoCircle = styled.div`
   width: 3rem;
@@ -252,59 +256,59 @@ const LogoCircle = styled.div`
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-`
+`;
 
 const HeaderText = styled.div`
   display: flex;
   flex-direction: column;
-`
+`;
 
 const HeaderTitle = styled.h1`
   font-size: 1.25rem;
   font-weight: 700;
   color: rgb(15 23 42);
   margin: 0;
-`
+`;
 
 const HeaderSubtitle = styled.p`
   font-size: 0.875rem;
   color: rgb(71 85 105);
   margin: 0;
-`
+`;
 
 const HeaderActions = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-`
+`;
 
 const StatusIndicator = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-`
+`;
 
 const StatusDot = styled.div`
   width: 0.5rem;
   height: 0.5rem;
   background: rgb(34 197 94);
   border-radius: 50%;
-`
+`;
 
 const StatusText = styled.span`
   font-size: 0.875rem;
   color: rgb(71 85 105);
-`
+`;
 
 const Main = styled.main`
   flex: 1;
   padding: 1.5rem;
-`
+`;
 
 const Container = styled.div`
   max-width: 112rem;
   margin: 0 auto;
-`
+`;
 
 const GridContainer = styled.div`
   display: grid;
@@ -314,7 +318,7 @@ const GridContainer = styled.div`
   @media (min-width: 1024px) {
     grid-template-columns: 1fr 3fr;
   }
-`
+`;
 
 const Sidebar = styled.div`
   background: white;
@@ -326,13 +330,13 @@ const Sidebar = styled.div`
   flex-direction: column;
   height: 80vh;
   overflow-y: auto;
-`
+`;
 
 const SidebarTitle = styled.h4`
   font-weight: 600;
   color: rgb(15 23 42);
   margin-bottom: 1rem;
-`
+`;
 
 const DestinationList = styled.div`
   display: flex;
@@ -340,7 +344,7 @@ const DestinationList = styled.div`
   gap: 0.5rem;
   overflow-y: auto;
   flex: 1;
-`
+`;
 
 const DestinationButton = styled.button<{ $selected?: boolean }>`
   width: 100%;
@@ -350,22 +354,25 @@ const DestinationButton = styled.button<{ $selected?: boolean }>`
   border: none;
   cursor: pointer;
   transition: all 0.2s;
-  background: ${(props) => (props.$selected ? "rgb(37 99 235)" : "rgb(241 245 249)")};
+  background: ${(props) =>
+    props.$selected ? "rgb(37 99 235)" : "rgb(241 245 249)"};
   color: ${(props) => (props.$selected ? "white" : "rgb(15 23 42)")};
 
   &:hover {
-    background: ${(props) => (props.$selected ? "rgb(37 99 235)" : "rgb(226 232 240)")};
+    background: ${(props) =>
+      props.$selected ? "rgb(37 99 235)" : "rgb(226 232 240)"};
   }
-`
+`;
 
 const DestinationName = styled.div`
   font-weight: 500;
-`
+`;
 
 const DestinationCount = styled.div<{ $selected?: boolean }>`
   font-size: 0.875rem;
-  color: ${(props) => (props.$selected ? "rgb(191 219 254)" : "rgb(71 85 105)")};
-`
+  color: ${(props) =>
+    props.$selected ? "rgb(191 219 254)" : "rgb(71 85 105)"};
+`;
 
 const ContentCard = styled.div`
   background: white;
@@ -376,52 +383,52 @@ const ContentCard = styled.div`
   height: 80vh;
   display: flex;
   flex-direction: column;
-`
+`;
 
 const CardHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.5rem;
-`
+`;
 
 const CardHeaderText = styled.div`
   display: flex;
   flex-direction: column;
-`
+`;
 
 const CardTitle = styled.h2`
   font-size: 1.5rem;
   font-weight: 700;
   color: rgb(15 23 42);
   margin-bottom: 0.25rem;
-`
+`;
 
 const CardDescription = styled.p`
   color: rgb(71 85 105);
   margin: 0;
-`
+`;
 
 const SearchContainer = styled.div`
   margin-bottom: 1.5rem;
-`
+`;
 
 const TableWrapper = styled.div`
   flex: 1;
   overflow: auto;
-`
+`;
 
 const EmptyState = styled.div`
   text-align: center;
   padding: 3rem 0;
   color: rgb(100 116 139);
-`
+`;
 
 const TableFooter = styled.div`
   margin-top: 1rem;
   font-size: 0.875rem;
   color: rgb(71 85 105);
-`
+`;
 
 const AddDestinationCard = styled.button`
   width: 100%;
@@ -447,7 +454,7 @@ const AddDestinationCard = styled.button`
   svg {
     flex-shrink: 0;
   }
-`
+`;
 
 const MOCK_RATES = [
   {
@@ -2760,36 +2767,47 @@ const MOCK_RATES = [
     total: 350,
     submittedAt: "2025-01-17 02:20 PM",
   },
-]
+];
 
 export default function AdminRatesPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const selectedCity = searchParams.get("city")
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedCity = searchParams.get("city");
 
-  const [searchTerm, setSearchTerm] = useState("")
-  const [orderBy, setOrderBy] = useState<keyof RateData>("submittedAt")
-  const [order, setOrder] = useState<"asc" | "desc">("desc")
-  const [selectedDestination, setSelectedDestination] = useState<string | null>(null)
-  const [rates, setRates] = useState<RateData[]>([])
+  const [searchTerm, setSearchTerm] = useState("");
+  const [orderBy, setOrderBy] = useState<keyof RateData>("submittedAt");
+  const [order, setOrder] = useState<"asc" | "desc">("desc");
+  const [selectedDestination, setSelectedDestination] = useState<string | null>(
+    null
+  );
+  const [rates, setRates] = useState<RateData[]>([]);
 
-  const [openAddDestDialog, setOpenAddDestDialog] = useState(false)
-  const [newDestination, setNewDestination] = useState<string | null>(null)
-  const [newDestinationInput, setNewDestinationInput] = useState("")
+  const [openAddDestDialog, setOpenAddDestDialog] = useState(false);
+  const [newDestination, setNewDestination] = useState<string | null>(null);
+  const [newDestinationInput, setNewDestinationInput] = useState("");
 
   useEffect(() => {
     const loadRates = () => {
-      const submittedRates = JSON.parse(localStorage.getItem("submittedRates") || "{}")
-      const ratesArray: RateData[] = []
+      const submittedRates = JSON.parse(
+        localStorage.getItem("submittedRates") || "{}"
+      );
+      const ratesArray: RateData[] = [];
 
       Object.entries(submittedRates).forEach(([key, value]: [string, any]) => {
-        const [city, destId] = key.split("-")
-        const cityName = city.charAt(0).toUpperCase() + city.slice(1)
-        const destName = DESTINATIONS[city]?.[Number.parseInt(destId)] || "Unknown"
+        const [city, destId] = key.split("-");
+        const cityName = city.charAt(0).toUpperCase() + city.slice(1);
+        const destName =
+          DESTINATIONS[city]?.[Number.parseInt(destId)] || "Unknown";
 
-        const baseRate = Number.parseFloat(value.baseRate?.replace(/[^0-9.]/g, "") || "0")
-        const fsc = Number.parseFloat(value.fsc?.replace(/[^0-9.]/g, "") || "0")
-        const total = Number.parseFloat(value.total?.replace(/[^0-9.]/g, "") || "0")
+        const baseRate = Number.parseFloat(
+          value.baseRate?.replace(/[^0-9.]/g, "") || "0"
+        );
+        const fsc = Number.parseFloat(
+          value.fsc?.replace(/[^0-9.]/g, "") || "0"
+        );
+        const total = Number.parseFloat(
+          value.total?.replace(/[^0-9.]/g, "") || "0"
+        );
 
         ratesArray.push({
           id: key,
@@ -2808,78 +2826,96 @@ export default function AdminRatesPage() {
             minute: "2-digit",
             hour12: true,
           }),
-        })
-      })
+        });
+      });
 
       // Combine MOCK_RATES with the loaded rates
-      const allRates = [...MOCK_RATES, ...ratesArray]
+      const allRates = [...MOCK_RATES, ...ratesArray];
 
       // Ensure unique IDs if necessary, or handle potential overlaps if mock and local storage can have same IDs
       const uniqueRates = allRates.reduce((acc, rate) => {
-        if (!acc.some((r) => r.id === rate.id)) {
-          acc.push(rate)
+        if (!acc.some((r) => r.id === String(rate.id))) {
+          acc.push({ ...rate, id: String(rate.id) });
         }
-        return acc
-      }, [] as RateData[])
+        return acc;
+      }, [] as RateData[]);
+      ``;
 
-      setRates(uniqueRates)
-    }
+      setRates(uniqueRates);
+    };
 
-    loadRates()
-  }, [])
+    loadRates();
+  }, []);
 
   const handleSort = (property: keyof RateData) => {
-    const isAsc = orderBy === property && order === "asc"
-    setOrder(isAsc ? "desc" : "asc")
-    setOrderBy(property)
-  }
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
 
   const filteredRates = rates
     .filter((rate) => {
-      const matchesCity = selectedCity ? rate.startCity.toLowerCase() === selectedCity.toLowerCase() : true
+      const matchesCity = selectedCity
+        ? rate.startCity.toLowerCase() === selectedCity.toLowerCase()
+        : true;
       const matchesDestination =
-        selectedCity?.toLowerCase() === "atlanta" && selectedDestination ? rate.endCity === selectedDestination : true
+        selectedCity?.toLowerCase() === "atlanta" && selectedDestination
+          ? rate.endCity === selectedDestination
+          : true;
       const matchesSearch =
         rate.vendorId.toLowerCase().includes(searchTerm.toLowerCase()) ||
         rate.vendorEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
         rate.startCity.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        rate.endCity.toLowerCase().includes(searchTerm.toLowerCase())
+        rate.endCity.toLowerCase().includes(searchTerm.toLowerCase());
 
-      return matchesCity && matchesDestination && matchesSearch
+      return matchesCity && matchesDestination && matchesSearch;
     })
     .sort((a, b) => {
-      if (selectedCity?.toLowerCase() === "atlanta" && orderBy === "submittedAt") {
-        const destCompare = a.endCity.localeCompare(b.endCity)
-        if (destCompare !== 0) return destCompare
-        return order === "asc" ? a.submittedAt.localeCompare(b.submittedAt) : b.submittedAt.localeCompare(a.submittedAt)
+      if (
+        selectedCity?.toLowerCase() === "atlanta" &&
+        orderBy === "submittedAt"
+      ) {
+        const destCompare = a.endCity.localeCompare(b.endCity);
+        if (destCompare !== 0) return destCompare;
+        return order === "asc"
+          ? a.submittedAt.localeCompare(b.submittedAt)
+          : b.submittedAt.localeCompare(a.submittedAt);
       }
 
-      const aValue = a[orderBy]
-      const bValue = b[orderBy]
+      const aValue = a[orderBy];
+      const bValue = b[orderBy];
 
       if (typeof aValue === "string" && typeof bValue === "string") {
-        return order === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue)
+        return order === "asc"
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
       }
 
       if (typeof aValue === "number" && typeof bValue === "number") {
-        return order === "asc" ? aValue - bValue : bValue - aValue
+        return order === "asc" ? aValue - bValue : bValue - aValue;
       }
 
-      return 0
-    })
+      return 0;
+    });
 
   const atlantaDestinations =
     selectedCity?.toLowerCase() === "atlanta"
-      ? Array.from(new Set(rates.filter((r) => r.startCity.toLowerCase() === "atlanta").map((r) => r.endCity))).sort()
-      : []
+      ? Array.from(
+          new Set(
+            rates
+              .filter((r) => r.startCity.toLowerCase() === "atlanta")
+              .map((r) => r.endCity)
+          )
+        ).sort()
+      : [];
 
   const handleExport = () => {
-    alert("Exporting rates to CSV...")
-  }
+    alert("Exporting rates to CSV...");
+  };
 
   const handleLogout = () => {
-    router.push("/")
-  }
+    router.push("/");
+  };
 
   const handleAddDestination = () => {
     if (newDestination && selectedCity) {
@@ -2901,27 +2937,31 @@ export default function AdminRatesPage() {
           minute: "2-digit",
           hour12: true,
         }),
-      }
+      };
 
-      const updatedRates = [...rates, newRate]
-      setRates(updatedRates)
+      const updatedRates = [...rates, newRate];
+      setRates(updatedRates);
 
-      setNewDestination(null)
-      setNewDestinationInput("")
-      setOpenAddDestDialog(false)
+      setNewDestination(null);
+      setNewDestinationInput("");
+      setOpenAddDestDialog(false);
     }
-  }
+  };
 
   return (
     <PageContainer>
       <Header>
         <HeaderContent>
           <LogoCircle>
-            <Truck style={{ width: "1.5rem", height: "1.5rem", color: "white" }} />
+            <Truck
+              style={{ width: "1.5rem", height: "1.5rem", color: "white" }}
+            />
           </LogoCircle>
           <HeaderText>
             <HeaderTitle>Vendor Bid Portal</HeaderTitle>
-            <HeaderSubtitle>Admin - Rate Management{selectedCity && ` - ${selectedCity}`}</HeaderSubtitle>
+            <HeaderSubtitle>
+              Admin - Rate Management{selectedCity && ` - ${selectedCity}`}
+            </HeaderSubtitle>
           </HeaderText>
         </HeaderContent>
         <HeaderActions>
@@ -2978,8 +3018,10 @@ export default function AdminRatesPage() {
                 <DestinationList>
                   {atlantaDestinations.map((dest) => {
                     const count = rates.filter(
-                      (r) => r.startCity.toLowerCase() === "atlanta" && r.endCity === dest,
-                    ).length
+                      (r) =>
+                        r.startCity.toLowerCase() === "atlanta" &&
+                        r.endCity === dest
+                    ).length;
                     return (
                       <DestinationButton
                         key={dest}
@@ -2987,11 +3029,13 @@ export default function AdminRatesPage() {
                         $selected={selectedDestination === dest}
                       >
                         <DestinationName>{dest}</DestinationName>
-                        <DestinationCount $selected={selectedDestination === dest}>
+                        <DestinationCount
+                          $selected={selectedDestination === dest}
+                        >
                           {count} {count === 1 ? "rate" : "rates"}
                         </DestinationCount>
                       </DestinationButton>
-                    )
+                    );
                   })}
                 </DestinationList>
               </Sidebar>
@@ -3009,31 +3053,24 @@ export default function AdminRatesPage() {
                         : "Select a destination to view rates"}
                     </CardDescription>
                   </CardHeaderText>
-                  <Button
-                    variant="contained"
-                    startIcon={<Download style={{ width: "1rem", height: "1rem" }} />}
-                    onClick={handleExport}
-                    sx={{
-                      backgroundColor: "rgb(37 99 235)",
-                      "&:hover": {
-                        backgroundColor: "rgb(29 78 216)",
-                      },
-                    }}
-                  >
-                    Export to CSV
-                  </Button>
                 </CardHeader>
 
                 <SearchContainer>
                   <TextField
                     fullWidth
-                    placeholder="Search by vendor ID, email, or city..."
+                    placeholder="Search by vendor ID, email ..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Search style={{ width: "1.25rem", height: "1.25rem", color: "rgb(156 163 175)" }} />
+                          <Search
+                            style={{
+                              width: "1.25rem",
+                              height: "1.25rem",
+                              color: "rgb(156 163 175)",
+                            }}
+                          />
                         </InputAdornment>
                       ),
                     }}
@@ -3042,7 +3079,11 @@ export default function AdminRatesPage() {
                 </SearchContainer>
 
                 <TableWrapper>
-                  <TableContainer component={Paper} variant="outlined" sx={{ height: "100%" }}>
+                  <TableContainer
+                    component={Paper}
+                    variant="outlined"
+                    sx={{ height: "100%" }}
+                  >
                     <Table stickyHeader>
                       <TableHead>
                         <TableRow sx={{ backgroundColor: "rgb(248 250 252)" }}>
@@ -3058,7 +3099,9 @@ export default function AdminRatesPage() {
                           <TableCell sx={{ fontWeight: 700 }}>
                             <TableSortLabel
                               active={orderBy === "vendorEmail"}
-                              direction={orderBy === "vendorEmail" ? order : "asc"}
+                              direction={
+                                orderBy === "vendorEmail" ? order : "asc"
+                              }
                               onClick={() => handleSort("vendorEmail")}
                             >
                               Email
@@ -3076,7 +3119,9 @@ export default function AdminRatesPage() {
                           <TableCell sx={{ fontWeight: 700 }}>
                             <TableSortLabel
                               active={orderBy === "submittedAt"}
-                              direction={orderBy === "submittedAt" ? order : "asc"}
+                              direction={
+                                orderBy === "submittedAt" ? order : "asc"
+                              }
                               onClick={() => handleSort("submittedAt")}
                             >
                               Submitted
@@ -3114,18 +3159,39 @@ export default function AdminRatesPage() {
                       <TableBody>
                         {filteredRates.map((rate) => (
                           <TableRow key={rate.id} hover>
-                            <TableCell sx={{ fontFamily: "monospace", fontSize: "0.875rem" }}>
+                            <TableCell
+                              sx={{
+                                fontFamily: "monospace",
+                                fontSize: "0.875rem",
+                              }}
+                            >
                               {rate.vendorId}
                             </TableCell>
                             <TableCell>{rate.vendorEmail}</TableCell>
                             <TableCell>{rate.endCity}</TableCell>
-                            <TableCell sx={{ fontSize: "0.875rem", color: "rgb(71 85 105)" }}>
+                            <TableCell
+                              sx={{
+                                fontSize: "0.875rem",
+                                color: "rgb(71 85 105)",
+                              }}
+                            >
                               {rate.submittedAt}
                             </TableCell>
-                            <TableCell align="right">${rate.baseRate.toFixed(2)}</TableCell>
-                            <TableCell align="right">{rate.fsc.toFixed(2)}%</TableCell>
                             <TableCell align="right">
-                              <span style={{ fontWeight: 700, color: "rgb(37 99 235)" }}>${rate.total.toFixed(2)}</span>
+                              ${rate.baseRate.toFixed(2)}
+                            </TableCell>
+                            <TableCell align="right">
+                              {rate.fsc.toFixed(2)}%
+                            </TableCell>
+                            <TableCell align="right">
+                              <span
+                                style={{
+                                  fontWeight: 700,
+                                  color: "rgb(37 99 235)",
+                                }}
+                              >
+                                ${rate.total.toFixed(2)}
+                              </span>
                             </TableCell>
                           </TableRow>
                         ))}
@@ -3134,47 +3200,46 @@ export default function AdminRatesPage() {
                   </TableContainer>
                 </TableWrapper>
 
-                {filteredRates.length === 0 && <EmptyState>No rates found matching your search criteria</EmptyState>}
-
-                <TableFooter>Showing {filteredRates.length} rates</TableFooter>
+                {filteredRates.length === 0 && (
+                  <EmptyState>
+                    No rates found matching your search criteria
+                  </EmptyState>
+                )}
               </ContentCard>
             </GridContainer>
           ) : (
             <ContentCard>
               <CardHeader>
                 <CardHeaderText>
-                  <CardTitle>{selectedCity ? `${selectedCity} Vendor Rates` : "All Vendor Rates"}</CardTitle>
+                  <CardTitle>
+                    {selectedCity
+                      ? `${selectedCity} Vendor Rates`
+                      : "All Vendor Rates"}
+                  </CardTitle>
                   <CardDescription>
                     {selectedCity
                       ? `View and manage bids starting from ${selectedCity}`
                       : "View and manage all submitted vendor bids"}
                   </CardDescription>
                 </CardHeaderText>
-                <Button
-                  variant="contained"
-                  startIcon={<Download style={{ width: "1rem", height: "1rem" }} />}
-                  onClick={handleExport}
-                  sx={{
-                    backgroundColor: "rgb(37 99 235)",
-                    "&:hover": {
-                      backgroundColor: "rgb(29 78 216)",
-                    },
-                  }}
-                >
-                  Export to CSV
-                </Button>
               </CardHeader>
 
               <SearchContainer>
                 <TextField
                   fullWidth
-                  placeholder="Search by vendor ID, email, or city..."
+                  placeholder="Search by vendor ID, email..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Search style={{ width: "1.25rem", height: "1.25rem", color: "rgb(156 163 175)" }} />
+                        <Search
+                          style={{
+                            width: "1.25rem",
+                            height: "1.25rem",
+                            color: "rgb(156 163 175)",
+                          }}
+                        />
                       </InputAdornment>
                     ),
                   }}
@@ -3199,7 +3264,9 @@ export default function AdminRatesPage() {
                         <TableCell sx={{ fontWeight: 700 }}>
                           <TableSortLabel
                             active={orderBy === "vendorEmail"}
-                            direction={orderBy === "vendorEmail" ? order : "asc"}
+                            direction={
+                              orderBy === "vendorEmail" ? order : "asc"
+                            }
                             onClick={() => handleSort("vendorEmail")}
                           >
                             Email
@@ -3209,7 +3276,9 @@ export default function AdminRatesPage() {
                           <TableCell sx={{ fontWeight: 700 }}>
                             <TableSortLabel
                               active={orderBy === "startCity"}
-                              direction={orderBy === "startCity" ? order : "asc"}
+                              direction={
+                                orderBy === "startCity" ? order : "asc"
+                              }
                               onClick={() => handleSort("startCity")}
                             >
                               Start City
@@ -3228,7 +3297,9 @@ export default function AdminRatesPage() {
                         <TableCell sx={{ fontWeight: 700 }}>
                           <TableSortLabel
                             active={orderBy === "submittedAt"}
-                            direction={orderBy === "submittedAt" ? order : "asc"}
+                            direction={
+                              orderBy === "submittedAt" ? order : "asc"
+                            }
                             onClick={() => handleSort("submittedAt")}
                           >
                             Submitted
@@ -3266,17 +3337,42 @@ export default function AdminRatesPage() {
                     <TableBody>
                       {filteredRates.map((rate) => (
                         <TableRow key={rate.id} hover>
-                          <TableCell sx={{ fontFamily: "monospace", fontSize: "0.875rem" }}>{rate.vendorId}</TableCell>
+                          <TableCell
+                            sx={{
+                              fontFamily: "monospace",
+                              fontSize: "0.875rem",
+                            }}
+                          >
+                            {rate.vendorId}
+                          </TableCell>
                           <TableCell>{rate.vendorEmail}</TableCell>
-                          {!selectedCity && <TableCell>{rate.startCity}</TableCell>}
+                          {!selectedCity && (
+                            <TableCell>{rate.startCity}</TableCell>
+                          )}
                           <TableCell>{rate.endCity}</TableCell>
-                          <TableCell sx={{ fontSize: "0.875rem", color: "rgb(71 85 105)" }}>
+                          <TableCell
+                            sx={{
+                              fontSize: "0.875rem",
+                              color: "rgb(71 85 105)",
+                            }}
+                          >
                             {rate.submittedAt}
                           </TableCell>
-                          <TableCell align="right">${rate.baseRate.toFixed(2)}</TableCell>
-                          <TableCell align="right">{rate.fsc.toFixed(2)}%</TableCell>
                           <TableCell align="right">
-                            <span style={{ fontWeight: 700, color: "rgb(37 99 235)" }}>${rate.total.toFixed(2)}</span>
+                            ${rate.baseRate.toFixed(2)}
+                          </TableCell>
+                          <TableCell align="right">
+                            {rate.fsc.toFixed(2)}%
+                          </TableCell>
+                          <TableCell align="right">
+                            <span
+                              style={{
+                                fontWeight: 700,
+                                color: "rgb(37 99 235)",
+                              }}
+                            >
+                              ${rate.total.toFixed(2)}
+                            </span>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -3285,7 +3381,11 @@ export default function AdminRatesPage() {
                 </TableContainer>
               </TableWrapper>
 
-              {filteredRates.length === 0 && <EmptyState>No rates found matching your search criteria</EmptyState>}
+              {filteredRates.length === 0 && (
+                <EmptyState>
+                  No rates found matching your search criteria
+                </EmptyState>
+              )}
 
               <TableFooter>
                 Showing {filteredRates.length} of {rates.length} total rates
@@ -3295,7 +3395,12 @@ export default function AdminRatesPage() {
         </Container>
       </Main>
 
-      <Dialog open={openAddDestDialog} onClose={() => setOpenAddDestDialog(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openAddDestDialog}
+        onClose={() => setOpenAddDestDialog(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Add New Destination</DialogTitle>
         <DialogContent>
           <div style={{ paddingTop: "1rem" }}>
@@ -3304,37 +3409,52 @@ export default function AdminRatesPage() {
               value={newDestination}
               inputValue={newDestinationInput}
               onInputChange={(event, newInputValue) => {
-                setNewDestinationInput(newInputValue)
+                setNewDestinationInput(newInputValue);
               }}
               onChange={(event, newValue) => {
-                setNewDestination(newValue)
+                setNewDestination(newValue);
               }}
               renderInput={(params) => (
-                <TextField {...params} label="Destination Route" placeholder="Type at least 3 characters..." />
+                <TextField
+                  {...params}
+                  label="Destination Route"
+                  placeholder="Type at least 3 characters..."
+                />
               )}
               filterOptions={(options, state) => {
-                if (state.inputValue.length < 3) return []
-                return options.filter((option) => option.toLowerCase().includes(state.inputValue.toLowerCase()))
+                if (state.inputValue.length < 3) return [];
+                return options.filter((option) =>
+                  option.toLowerCase().includes(state.inputValue.toLowerCase())
+                );
               }}
-              noOptionsText={newDestinationInput.length < 3 ? "Type at least 3 characters" : "No cities found"}
+              noOptionsText={
+                newDestinationInput.length < 3
+                  ? "Type at least 3 characters"
+                  : "No cities found"
+              }
             />
           </div>
         </DialogContent>
         <DialogActions>
           <Button
             onClick={() => {
-              setOpenAddDestDialog(false)
-              setNewDestination(null)
-              setNewDestinationInput("")
+              setOpenAddDestDialog(false);
+              setNewDestination(null);
+              setNewDestinationInput("");
             }}
           >
             Cancel
           </Button>
-          <Button onClick={handleAddDestination} variant="contained" color="primary" disabled={!newDestination}>
+          <Button
+            onClick={handleAddDestination}
+            variant="contained"
+            color="primary"
+            disabled={!newDestination}
+          >
             Submit
           </Button>
         </DialogActions>
       </Dialog>
     </PageContainer>
-  )
+  );
 }
