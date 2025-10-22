@@ -15,8 +15,178 @@ import {
   TextField,
   InputAdornment,
   TableSortLabel,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Autocomplete,
 } from "@mui/material"
-import { Truck, LogOut, Search, Download } from "lucide-react"
+import { Truck, LogOut, Search, Download, Plus } from "lucide-react"
+
+// Mock data for US cities, needed for Autocomplete
+const US_CITIES = [
+  "New York, NY",
+  "Los Angeles, CA",
+  "Chicago, IL",
+  "Houston, TX",
+  "Phoenix, AZ",
+  "Philadelphia, PA",
+  "San Antonio, TX",
+  "San Diego, CA",
+  "Dallas, TX",
+  "San Jose, CA",
+  "Austin, TX",
+  "Jacksonville, FL",
+  "Fort Worth, TX",
+  "Columbus, OH",
+  "Charlotte, NC",
+  "San Francisco, CA",
+  "Indianapolis, IN",
+  "Seattle, WA",
+  "Denver, CO",
+  "Washington, DC",
+  "Boston, MA",
+  "El Paso, TX",
+  "Nashville, TN",
+  "Detroit, MI",
+  "Oklahoma City, OK",
+  "Portland, OR",
+  "Las Vegas, NV",
+  "Memphis, TN",
+  "Louisville, KY",
+  "Baltimore, MD",
+  "Milwaukee, WI",
+  "Albuquerque, NM",
+  "Tucson, AZ",
+  "Fresno, CA",
+  "Sacramento, CA",
+  "Kansas City, MO",
+  "Atlanta, GA",
+  "Colorado Springs, CO",
+  "Omaha, NE",
+  "Raleigh, NC",
+  "Miami, FL",
+  "Oakland, CA",
+  "Minneapolis, MN",
+  "Tulsa, OK",
+  "Cleveland, OH",
+  "Wichita, KS",
+  "Arlington, TX",
+  "New Orleans, LA",
+  "Bakersfield, CA",
+  "Tampa, FL",
+  "Aurora, CO",
+  "Honolulu, HI",
+  "Anaheim, CA",
+  "Santa Ana, CA",
+  "St. Louis, MO",
+  "Riverside, CA",
+  "Corpus Christi, TX",
+  "Lexington, KY",
+  "Pittsburgh, PA",
+  "Anchorage, AK",
+  "Stockton, CA",
+  "Cincinnati, OH",
+  "St. Paul, MN",
+  "Toledo, OH",
+  "Newark, NJ",
+  "Greensboro, NC",
+  "Chandler, AZ",
+  "Plano, TX",
+  "Lincoln, NE",
+  "Orlando, FL",
+  "Irvine, CA",
+  "Newark, CA",
+  "Durham, NC",
+  "Chula Vista, CA",
+  "Fort Wayne, IN",
+  "Jersey City, NJ",
+  "St. Petersburg, FL",
+  "Laredo, TX",
+  "Buffalo, NY",
+  "Madison, WI",
+  "Lubbock, TX",
+  "Scottsdale, AZ",
+  "Reno, NV",
+  "Glendale, AZ",
+  "Norfolk, VA",
+  "Baton Rouge, LA",
+  "Boise, ID",
+  "Hialeah, FL",
+  "Gilbert, AZ",
+  "Chesapeake, VA",
+  "Irving, TX",
+  "San Bernardino, CA",
+  "Fremont, CA",
+  "Spokane, WA",
+  "San Francisco, CA",
+  "Richmond, VA",
+  "Des Moines, IA",
+  "Tacoma, WA",
+  "San Jose, CA",
+  "Fontana, CA",
+  "Modesto, CA",
+  "Salt Lake City, UT",
+  "Santa Clarita, CA",
+  "Birmingham, AL",
+  "Akron, OH",
+  "Worcester, MA",
+  "Knoxville, TN",
+  "Oxnard, CA",
+  "Augusta, GA",
+  "Manchester, NH",
+  "Fort Lauderdale, FL",
+  "Fayetteville, NC",
+  "Springfield, MA",
+  "Rochester, NY",
+  "Little Rock, AR",
+  "Moreno Valley, CA",
+  "Renton, WA",
+  "Long Beach, CA",
+  "Oceanside, CA",
+  "Davis, CA",
+  "New Haven, CT",
+  "Columbia, SC",
+  "Springfield, MO",
+  "Vancouver, BC",
+  "Salem, OR",
+  "Fort Collins, CO",
+  "Alexandria, VA",
+  "Knoxville, TN",
+  "Chattanooga, TN",
+  "Santa Barbara, CA",
+  "Flagstaff, AZ",
+  "Boulder, CO",
+  "San Jose, CA",
+  "Oakland, CA",
+  "Fort Lauderdale, FL",
+  "Key West, FL",
+  "Savannah, GA",
+  "Greenville, SC",
+  "Pittsburgh, PA",
+  "Burlington, VT",
+  "Albany, NY",
+  "Manchester, NH",
+  "Colorado Springs, CO",
+  "Minneapolis, MN",
+  "Orlando, FL",
+  "Eugene, OR",
+  "New Orleans, LA",
+  "San Antonio, TX",
+  "Austin, TX",
+  "Houston, TX",
+  "Philadelphia, PA",
+  "Baltimore, MD",
+  "Washington, DC",
+  "New York, NY",
+  "Boston, MA",
+  "Providence, RI",
+  "Hartford, CT",
+  "Franlin, NH",
+  "Slatersville, RI",
+  "Augustas, GA",
+  "Portland, ME",
+]
 
 const DESTINATIONS: Record<string, Record<number, string>> = {
   boston: {
@@ -251,6 +421,29 @@ const TableFooter = styled.div`
   margin-top: 1rem;
   font-size: 0.875rem;
   color: rgb(71 85 105);
+`
+
+const AddDestinationCard = styled.button`
+  width: 100%;
+  text-align: left;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 2px dashed #2563eb;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: white;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #2563eb;
+  font-weight: 600;
+
+  &:hover {
+    background: #eff6ff;
+    border-color: #1d4ed8;
+  }
 `
 
 const MOCK_RATES = [
@@ -2577,6 +2770,9 @@ export default function AdminRatesPage() {
   const [selectedDestination, setSelectedDestination] = useState<string | null>(null)
   const [rates, setRates] = useState<RateData[]>([])
 
+  const [openAddDestDialog, setOpenAddDestDialog] = useState(false)
+  const [newDestination, setNewDestination] = useState<string | null>(null)
+
   useEffect(() => {
     const loadRates = () => {
       const submittedRates = JSON.parse(localStorage.getItem("submittedRates") || "{}")
@@ -2681,6 +2877,36 @@ export default function AdminRatesPage() {
     router.push("/")
   }
 
+  const handleAddDestination = () => {
+    if (newDestination && selectedCity) {
+      // Add the new destination to the rates list
+      const newRate: RateData = {
+        id: `${selectedCity.toLowerCase()}-${Date.now()}`,
+        vendorId: "PENDING",
+        vendorEmail: "pending@example.com",
+        startCity: selectedCity.charAt(0).toUpperCase() + selectedCity.slice(1),
+        endCity: newDestination,
+        baseRate: 0,
+        fsc: 0,
+        total: 0,
+        submittedAt: new Date().toLocaleString("en-US", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }),
+      }
+
+      const updatedRates = [...rates, newRate]
+      setRates(updatedRates)
+
+      setNewDestination(null)
+      setOpenAddDestDialog(false)
+    }
+  }
+
   return (
     <PageContainer>
       <Header>
@@ -2740,6 +2966,10 @@ export default function AdminRatesPage() {
             <GridContainer>
               <Sidebar>
                 <SidebarTitle>Select Destination</SidebarTitle>
+                <AddDestinationCard onClick={() => setOpenAddDestDialog(true)}>
+                  <Plus size={18} />
+                  Add a New Destination
+                </AddDestinationCard>
                 <DestinationList>
                   {atlantaDestinations.map((dest) => {
                     const count = rates.filter(
@@ -3059,6 +3289,36 @@ export default function AdminRatesPage() {
           )}
         </Container>
       </Main>
+
+      <Dialog open={openAddDestDialog} onClose={() => setOpenAddDestDialog(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Add New Destination</DialogTitle>
+        <DialogContent>
+          <div style={{ paddingTop: "1rem" }}>
+            <Autocomplete
+              options={US_CITIES}
+              value={newDestination}
+              onChange={(event, newValue) => setNewDestination(newValue)}
+              renderInput={(params) => (
+                <TextField {...params} label="Destination Route" placeholder="Type to search cities..." />
+              )}
+              freeSolo={false}
+            />
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setOpenAddDestDialog(false)
+              setNewDestination(null)
+            }}
+          >
+            Cancel
+          </Button>
+          <Button onClick={handleAddDestination} variant="contained" color="primary" disabled={!newDestination}>
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
     </PageContainer>
   )
 }

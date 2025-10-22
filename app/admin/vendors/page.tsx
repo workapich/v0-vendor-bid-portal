@@ -5,8 +5,8 @@ import type React from "react"
 import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import styled from "styled-components"
-import { Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material"
-import { Truck, ArrowLeft, Plus, Trash2, ChevronDown, ChevronUp, Upload, Ban } from "lucide-react"
+import { Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Autocomplete } from "@mui/material"
+import { Truck, ArrowLeft, Plus, Trash2, ChevronDown, ChevronUp, Upload, Ban, Route } from "lucide-react"
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -488,6 +488,98 @@ const HelpText = styled.p`
   margin: 0;
 `
 
+const TabsContainer = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e2e8f0;
+`
+
+const Tab = styled.button<{ $active: boolean }>`
+  padding: 0.75rem 1.5rem;
+  background: ${(props) => (props.$active ? "white" : "transparent")};
+  border: none;
+  border-bottom: 3px solid ${(props) => (props.$active ? "#2563eb" : "transparent")};
+  color: ${(props) => (props.$active ? "#2563eb" : "#64748b")};
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &:hover {
+    color: #2563eb;
+    background: #f8fafc;
+  }
+`
+
+const RoutesList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+`
+
+const RouteCard = styled.div`
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+`
+
+const RouteInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`
+
+const RoutePath = styled.div`
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 1rem;
+`
+
+const RouteDate = styled.div`
+  font-size: 0.875rem;
+  color: #64748b;
+`
+
+const DeleteRouteButton = styled.button`
+  padding: 0.5rem;
+  background: white;
+  border: 2px solid #fca5a5;
+  border-radius: 0.5rem;
+  color: #dc2626;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: #fee2e2;
+    border-color: #f87171;
+  }
+`
+
+const ModalContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  min-width: 500px;
+`
+
 interface Vendor {
   id: number
   mcId: string | null
@@ -506,6 +598,66 @@ interface RateHistory {
   submittedDate: string
 }
 
+interface RouteData {
+  id: number
+  startCity: string
+  endCity: string
+  createdDate: string
+}
+
+const US_CITIES = [
+  "New York, NY",
+  "Los Angeles, CA",
+  "Chicago, IL",
+  "Houston, TX",
+  "Phoenix, AZ",
+  "Philadelphia, PA",
+  "San Antonio, TX",
+  "San Diego, CA",
+  "Dallas, TX",
+  "San Jose, CA",
+  "Austin, TX",
+  "Jacksonville, FL",
+  "Fort Worth, TX",
+  "Columbus, OH",
+  "Charlotte, NC",
+  "San Francisco, CA",
+  "Indianapolis, IN",
+  "Seattle, WA",
+  "Denver, CO",
+  "Washington, DC",
+  "Boston, MA",
+  "El Paso, TX",
+  "Nashville, TN",
+  "Detroit, MI",
+  "Oklahoma City, OK",
+  "Portland, OR",
+  "Las Vegas, NV",
+  "Memphis, TN",
+  "Louisville, KY",
+  "Baltimore, MD",
+  "Milwaukee, WI",
+  "Albuquerque, NM",
+  "Tucson, AZ",
+  "Fresno, CA",
+  "Mesa, AZ",
+  "Sacramento, CA",
+  "Atlanta, GA",
+  "Kansas City, MO",
+  "Colorado Springs, CO",
+  "Omaha, NE",
+  "Raleigh, NC",
+  "Miami, FL",
+  "Long Beach, CA",
+  "Virginia Beach, VA",
+  "Oakland, CA",
+  "Minneapolis, MN",
+  "Tulsa, OK",
+  "Tampa, FL",
+  "Arlington, TX",
+  "New Orleans, LA",
+]
+
 export default function VendorsPage() {
   const router = useRouter()
   const [vendors, setVendors] = useState<Vendor[]>([])
@@ -514,6 +666,12 @@ export default function VendorsPage() {
   const [openDialog, setOpenDialog] = useState(false)
   const [emailInput, setEmailInput] = useState("")
   const [emailList, setEmailList] = useState<string[]>([])
+
+  const [activeTab, setActiveTab] = useState<"vendors" | "routes">("vendors")
+  const [routes, setRoutes] = useState<RouteData[]>([])
+  const [openRouteDialog, setOpenRouteDialog] = useState(false)
+  const [startCity, setStartCity] = useState<string | null>(null)
+  const [endCity, setEndCity] = useState<string | null>(null)
 
   useEffect(() => {
     const savedVendors = JSON.parse(localStorage.getItem("vendors") || "[]")
@@ -701,6 +859,9 @@ export default function VendorsPage() {
       localStorage.setItem("vendors", JSON.stringify(migratedVendors))
       setVendors(migratedVendors)
     }
+
+    const savedRoutes = JSON.parse(localStorage.getItem("routes") || "[]")
+    setRoutes(savedRoutes)
   }, [])
 
   const loadVendorHistory = (vendor: Vendor) => {
@@ -830,6 +991,33 @@ export default function VendorsPage() {
     }
   }
 
+  const handleAddRoute = () => {
+    if (startCity && endCity) {
+      const newRoute: RouteData = {
+        id: Date.now(),
+        startCity,
+        endCity,
+        createdDate: new Date().toISOString().split("T")[0],
+      }
+
+      const updatedRoutes = [...routes, newRoute]
+      setRoutes(updatedRoutes)
+      localStorage.setItem("routes", JSON.stringify(updatedRoutes))
+
+      setStartCity(null)
+      setEndCity(null)
+      setOpenRouteDialog(false)
+    }
+  }
+
+  const handleDeleteRoute = (id: number) => {
+    if (confirm("Are you sure you want to delete this route?")) {
+      const updatedRoutes = routes.filter((r) => r.id !== id)
+      setRoutes(updatedRoutes)
+      localStorage.setItem("routes", JSON.stringify(updatedRoutes))
+    }
+  }
+
   return (
     <PageContainer>
       <Header>
@@ -851,117 +1039,210 @@ export default function VendorsPage() {
       <Main>
         <PageHeader>
           <PageTitleSection>
-            <h2>Vendor Management</h2>
-            <p>View, create, and manage all vendors in the system</p>
+            <h2>{activeTab === "vendors" ? "Vendor Management" : "Routes Management"}</h2>
+            <p>
+              {activeTab === "vendors"
+                ? "View, create, and manage all vendors in the system"
+                : "Create and manage shipping routes"}
+            </p>
           </PageTitleSection>
-          <AddButton onClick={() => setOpenDialog(true)}>
-            <Plus size={20} />
-            Add New Vendor(s)
-          </AddButton>
+          {activeTab === "vendors" ? (
+            <AddButton onClick={() => setOpenDialog(true)}>
+              <Plus size={20} />
+              Add New Vendor(s)
+            </AddButton>
+          ) : (
+            <AddButton onClick={() => setOpenRouteDialog(true)}>
+              <Plus size={20} />
+              Add New Route
+            </AddButton>
+          )}
         </PageHeader>
 
-        <VendorsCard>
-          {vendors.length === 0 ? (
-            <EmptyState>
-              <h3>No Vendors Found</h3>
-              <p>Click "Add New Vendor(s)" to create your first vendor</p>
-            </EmptyState>
-          ) : (
-            <TableContainer>
-              <VendorsTable>
-                <TableHeader>
-                  <tr>
-                    <TableHeaderCell>MC-ID</TableHeaderCell>
-                    <TableHeaderCell>Email</TableHeaderCell>
-                    <TableHeaderCell>Status</TableHeaderCell>
-                    <TableHeaderCell>Total Bids</TableHeaderCell>
-                    <TableHeaderCell>Joined Date</TableHeaderCell>
-                    <TableHeaderCell>Actions</TableHeaderCell>
-                  </tr>
-                </TableHeader>
-                <TableBody>
-                  {vendors.map((vendor) => (
-                    <>
-                      <TableRow key={vendor.id}>
-                        <TableCell>
-                          <VendorName>{vendor.mcId || "Not Added"}</VendorName>
-                        </TableCell>
-                        <TableCell>
-                          <VendorEmail>{vendor.email}</VendorEmail>
-                        </TableCell>
-                        <TableCell>
-                          <StatusBadge $status={vendor.status}>
-                            {vendor.status === "active" ? "Active" : vendor.status === "banned" ? "Banned" : "Inactive"}
-                          </StatusBadge>
-                        </TableCell>
-                        <TableCell>{vendor.totalBids}</TableCell>
-                        <TableCell>{new Date(vendor.joinedDate).toLocaleDateString()}</TableCell>
-                        <TableCell>
-                          <ActionButtons>
-                            <ToggleButton
-                              onClick={() => toggleVendorHistory(vendor)}
-                              title={expandedVendorId === vendor.id ? "Hide Rate History" : "View Rate History"}
-                            >
-                              {expandedVendorId === vendor.id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                            </ToggleButton>
-                            {vendor.status !== "banned" && (
-                              <BanButton onClick={() => handleBanVendor(vendor.id)} title="Ban Vendor">
-                                <Ban size={18} />
-                              </BanButton>
-                            )}
-                            <IconButton
-                              className="danger"
-                              onClick={() => handleDeleteVendor(vendor.id)}
-                              title="Delete Vendor"
-                            >
-                              <Trash2 size={18} />
-                            </IconButton>
-                          </ActionButtons>
-                        </TableCell>
-                      </TableRow>
-                      <AccordionRow key={`${vendor.id}-accordion`} $isOpen={expandedVendorId === vendor.id}>
-                        <AccordionCell colSpan={6}>
-                          <AccordionContent $isOpen={expandedVendorId === vendor.id}>
-                            <HistoryContainer>
-                              <HistoryHeader>Rate History - {vendor.mcId}</HistoryHeader>
-                              {vendorHistories[vendor.id] && vendorHistories[vendor.id].length > 0 ? (
-                                <HistoryScrollContainer>
-                                  <HistoryList>
-                                    {vendorHistories[vendor.id].map((history) => (
-                                      <HistoryItem key={history.id}>
-                                        <HistoryItemHeader>
-                                          <HistoryRoute>{history.route}</HistoryRoute>
-                                          <HistoryDate>{history.submittedDate}</HistoryDate>
-                                        </HistoryItemHeader>
-                                        <HistoryDetails>
-                                          <span>
-                                            <strong>Base Rate:</strong> {history.baseRate}
-                                          </span>
-                                          <span>
-                                            <strong>FSC:</strong> {history.fsc}
-                                          </span>
-                                          <span>
-                                            <strong>Total:</strong> {history.total}
-                                          </span>
-                                        </HistoryDetails>
-                                      </HistoryItem>
-                                    ))}
-                                  </HistoryList>
-                                </HistoryScrollContainer>
-                              ) : (
-                                <EmptyHistory>No bid history available for this vendor</EmptyHistory>
+        <TabsContainer>
+          <Tab $active={activeTab === "vendors"} onClick={() => setActiveTab("vendors")}>
+            <Truck size={18} />
+            Manage Vendors
+          </Tab>
+          <Tab $active={activeTab === "routes"} onClick={() => setActiveTab("routes")}>
+            <Route size={18} />
+            Add Routes
+          </Tab>
+        </TabsContainer>
+
+        {activeTab === "vendors" ? (
+          <VendorsCard>
+            {vendors.length === 0 ? (
+              <EmptyState>
+                <h3>No Vendors Found</h3>
+                <p>Click "Add New Vendor(s)" to create your first vendor</p>
+              </EmptyState>
+            ) : (
+              <TableContainer>
+                <VendorsTable>
+                  <TableHeader>
+                    <tr>
+                      <TableHeaderCell>MC-ID</TableHeaderCell>
+                      <TableHeaderCell>Email</TableHeaderCell>
+                      <TableHeaderCell>Status</TableHeaderCell>
+                      <TableHeaderCell>Total Bids</TableHeaderCell>
+                      <TableHeaderCell>Joined Date</TableHeaderCell>
+                      <TableHeaderCell>Actions</TableHeaderCell>
+                    </tr>
+                  </TableHeader>
+                  <TableBody>
+                    {vendors.map((vendor) => (
+                      <>
+                        <TableRow key={vendor.id}>
+                          <TableCell>
+                            <VendorName>{vendor.mcId || "Not Added"}</VendorName>
+                          </TableCell>
+                          <TableCell>
+                            <VendorEmail>{vendor.email}</VendorEmail>
+                          </TableCell>
+                          <TableCell>
+                            <StatusBadge $status={vendor.status}>
+                              {vendor.status === "active"
+                                ? "Active"
+                                : vendor.status === "banned"
+                                  ? "Banned"
+                                  : "Inactive"}
+                            </StatusBadge>
+                          </TableCell>
+                          <TableCell>{vendor.totalBids}</TableCell>
+                          <TableCell>{new Date(vendor.joinedDate).toLocaleDateString()}</TableCell>
+                          <TableCell>
+                            <ActionButtons>
+                              <ToggleButton
+                                onClick={() => toggleVendorHistory(vendor)}
+                                title={expandedVendorId === vendor.id ? "Hide Rate History" : "View Rate History"}
+                              >
+                                {expandedVendorId === vendor.id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                              </ToggleButton>
+                              {vendor.status !== "banned" && (
+                                <BanButton onClick={() => handleBanVendor(vendor.id)} title="Ban Vendor">
+                                  <Ban size={18} />
+                                </BanButton>
                               )}
-                            </HistoryContainer>
-                          </AccordionContent>
-                        </AccordionCell>
-                      </AccordionRow>
-                    </>
-                  ))}
-                </TableBody>
-              </VendorsTable>
-            </TableContainer>
-          )}
-        </VendorsCard>
+                              <IconButton
+                                className="danger"
+                                onClick={() => handleDeleteVendor(vendor.id)}
+                                title="Delete Vendor"
+                              >
+                                <Trash2 size={18} />
+                              </IconButton>
+                            </ActionButtons>
+                          </TableCell>
+                        </TableRow>
+                        <AccordionRow key={`${vendor.id}-accordion`} $isOpen={expandedVendorId === vendor.id}>
+                          <AccordionCell colSpan={6}>
+                            <AccordionContent $isOpen={expandedVendorId === vendor.id}>
+                              <HistoryContainer>
+                                <HistoryHeader>Rate History - {vendor.mcId}</HistoryHeader>
+                                {vendorHistories[vendor.id] && vendorHistories[vendor.id].length > 0 ? (
+                                  <HistoryScrollContainer>
+                                    <HistoryList>
+                                      {vendorHistories[vendor.id].map((history) => (
+                                        <HistoryItem key={history.id}>
+                                          <HistoryItemHeader>
+                                            <HistoryRoute>{history.route}</HistoryRoute>
+                                            <HistoryDate>{history.submittedDate}</HistoryDate>
+                                          </HistoryItemHeader>
+                                          <HistoryDetails>
+                                            <span>
+                                              <strong>Base Rate:</strong> {history.baseRate}
+                                            </span>
+                                            <span>
+                                              <strong>FSC:</strong> {history.fsc}
+                                            </span>
+                                            <span>
+                                              <strong>Total:</strong> {history.total}
+                                            </span>
+                                          </HistoryDetails>
+                                        </HistoryItem>
+                                      ))}
+                                    </HistoryList>
+                                  </HistoryScrollContainer>
+                                ) : (
+                                  <EmptyHistory>No bid history available for this vendor</EmptyHistory>
+                                )}
+                              </HistoryContainer>
+                            </AccordionContent>
+                          </AccordionCell>
+                        </AccordionRow>
+                      </>
+                    ))}
+                  </TableBody>
+                </VendorsTable>
+              </TableContainer>
+            )}
+          </VendorsCard>
+        ) : (
+          <VendorsCard>
+            {routes.length === 0 ? (
+              <EmptyState>
+                <h3>No Routes Found</h3>
+                <p>Click "Add New Route" to create your first route</p>
+              </EmptyState>
+            ) : (
+              <RoutesList>
+                {routes.map((route) => (
+                  <RouteCard key={route.id}>
+                    <RouteInfo>
+                      <RoutePath>
+                        {route.startCity} → {route.endCity}
+                      </RoutePath>
+                      <RouteDate>Created: {new Date(route.createdDate).toLocaleDateString()}</RouteDate>
+                    </RouteInfo>
+                    <DeleteRouteButton onClick={() => handleDeleteRoute(route.id)} title="Delete Route">
+                      <Trash2 size={18} />
+                    </DeleteRouteButton>
+                  </RouteCard>
+                ))}
+              </RoutesList>
+            )}
+          </VendorsCard>
+        )}
+
+        <Dialog open={openRouteDialog} onClose={() => setOpenRouteDialog(false)} maxWidth="md" fullWidth>
+          <DialogTitle>Add New Route</DialogTitle>
+          <DialogContent>
+            <ModalContent>
+              <Autocomplete
+                options={US_CITIES}
+                value={startCity}
+                onChange={(event, newValue) => setStartCity(newValue)}
+                renderInput={(params) => (
+                  <TextField {...params} label="Starting Position" placeholder="Type to search cities..." />
+                )}
+                freeSolo={false}
+              />
+              <Autocomplete
+                options={US_CITIES}
+                value={endCity}
+                onChange={(event, newValue) => setEndCity(newValue)}
+                renderInput={(params) => (
+                  <TextField {...params} label="Ending Position" placeholder="Type to search cities..." />
+                )}
+                freeSolo={false}
+              />
+            </ModalContent>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => {
+                setOpenRouteDialog(false)
+                setStartCity(null)
+                setEndCity(null)
+              }}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleAddRoute} variant="contained" color="primary" disabled={!startCity || !endCity}>
+              Submit
+            </Button>
+          </DialogActions>
+        </Dialog>
 
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
           <DialogTitle>Add New Vendor(s)</DialogTitle>
