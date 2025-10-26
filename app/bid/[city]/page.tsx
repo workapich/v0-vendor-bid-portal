@@ -120,8 +120,7 @@ const RouteText = styled.div`
 
 const FavoriteButton = styled.button`
   background: ${(props) => (props.className?.includes("favorite") ? "#2563eb" : "white")};
-  border: 2px solid
-    ${(props) => (props.className?.includes("favorite") ? "#2563eb" : "#e2e8f0")};
+  border: 2px solid ${(props) => (props.className?.includes("favorite") ? "#2563eb" : "#e2e8f0")};
   border-radius: 0.75rem;
   width: 3.5rem;
   height: 3.5rem;
@@ -175,12 +174,11 @@ const DestinationButton = styled.button<{ $hasSubmittedRates?: boolean }>`
   padding: 0.75rem 1rem;
   height: 4rem;
   border-radius: 0.75rem;
-  border: 2px solid
-    ${(props) => {
-      if (props.$hasSubmittedRates) return "#10b981"
-      if (props.className?.includes("selected")) return "#2563eb"
-      return "#e2e8f0"
-    }};
+  border: 2px solid ${(props) => {
+    if (props.$hasSubmittedRates) return "#10b981"
+    if (props.className?.includes("selected")) return "#2563eb"
+    return "#e2e8f0"
+  }};
   background: ${(props) => {
     if (props.$hasSubmittedRates && props.className?.includes("selected"))
       return "linear-gradient(135deg, #10b981, #059669)"
@@ -376,29 +374,37 @@ const EmptyTemplates = styled.div`
 `
 
 const SaveTemplateTooltip = styled.div<{ $show: boolean }>`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 0.75rem;
   background: white;
   border: 2px solid #e2e8f0;
   border-radius: 0.75rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  padding: 1.5rem;
-  z-index: 2000;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  padding: 1.25rem;
+  z-index: 1000;
   display: ${(props) => (props.$show ? "block" : "none")};
-  min-width: 400px;
-`
+  min-width: 350px;
 
-const TooltipOverlay = styled.div<{ $show: boolean }>`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 1999;
-  display: ${(props) => (props.$show ? "block" : "none")};
+  &::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    right: 2rem;
+    border: 8px solid transparent;
+    border-top-color: white;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 100%;
+    right: 2rem;
+    border: 10px solid transparent;
+    border-top-color: #e2e8f0;
+    margin-top: 2px;
+  }
 `
 
 const TooltipText = styled.p`
@@ -489,22 +495,6 @@ const ModalButtons = styled.div`
   justify-content: flex-end;
 `
 
-interface AccessorialTemplate {
-  name: string
-  values: {
-    optional1: string
-    optional2: string
-    optional3: string
-    optional4: string
-    optional5: string
-    optional6: string
-    optional7: string
-    optional8: string
-  }
-  lastUsedRoute: string
-  lastUsedDate: string
-}
-
 const FieldGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -572,6 +562,7 @@ const SubmitButton = styled.button<{ $enabled?: boolean }>`
   transition: all 0.2s;
   float: right;
   margin-top: 1rem;
+  position: relative;
 
   &:hover {
     background: ${(props) =>
@@ -604,6 +595,22 @@ const DESTINATIONS = {
     { id: 2, name: "Baltimore, MD" },
     { id: 3, name: "Washington, DC" },
   ],
+}
+
+interface AccessorialTemplate {
+  name: string
+  values: {
+    optional1: string
+    optional2: string
+    optional3: string
+    optional4: string
+    optional5: string
+    optional6: string
+    optional7: string
+    optional8: string
+  }
+  lastUsedRoute: string
+  lastUsedDate: string
 }
 
 export default function BidPage() {
@@ -973,6 +980,23 @@ export default function BidPage() {
 
                 <SubmitButton onClick={handleSubmit} disabled={!isFormValid} $enabled={isFormValid as any}>
                   Submit Bid
+                  <SaveTemplateTooltip $show={showSaveTooltip}>
+                    <TooltipText>
+                      Before submitting the rates, do you want to save your accessorial rates as a template?
+                    </TooltipText>
+                    <TooltipButtons>
+                      <TooltipButton onClick={submitRates}>No, just submit</TooltipButton>
+                      <TooltipButton
+                        $primary
+                        onClick={() => {
+                          setShowSaveTooltip(false)
+                          setShowSaveModal(true)
+                        }}
+                      >
+                        Yes, save template
+                      </TooltipButton>
+                    </TooltipButtons>
+                  </SaveTemplateTooltip>
                 </SubmitButton>
               </>
             )}
@@ -980,26 +1004,7 @@ export default function BidPage() {
         </GridLayout>
       </Main>
 
-      <TooltipOverlay $show={showSaveTooltip} onClick={() => setShowSaveTooltip(false)} />
-      <SaveTemplateTooltip $show={showSaveTooltip}>
-        <TooltipText>
-          Before submitting the rates, do you want to save your accessorial rates as a template?
-        </TooltipText>
-        <TooltipButtons>
-          <TooltipButton onClick={submitRates}>No, just submit</TooltipButton>
-          <TooltipButton
-            $primary
-            onClick={() => {
-              setShowSaveTooltip(false)
-              setShowSaveModal(true)
-            }}
-          >
-            Yes, save template
-          </TooltipButton>
-        </TooltipButtons>
-      </SaveTemplateTooltip>
-
-      <TooltipOverlay $show={showSaveModal} onClick={() => setShowSaveModal(false)} />
+      <div $show={showSaveModal} onClick={() => setShowSaveModal(false)} />
       <SaveTemplateModal $show={showSaveModal}>
         <ModalTitle>Save Accessorial Template</ModalTitle>
         <ModalInputGroup>
