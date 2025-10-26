@@ -1013,15 +1013,18 @@ export default function BidPage() {
                       Before submitting the rates, do you want to save your accessorial rates as a template?
                     </TooltipText>
                     <ModalButtons>
-                      <TooltipButton onClick={submitRates}>
-                        {" "}
-                        {/* Closes tooltip on click */}
+                      <TooltipButton
+                        onClick={() => {
+                          setShowSaveTooltip(false)
+                          submitRates()
+                        }}
+                      >
                         No, just submit
                       </TooltipButton>
                       <TooltipButton
                         $primary
                         onClick={() => {
-                          setShowSaveTooltip(false) // Close tooltip
+                          setShowSaveTooltip(false)
                           setShowSaveModal(true)
                         }}
                       >
