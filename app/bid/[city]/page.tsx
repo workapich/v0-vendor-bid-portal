@@ -1,14 +1,14 @@
-"use client";
+"use client"
 
-import { useParams, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-import styled from "styled-components";
-import { Truck, ArrowLeft, MapPin, Star, CheckCircle2 } from "lucide-react";
+import { useParams, useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import styled from "styled-components"
+import { Truck, ArrowLeft, MapPin, Star, CheckCircle2, Repeat } from "lucide-react"
 
 const PageContainer = styled.div`
   min-height: 100vh;
   background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-`;
+`
 
 const Header = styled.header`
   background: white;
@@ -17,13 +17,13 @@ const Header = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`;
+`
 
 const HeaderLeft = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
-`;
+`
 
 const Logo = styled.div`
   width: 3rem;
@@ -34,7 +34,7 @@ const Logo = styled.div`
   align-items: center;
   justify-content: center;
   color: white;
-`;
+`
 
 const HeaderTitle = styled.div`
   h1 {
@@ -48,7 +48,7 @@ const HeaderTitle = styled.div`
     color: #64748b;
     margin: 0;
   }
-`;
+`
 
 const BackButton = styled.button`
   display: flex;
@@ -67,13 +67,13 @@ const BackButton = styled.button`
     background: #f8fafc;
     border-color: #cbd5e1;
   }
-`;
+`
 
 const Main = styled.main`
   padding: 2rem;
   max-width: 1400px;
   margin: 0 auto;
-`;
+`
 
 const StartingRouteCard = styled.div`
   background: white;
@@ -84,13 +84,13 @@ const StartingRouteCard = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`;
+`
 
 const RouteInfo = styled.div`
   display: flex;
   align-items: center;
   gap: 1.5rem;
-`;
+`
 
 const RouteIcon = styled.div`
   width: 4rem;
@@ -101,7 +101,7 @@ const RouteIcon = styled.div`
   align-items: center;
   justify-content: center;
   border: 2px solid #bfdbfe;
-`;
+`
 
 const RouteText = styled.div`
   h2 {
@@ -116,14 +116,12 @@ const RouteText = styled.div`
     color: #64748b;
     margin: 0;
   }
-`;
+`
 
 const FavoriteButton = styled.button`
-  background: ${(props) =>
-    props.className?.includes("favorite") ? "#2563eb" : "white"};
+  background: ${(props) => (props.className?.includes("favorite") ? "#2563eb" : "white")};
   border: 2px solid
-    ${(props) =>
-      props.className?.includes("favorite") ? "#2563eb" : "#e2e8f0"};
+    ${(props) => (props.className?.includes("favorite") ? "#2563eb" : "#e2e8f0")};
   border-radius: 0.75rem;
   width: 3.5rem;
   height: 3.5rem;
@@ -132,13 +130,12 @@ const FavoriteButton = styled.button`
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s;
-  color: ${(props) =>
-    props.className?.includes("favorite") ? "white" : "#94a3b8"};
+  color: ${(props) => (props.className?.includes("favorite") ? "white" : "#94a3b8")};
 
   &:hover {
     transform: scale(1.1);
   }
-`;
+`
 
 const GridLayout = styled.div`
   display: grid;
@@ -148,7 +145,7 @@ const GridLayout = styled.div`
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
   }
-`;
+`
 
 const Sidebar = styled.div`
   background: white;
@@ -157,20 +154,20 @@ const Sidebar = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   height: 65vh;
   overflow-y: auto;
-`;
+`
 
 const SidebarTitle = styled.h3`
   font-size: 1.125rem;
   font-weight: 700;
   color: #0f172a;
   margin: 0 0 1rem 0;
-`;
+`
 
 const DestinationList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-`;
+`
 
 const DestinationButton = styled.button<{ $hasSubmittedRates?: boolean }>`
   width: 100%;
@@ -180,25 +177,22 @@ const DestinationButton = styled.button<{ $hasSubmittedRates?: boolean }>`
   border-radius: 0.75rem;
   border: 2px solid
     ${(props) => {
-      if (props.$hasSubmittedRates) return "#10b981";
-      if (props.className?.includes("selected")) return "#2563eb";
-      return "#e2e8f0";
+      if (props.$hasSubmittedRates) return "#10b981"
+      if (props.className?.includes("selected")) return "#2563eb"
+      return "#e2e8f0"
     }};
   background: ${(props) => {
     if (props.$hasSubmittedRates && props.className?.includes("selected"))
-      return "linear-gradient(135deg, #10b981, #059669)";
-    if (props.$hasSubmittedRates)
-      return "linear-gradient(135deg, #d1fae5, #a7f3d0)";
-    if (props.className?.includes("selected"))
-      return "linear-gradient(135deg, #2563eb, #1d4ed8)";
-    return "white";
+      return "linear-gradient(135deg, #10b981, #059669)"
+    if (props.$hasSubmittedRates) return "linear-gradient(135deg, #d1fae5, #a7f3d0)"
+    if (props.className?.includes("selected")) return "linear-gradient(135deg, #2563eb, #1d4ed8)"
+    return "white"
   }};
   color: ${(props) => {
-    if (props.$hasSubmittedRates && props.className?.includes("selected"))
-      return "white";
-    if (props.$hasSubmittedRates) return "#065f46";
-    if (props.className?.includes("selected")) return "white";
-    return "#0f172a";
+    if (props.$hasSubmittedRates && props.className?.includes("selected")) return "white"
+    if (props.$hasSubmittedRates) return "#065f46"
+    if (props.className?.includes("selected")) return "white"
+    return "#0f172a"
   }};
   cursor: pointer;
   transition: all 0.2s;
@@ -209,35 +203,33 @@ const DestinationButton = styled.button<{ $hasSubmittedRates?: boolean }>`
 
   &:hover {
     border-color: ${(props) => {
-      if (props.$hasSubmittedRates) return "#059669";
-      if (props.className?.includes("selected")) return "#1d4ed8";
-      return "#cbd5e1";
+      if (props.$hasSubmittedRates) return "#059669"
+      if (props.className?.includes("selected")) return "#1d4ed8"
+      return "#cbd5e1"
     }};
     background: ${(props) => {
       if (props.$hasSubmittedRates && props.className?.includes("selected"))
-        return "linear-gradient(135deg, #059669, #047857)";
-      if (props.$hasSubmittedRates)
-        return "linear-gradient(135deg, #a7f3d0, #6ee7b7)";
-      if (props.className?.includes("selected"))
-        return "linear-gradient(135deg, #1d4ed8, #1e40af)";
-      return "#f8fafc";
+        return "linear-gradient(135deg, #059669, #047857)"
+      if (props.$hasSubmittedRates) return "linear-gradient(135deg, #a7f3d0, #6ee7b7)"
+      if (props.className?.includes("selected")) return "linear-gradient(135deg, #1d4ed8, #1e40af)"
+      return "#f8fafc"
     }};
   }
 
   div:first-child {
     font-weight: 600;
   }
-`;
+`
 
 const DestinationContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-`;
+`
 
 const DestinationName = styled.div`
   font-weight: 600;
-`;
+`
 
 const SubmittedBadge = styled.div`
   font-size: 0.75rem;
@@ -245,7 +237,7 @@ const SubmittedBadge = styled.div`
   display: flex;
   align-items: center;
   gap: 0.25rem;
-`;
+`
 
 const FormCard = styled.div`
   background: white;
@@ -254,7 +246,7 @@ const FormCard = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   height: 65vh;
   overflow-y: auto;
-`;
+`
 
 const EmptyState = styled.div`
   display: flex;
@@ -276,11 +268,11 @@ const EmptyState = styled.div`
     font-size: 1rem;
     color: #64748b;
   }
-`;
+`
 
 const FormSection = styled.div`
   margin-bottom: 2rem;
-`;
+`
 
 const SectionTitle = styled.h4`
   font-size: 1rem;
@@ -290,7 +282,228 @@ const SectionTitle = styled.h4`
   padding: 1rem;
   background: #eff6ff;
   border-radius: 0.5rem;
-`;
+`
+
+const SectionTitleWithIcon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  padding: 1rem;
+  background: #eff6ff;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+`
+
+const SectionTitleText = styled.h4`
+  margin: 0;
+`
+
+const RepeatIconButton = styled.button`
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #2563eb;
+  position: relative;
+
+  &:hover {
+    background: #f8fafc;
+    border-color: #2563eb;
+    transform: scale(1.05);
+  }
+`
+
+const TemplatePopover = styled.div<{ $show: boolean }>`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  padding: 0.75rem;
+  min-width: 300px;
+  z-index: 1000;
+  display: ${(props) => (props.$show ? "block" : "none")};
+`
+
+const TemplateItem = styled.button`
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem;
+  border: none;
+  background: white;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 0.5rem;
+
+  &:hover {
+    background: #f8fafc;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`
+
+const TemplateName = styled.div`
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+`
+
+const TemplateInfo = styled.div`
+  font-size: 0.75rem;
+  color: #64748b;
+`
+
+const EmptyTemplates = styled.div`
+  padding: 1rem;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.875rem;
+`
+
+const SaveTemplateTooltip = styled.div<{ $show: boolean }>`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  padding: 1.5rem;
+  z-index: 2000;
+  display: ${(props) => (props.$show ? "block" : "none")};
+  min-width: 400px;
+`
+
+const TooltipOverlay = styled.div<{ $show: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1999;
+  display: ${(props) => (props.$show ? "block" : "none")};
+`
+
+const TooltipText = styled.p`
+  margin: 0 0 1rem 0;
+  color: #334155;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+`
+
+const TooltipButtons = styled.div`
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+`
+
+const TooltipButton = styled.button<{ $primary?: boolean }>`
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid ${(props) => (props.$primary ? "#2563eb" : "#e2e8f0")};
+  background: ${(props) => (props.$primary ? "#2563eb" : "white")};
+  color: ${(props) => (props.$primary ? "white" : "#334155")};
+
+  &:hover {
+    background: ${(props) => (props.$primary ? "#1d4ed8" : "#f8fafc")};
+    border-color: ${(props) => (props.$primary ? "#1d4ed8" : "#cbd5e1")};
+  }
+`
+
+const SaveTemplateModal = styled.div<{ $show: boolean }>`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
+  z-index: 2001;
+  display: ${(props) => (props.$show ? "block" : "none")};
+  min-width: 450px;
+`
+
+const ModalTitle = styled.h3`
+  margin: 0 0 1.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+`
+
+const ModalInputGroup = styled.div`
+  margin-bottom: 1.5rem;
+`
+
+const ModalLabel = styled.label`
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 0.5rem;
+`
+
+const ModalInput = styled.input`
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  color: #0f172a;
+  transition: all 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: #2563eb;
+  }
+
+  &::placeholder {
+    color: #94a3b8;
+  }
+`
+
+const ModalButtons = styled.div`
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+`
+
+interface AccessorialTemplate {
+  name: string
+  values: {
+    optional1: string
+    optional2: string
+    optional3: string
+    optional4: string
+    optional5: string
+    optional6: string
+    optional7: string
+    optional8: string
+  }
+  lastUsedRoute: string
+  lastUsedDate: string
+}
 
 const FieldGrid = styled.div`
   display: grid;
@@ -303,7 +516,7 @@ const FieldGrid = styled.div`
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
-`;
+`
 
 const FieldGridOptional = styled(FieldGrid)`
   grid-template-columns: repeat(4, 1fr);
@@ -311,19 +524,19 @@ const FieldGridOptional = styled(FieldGrid)`
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
-`;
+`
 
 const InputGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-`;
+`
 
 const Label = styled.label`
   font-size: 0.875rem;
   font-weight: 600;
   color: #334155;
-`;
+`
 
 const Input = styled.input`
   padding: 0.75rem;
@@ -344,14 +557,12 @@ const Input = styled.input`
   &::placeholder {
     color: #94a3b8;
   }
-`;
+`
 
 const SubmitButton = styled.button<{ $enabled?: boolean }>`
   padding: 1rem 3rem;
   background: ${(props) =>
-    props.$enabled
-      ? "linear-gradient(135deg, #2563eb, #1d4ed8)"
-      : "linear-gradient(135deg, #cbd5e1, #94a3b8)"};
+    props.$enabled ? "linear-gradient(135deg, #2563eb, #1d4ed8)" : "linear-gradient(135deg, #cbd5e1, #94a3b8)"};
   color: white;
   border: none;
   border-radius: 0.75rem;
@@ -364,19 +575,16 @@ const SubmitButton = styled.button<{ $enabled?: boolean }>`
 
   &:hover {
     background: ${(props) =>
-      props.$enabled
-        ? "linear-gradient(135deg, #1d4ed8, #1e40af)"
-        : "linear-gradient(135deg, #cbd5e1, #94a3b8)"};
+      props.$enabled ? "linear-gradient(135deg, #1d4ed8, #1e40af)" : "linear-gradient(135deg, #cbd5e1, #94a3b8)"};
     transform: ${(props) => (props.$enabled ? "translateY(-2px)" : "none")};
-    box-shadow: ${(props) =>
-      props.$enabled ? "0 4px 12px rgba(37, 99, 235, 0.3)" : "none"};
+    box-shadow: ${(props) => (props.$enabled ? "0 4px 12px rgba(37, 99, 235, 0.3)" : "none")};
   }
 
   &:disabled {
     background: linear-gradient(135deg, #cbd5e1, #94a3b8);
     cursor: not-allowed;
   }
-`;
+`
 
 const DESTINATIONS = {
   boston: [
@@ -396,21 +604,17 @@ const DESTINATIONS = {
     { id: 2, name: "Baltimore, MD" },
     { id: 3, name: "Washington, DC" },
   ],
-};
+}
 
 export default function BidPage() {
-  const params = useParams();
-  const router = useRouter();
-  const city = params.city as string;
-  const cityName = city
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (l) => l.toUpperCase());
+  const params = useParams()
+  const router = useRouter()
+  const city = params.city as string
+  const cityName = city.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
 
-  const [selectedDestination, setSelectedDestination] = useState<number | null>(
-    null
-  );
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [submittedRates, setSubmittedRates] = useState<Record<string, any>>({});
+  const [selectedDestination, setSelectedDestination] = useState<number | null>(null)
+  const [isFavorite, setIsFavorite] = useState(false)
+  const [submittedRates, setSubmittedRates] = useState<Record<string, any>>({})
   const [formData, setFormData] = useState({
     baseRate: "",
     fsc: "",
@@ -423,21 +627,25 @@ export default function BidPage() {
     optional6: "",
     optional7: "",
     optional8: "",
-  });
+  })
 
-  const destinations =
-    DESTINATIONS[city as keyof typeof DESTINATIONS] || DESTINATIONS.boston;
+  const [showTemplatePopover, setShowTemplatePopover] = useState(false)
+  const [showSaveTooltip, setShowSaveTooltip] = useState(false)
+  const [showSaveModal, setShowSaveModal] = useState(false)
+  const [templateName, setTemplateName] = useState("")
+  const [templates, setTemplates] = useState<AccessorialTemplate[]>([])
+
+  const destinations = DESTINATIONS[city as keyof typeof DESTINATIONS] || DESTINATIONS.boston
 
   useEffect(() => {
-    const favorites = JSON.parse(
-      localStorage.getItem("favoriteCities") || "[]"
-    );
-    setIsFavorite(favorites.includes(cityName));
+    const favorites = JSON.parse(localStorage.getItem("favoriteCities") || "[]")
+    setIsFavorite(favorites.includes(cityName))
 
-    const savedRates = JSON.parse(
-      localStorage.getItem("submittedRates") || "{}"
-    );
-    setSubmittedRates(savedRates);
+    const savedRates = JSON.parse(localStorage.getItem("submittedRates") || "{}")
+    setSubmittedRates(savedRates)
+
+    const savedTemplates = JSON.parse(localStorage.getItem("accessorialTemplates") || "[]")
+    setTemplates(savedTemplates)
 
     if (city === "atlanta" && !savedRates["atlanta-3"]) {
       const atlantaNashvilleRate = {
@@ -452,16 +660,16 @@ export default function BidPage() {
         optional6: "",
         optional7: "",
         optional8: "",
-      };
-      savedRates["atlanta-3"] = atlantaNashvilleRate;
-      localStorage.setItem("submittedRates", JSON.stringify(savedRates));
-      setSubmittedRates(savedRates);
+      }
+      savedRates["atlanta-3"] = atlantaNashvilleRate
+      localStorage.setItem("submittedRates", JSON.stringify(savedRates))
+      setSubmittedRates(savedRates)
     }
 
     if (selectedDestination) {
-      const rateKey = `${city}-${selectedDestination}`;
+      const rateKey = `${city}-${selectedDestination}`
       if (savedRates[rateKey]) {
-        setFormData(savedRates[rateKey]);
+        setFormData(savedRates[rateKey])
       } else {
         setFormData({
           baseRate: "",
@@ -475,92 +683,157 @@ export default function BidPage() {
           optional6: "",
           optional7: "",
           optional8: "",
-        });
+        })
       }
     }
-  }, [cityName, selectedDestination, city]);
+  }, [cityName, selectedDestination, city])
 
   const toggleFavorite = () => {
-    const favorites = JSON.parse(
-      localStorage.getItem("favoriteCities") || "[]"
-    );
-    let updatedFavorites;
+    const favorites = JSON.parse(localStorage.getItem("favoriteCities") || "[]")
+    let updatedFavorites
 
     if (favorites.includes(cityName)) {
-      updatedFavorites = favorites.filter((c: string) => c !== cityName);
+      updatedFavorites = favorites.filter((c: string) => c !== cityName)
     } else {
-      updatedFavorites = [...favorites, cityName];
+      updatedFavorites = [...favorites, cityName]
     }
 
-    localStorage.setItem("favoriteCities", JSON.stringify(updatedFavorites));
-    setIsFavorite(!isFavorite);
-  };
+    localStorage.setItem("favoriteCities", JSON.stringify(updatedFavorites))
+    setIsFavorite(!isFavorite)
+  }
 
   const formatCurrency = (value: string): string => {
-    const numericValue = value.replace(/[^0-9.]/g, "");
-    if (!numericValue) return "";
-    return `$${numericValue}`;
-  };
+    const numericValue = value.replace(/[^0-9.]/g, "")
+    if (!numericValue) return ""
+    return `$${numericValue}`
+  }
 
   const formatPercentage = (value: string): string => {
-    const numericValue = value.replace(/[^0-9.]/g, "");
-    if (!numericValue) return "";
-    return `${numericValue}%`;
-  };
+    const numericValue = value.replace(/[^0-9.]/g, "")
+    if (!numericValue) return ""
+    return `${numericValue}%`
+  }
 
   const extractNumericValue = (value: string): string => {
-    return value.replace(/[^0-9.]/g, "");
-  };
+    return value.replace(/[^0-9.]/g, "")
+  }
 
   useEffect(() => {
-    const baseRate =
-      Number.parseFloat(extractNumericValue(formData.baseRate)) || 0;
-    const fsc = Number.parseFloat(extractNumericValue(formData.fsc)) || 0;
+    const baseRate = Number.parseFloat(extractNumericValue(formData.baseRate)) || 0
+    const fsc = Number.parseFloat(extractNumericValue(formData.fsc)) || 0
 
     if (baseRate > 0 && fsc >= 0) {
-      const total = baseRate + baseRate * (fsc / 100);
-      setFormData((prev) => ({ ...prev, total: `$${total.toFixed(2)}` }));
+      const total = baseRate + baseRate * (fsc / 100)
+      setFormData((prev) => ({ ...prev, total: `$${total.toFixed(2)}` }))
     } else if (!formData.baseRate && !formData.fsc) {
-      setFormData((prev) => ({ ...prev, total: "" }));
+      setFormData((prev) => ({ ...prev, total: "" }))
     }
-  }, [formData.baseRate, formData.fsc]);
+  }, [formData.baseRate, formData.fsc])
 
   const handleCurrencyInput = (field: string, value: string) => {
-    const formatted = formatCurrency(value);
-    setFormData({ ...formData, [field]: formatted });
-  };
+    const formatted = formatCurrency(value)
+    setFormData({ ...formData, [field]: formatted })
+  }
 
   const handlePercentageInput = (value: string) => {
-    const formatted = formatPercentage(value);
-    setFormData({ ...formData, fsc: formatted });
-  };
+    const formatted = formatPercentage(value)
+    setFormData({ ...formData, fsc: formatted })
+  }
+
+  const hasAccessorialValues = () => {
+    return (
+      formData.optional1 ||
+      formData.optional2 ||
+      formData.optional3 ||
+      formData.optional4 ||
+      formData.optional5 ||
+      formData.optional6 ||
+      formData.optional7 ||
+      formData.optional8
+    )
+  }
+
+  const isAccessorialSavedAsTemplate = () => {
+    if (!hasAccessorialValues()) return true
+
+    return templates.some((template) => {
+      return (
+        template.values.optional1 === formData.optional1 &&
+        template.values.optional2 === formData.optional2 &&
+        template.values.optional3 === formData.optional3 &&
+        template.values.optional4 === formData.optional4 &&
+        template.values.optional5 === formData.optional5 &&
+        template.values.optional6 === formData.optional6 &&
+        template.values.optional7 === formData.optional7 &&
+        template.values.optional8 === formData.optional8
+      )
+    })
+  }
+
+  const loadTemplate = (template: AccessorialTemplate) => {
+    setFormData({
+      ...formData,
+      ...template.values,
+    })
+    setShowTemplatePopover(false)
+  }
+
+  const saveTemplate = () => {
+    if (!templateName.trim()) return
+
+    const destinationName = destinations.find((d) => d.id === selectedDestination)?.name || ""
+    const newTemplate: AccessorialTemplate = {
+      name: templateName,
+      values: {
+        optional1: formData.optional1,
+        optional2: formData.optional2,
+        optional3: formData.optional3,
+        optional4: formData.optional4,
+        optional5: formData.optional5,
+        optional6: formData.optional6,
+        optional7: formData.optional7,
+        optional8: formData.optional8,
+      },
+      lastUsedRoute: `${cityName} → ${destinationName}`,
+      lastUsedDate: new Date().toLocaleDateString(),
+    }
+
+    const updatedTemplates = [...templates, newTemplate]
+    setTemplates(updatedTemplates)
+    localStorage.setItem("accessorialTemplates", JSON.stringify(updatedTemplates))
+
+    setTemplateName("")
+    setShowSaveModal(false)
+    submitRates()
+  }
+
+  const submitRates = () => {
+    const savedRates = JSON.parse(localStorage.getItem("submittedRates") || "{}")
+    const rateKey = `${city}-${selectedDestination}`
+    savedRates[rateKey] = formData
+
+    localStorage.setItem("submittedRates", JSON.stringify(savedRates))
+
+    alert("Bid submitted successfully!")
+    setShowSaveTooltip(false)
+  }
 
   const handleSubmit = () => {
-    if (
-      formData.baseRate &&
-      formData.fsc &&
-      formData.total &&
-      selectedDestination
-    ) {
-      const savedRates = JSON.parse(
-        localStorage.getItem("submittedRates") || "{}"
-      );
-      const rateKey = `${city}-${selectedDestination}`;
-      savedRates[rateKey] = formData;
-
-      localStorage.setItem("submittedRates", JSON.stringify(savedRates));
-
-      alert("Bid submitted successfully!");
-      // router.push("/cities");
+    if (formData.baseRate && formData.fsc && formData.total && selectedDestination) {
+      if (!isAccessorialSavedAsTemplate() && hasAccessorialValues()) {
+        setShowSaveTooltip(true)
+      } else {
+        submitRates()
+      }
     }
-  };
+  }
 
-  const isFormValid = formData.baseRate && formData.fsc && formData.total;
+  const isFormValid = formData.baseRate && formData.fsc && formData.total
 
   const hasSubmittedRates = (destId: number) => {
-    const rateKey = `${city}-${destId}`;
-    return !!submittedRates[rateKey];
-  };
+    const rateKey = `${city}-${destId}`
+    return !!submittedRates[rateKey]
+  }
 
   return (
     <PageContainer>
@@ -591,10 +864,7 @@ export default function BidPage() {
               <p>Starting Route</p>
             </RouteText>
           </RouteInfo>
-          <FavoriteButton
-            onClick={toggleFavorite}
-            className={isFavorite ? "favorite" : ""}
-          >
+          <FavoriteButton onClick={toggleFavorite} className={isFavorite ? "favorite" : ""}>
             <Star size={24} fill={isFavorite ? "white" : "none"} />
           </FavoriteButton>
         </StartingRouteCard>
@@ -629,10 +899,7 @@ export default function BidPage() {
             {!selectedDestination ? (
               <EmptyState>
                 <h3>No Destination Selected</h3>
-                <p>
-                  Please select a destination from the sidebar to begin entering
-                  your bid rates
-                </p>
+                <p>Please select a destination from the sidebar to begin entering your bid rates</p>
               </EmptyState>
             ) : (
               <>
@@ -645,9 +912,7 @@ export default function BidPage() {
                         type="text"
                         placeholder="$0.00"
                         value={formData.baseRate}
-                        onChange={(e) =>
-                          handleCurrencyInput("baseRate", e.target.value)
-                        }
+                        onChange={(e) => handleCurrencyInput("baseRate", e.target.value)}
                       />
                     </InputGroup>
 
@@ -669,43 +934,44 @@ export default function BidPage() {
                 </FormSection>
 
                 <FormSection>
-                  <SectionTitle>INCIDENTAL FEES</SectionTitle>
+                  <SectionTitleWithIcon>
+                    <SectionTitleText>ACCESSORIALS</SectionTitleText>
+                    <RepeatIconButton onClick={() => setShowTemplatePopover(!showTemplatePopover)} type="button">
+                      <Repeat size={16} />
+                      <TemplatePopover $show={showTemplatePopover}>
+                        {templates.length === 0 ? (
+                          <EmptyTemplates>No templates saved yet</EmptyTemplates>
+                        ) : (
+                          templates.map((template, index) => (
+                            <TemplateItem key={index} onClick={() => loadTemplate(template)}>
+                              <TemplateName>{template.name}</TemplateName>
+                              <TemplateInfo>
+                                Last used: {template.lastUsedRoute} • {template.lastUsedDate}
+                              </TemplateInfo>
+                            </TemplateItem>
+                          ))
+                        )}
+                      </TemplatePopover>
+                    </RepeatIconButton>
+                  </SectionTitleWithIcon>
                   <FieldGridOptional>
-                    {[
-                      "Chassis",
-                      "Yard Storage",
-                      "Hazmat",
-                      "Bond",
-                      "Split",
-                      "Flip",
-                      "Overweight",
-                      "Prepull",
-                    ].map((num) => (
-                      <InputGroup key={num}>
-                        <Label>{num}</Label>
-                        <Input
-                          type="text"
-                          placeholder="$0.00"
-                          value={
-                            formData[`optional${num}` as keyof typeof formData]
-                          }
-                          onChange={(e) =>
-                            handleCurrencyInput(
-                              `optional${num}`,
-                              e.target.value
-                            )
-                          }
-                        />
-                      </InputGroup>
-                    ))}
+                    {["Chassis", "Yard Storage", "Hazmat", "Bond", "Split", "Flip", "Overweight", "Prepull"].map(
+                      (name, index) => (
+                        <InputGroup key={name}>
+                          <Label>{name}</Label>
+                          <Input
+                            type="text"
+                            placeholder="$0.00"
+                            value={formData[`optional${index + 1}` as keyof typeof formData]}
+                            onChange={(e) => handleCurrencyInput(`optional${index + 1}`, e.target.value)}
+                          />
+                        </InputGroup>
+                      ),
+                    )}
                   </FieldGridOptional>
                 </FormSection>
 
-                <SubmitButton
-                  onClick={handleSubmit}
-                  disabled={!isFormValid}
-                  $enabled={isFormValid as any}
-                >
+                <SubmitButton onClick={handleSubmit} disabled={!isFormValid} $enabled={isFormValid as any}>
                   Submit Bid
                 </SubmitButton>
               </>
@@ -713,6 +979,50 @@ export default function BidPage() {
           </FormCard>
         </GridLayout>
       </Main>
+
+      <TooltipOverlay $show={showSaveTooltip} onClick={() => setShowSaveTooltip(false)} />
+      <SaveTemplateTooltip $show={showSaveTooltip}>
+        <TooltipText>
+          Before submitting the rates, do you want to save your accessorial rates as a template?
+        </TooltipText>
+        <TooltipButtons>
+          <TooltipButton onClick={submitRates}>No, just submit</TooltipButton>
+          <TooltipButton
+            $primary
+            onClick={() => {
+              setShowSaveTooltip(false)
+              setShowSaveModal(true)
+            }}
+          >
+            Yes, save template
+          </TooltipButton>
+        </TooltipButtons>
+      </SaveTemplateTooltip>
+
+      <TooltipOverlay $show={showSaveModal} onClick={() => setShowSaveModal(false)} />
+      <SaveTemplateModal $show={showSaveModal}>
+        <ModalTitle>Save Accessorial Template</ModalTitle>
+        <ModalInputGroup>
+          <ModalLabel>Template Name</ModalLabel>
+          <ModalInput
+            type="text"
+            placeholder="e.g., Standard Hazmat Fees"
+            value={templateName}
+            onChange={(e) => setTemplateName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                saveTemplate()
+              }
+            }}
+          />
+        </ModalInputGroup>
+        <ModalButtons>
+          <TooltipButton onClick={() => setShowSaveModal(false)}>Cancel</TooltipButton>
+          <TooltipButton $primary onClick={saveTemplate}>
+            Save & Submit
+          </TooltipButton>
+        </ModalButtons>
+      </SaveTemplateModal>
     </PageContainer>
-  );
+  )
 }
