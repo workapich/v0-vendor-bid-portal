@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import styled from "styled-components";
 import { TextField, Card, CardContent } from "@mui/material";
-import { Lock, Mail } from "lucide-react";
+import { UserPlus, Mail, Lock, Hash } from "lucide-react";
 import Header from "@/components/Header";
 
 const PageContainer = styled.div`
@@ -28,13 +28,13 @@ const Main = styled.main`
   padding: 1.5rem;
 `;
 
-const LoginCard = styled(Card)`
+const RegisterCard = styled(Card)`
   width: 100%;
   max-width: 28rem;
   box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
 `;
 
-const LoginContent = styled(CardContent)`
+const RegisterContent = styled(CardContent)`
   padding: 2rem;
   display: flex;
   flex-direction: column;
@@ -52,13 +52,13 @@ const IconCircle = styled.div`
   margin-bottom: 1.5rem;
 `;
 
-const StyledLockIcon = styled(Lock)`
+const StyledUserPlusIcon = styled(UserPlus)`
   width: 2rem;
   height: 2rem;
   color: white;
 `;
 
-const LoginTitle = styled.h2`
+const RegisterTitle = styled.h2`
   font-size: 1.5rem;
   font-weight: 700;
   text-align: center;
@@ -66,7 +66,7 @@ const LoginTitle = styled.h2`
   color: rgb(15 23 42);
 `;
 
-const LoginSubtitle = styled.p`
+const RegisterSubtitle = styled.p`
   text-align: center;
   color: rgb(71 85 105);
   margin-bottom: 2rem;
@@ -95,14 +95,14 @@ const InputLabel = styled.label`
   margin-bottom: 0.5rem;
 `;
 
-const SmallLockIcon = styled(Lock)`
+const SmallIcon = styled.div`
   width: 1rem;
   height: 1rem;
-`;
 
-const SmallMailIcon = styled(Mail)`
-  width: 1rem;
-  height: 1rem;
+  svg {
+    width: 100%;
+    height: 100%;
+  }
 `;
 
 const StyledTextField = styled(TextField)`
@@ -121,7 +121,7 @@ const StyledTextField = styled(TextField)`
   }
 `;
 
-const LoginButton = styled.button`
+const RegisterButton = styled.button`
   width: 100%;
   background: rgb(37 99 235);
   color: white;
@@ -142,29 +142,7 @@ const LoginButton = styled.button`
   }
 `;
 
-const OrDivider = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-  margin: 0.5rem 0;
-
-  &::before,
-  &::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: rgb(226 232 240);
-  }
-
-  span {
-    color: rgb(100 116 139);
-    font-size: 0.875rem;
-    font-weight: 500;
-  }
-`;
-
-const RegisterButton = styled.button`
+const BackToLoginButton = styled.button`
   width: 100%;
   background: white;
   color: rgb(37 99 235);
@@ -210,32 +188,76 @@ const StatusDot = styled.div`
   border-radius: 50%;
 `;
 
-export default function LoginPage() {
+const SuccessMessage = styled.div`
+  width: 100%;
+  padding: 0.75rem;
+  background: rgb(220 252 231);
+  border: 1px solid rgb(134 239 172);
+  border-radius: 4px;
+  color: rgb(22 101 52);
+  font-size: 0.875rem;
+  text-align: center;
+  margin-bottom: 1rem;
+`;
+
+export default function RegisterPage() {
   const router = useRouter();
+  const [mcid, setMcid] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
-  const handleLogin = () => {
-    if (email === "admin@gmail.com" && password === "123456") {
-      localStorage.setItem("userType", "admin");
-      router.push("/cities");
-    } else if (email === "vendor@gmail.com" && password === "qwerty") {
-      localStorage.setItem("userType", "vendor");
-      router.push("/cities");
-    } else {
-      setError("Invalid email or password");
+  const handleRegister = () => {
+    // Reset messages
+    setError("");
+    setSuccess(false);
+
+    // Validation
+    if (!mcid.trim()) {
+      setError("MCID is required");
+      return;
     }
+    if (!email.trim()) {
+      setError("Email is required");
+      return;
+    }
+    if (!password.trim()) {
+      setError("Password is required");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
+    // Simulate registration (in a real app, this would call an API)
+    console.log("[v0] Registration attempt:", { mcid, email });
+
+    // Show success message
+    setSuccess(true);
+
+    // Redirect to login after 2 seconds
+    setTimeout(() => {
+      router.push("/");
+    }, 2000);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      handleLogin();
+      handleRegister();
     }
   };
 
-  const handleRegister = () => {
-    router.push("/register");
+  const handleBackToLogin = () => {
+    router.push("/");
   };
 
   return (
@@ -243,21 +265,51 @@ export default function LoginPage() {
       <Header />
 
       <Main>
-        <LoginCard>
-          <LoginContent>
+        <RegisterCard>
+          <RegisterContent>
             <IconCircle>
-              <StyledLockIcon />
+              <StyledUserPlusIcon />
             </IconCircle>
 
-            <LoginTitle>Vendor Entry</LoginTitle>
-            <LoginSubtitle>
-              Enter your credentials to access the bid portal
-            </LoginSubtitle>
+            <RegisterTitle>Create Account</RegisterTitle>
+            <RegisterSubtitle>
+              Register to access the bid portal
+            </RegisterSubtitle>
+
+            {success && (
+              <SuccessMessage>
+                Registration successful! Redirecting to login...
+              </SuccessMessage>
+            )}
 
             <FormSection>
               <InputWrapper>
                 <InputLabel>
-                  <SmallMailIcon />
+                  <SmallIcon>
+                    <Hash />
+                  </SmallIcon>
+                  MCID
+                </InputLabel>
+                <StyledTextField
+                  type="text"
+                  placeholder="Enter your MCID"
+                  value={mcid}
+                  onChange={(e) => {
+                    setMcid(e.target.value);
+                    setError("");
+                  }}
+                  onKeyPress={handleKeyPress}
+                  error={!!error && !mcid.trim()}
+                  variant="outlined"
+                  autoFocus
+                />
+              </InputWrapper>
+
+              <InputWrapper>
+                <InputLabel>
+                  <SmallIcon>
+                    <Mail />
+                  </SmallIcon>
                   Email
                 </InputLabel>
                 <StyledTextField
@@ -269,15 +321,16 @@ export default function LoginPage() {
                     setError("");
                   }}
                   onKeyPress={handleKeyPress}
-                  error={!!error}
+                  error={!!error && !email.trim()}
                   variant="outlined"
-                  autoFocus
                 />
               </InputWrapper>
 
               <InputWrapper>
                 <InputLabel>
-                  <SmallLockIcon />
+                  <SmallIcon>
+                    <Lock />
+                  </SmallIcon>
                   Password
                 </InputLabel>
                 <StyledTextField
@@ -295,16 +348,14 @@ export default function LoginPage() {
                 />
               </InputWrapper>
 
-              <LoginButton onClick={handleLogin}>Login</LoginButton>
-
-              <OrDivider>
-                <span>Or</span>
-              </OrDivider>
-
               <RegisterButton onClick={handleRegister}>Register</RegisterButton>
+
+              <BackToLoginButton onClick={handleBackToLogin}>
+                Back to Login
+              </BackToLoginButton>
             </FormSection>
-          </LoginContent>
-        </LoginCard>
+          </RegisterContent>
+        </RegisterCard>
       </Main>
 
       <Footer>
