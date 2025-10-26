@@ -695,10 +695,18 @@ export default function BidPage() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+
+      // Close template popover if clicking outside
+      if (showTemplatePopover) {
+        if (!target.closest("[data-template-popover]") && !target.closest("[data-repeat-button]")) {
+          setShowTemplatePopover(false)
+        }
+      }
+
+      // Close save tooltip if clicking outside
       if (showSaveTooltip) {
-        const target = event.target as HTMLElement
-        // Check if click is outside the tooltip and submit button
-        if (!target.closest("[data-tooltip]") && !target.closest("[data-submit-button]")) {
+        if (!target.closest("[data-save-tooltip]") && !target.closest("[data-submit-button]")) {
           setShowSaveTooltip(false)
         }
       }
@@ -708,7 +716,7 @@ export default function BidPage() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
     }
-  }, [showSaveTooltip])
+  }, [showTemplatePopover, showSaveTooltip])
 
   const toggleFavorite = () => {
     const favorites = JSON.parse(localStorage.getItem("favoriteCities") || "[]")
@@ -797,7 +805,7 @@ export default function BidPage() {
       ...formData,
       ...template.values,
     })
-    setShowTemplatePopover(false)
+    setShowTemplatePopover(false) // Close popover when template is selected
   }
 
   const saveTemplate = () => {
@@ -964,9 +972,15 @@ export default function BidPage() {
                 <FormSection>
                   <SectionTitleWithIcon>
                     <SectionTitleText>ACCESSORIALS</SectionTitleText>
-                    <RepeatIconButton onClick={() => setShowTemplatePopover(!showTemplatePopover)} type="button">
+                    <RepeatIconButton
+                      onClick={() => setShowTemplatePopover(!showTemplatePopover)}
+                      type="button"
+                      data-repeat-button // Added data attribute for click detection
+                    >
                       <Repeat size={16} />
-                      <TemplatePopover $show={showTemplatePopover}>
+                      <TemplatePopover $show={showTemplatePopover} data-template-popover>
+                        {" "}
+                        {/* Added data attribute */}
                         {templates.length === 0 ? (
                           <EmptyTemplates>No templates saved yet</EmptyTemplates>
                         ) : (
@@ -1003,10 +1017,10 @@ export default function BidPage() {
                   onClick={handleSubmit}
                   disabled={!isFormValid}
                   $enabled={isFormValid as any}
-                  data-submit-button // Added data attribute for click detection
+                  data-submit-button
                 >
                   Submit Bid
-                  <SaveTemplateTooltip $show={showSaveTooltip} data-tooltip>
+                  <SaveTemplateTooltip $show={showSaveTooltip} data-save-tooltip>
                     {" "}
                     {/* Added data attribute */}
                     <TooltipText>
@@ -1015,7 +1029,7 @@ export default function BidPage() {
                     <ModalButtons>
                       <TooltipButton
                         onClick={() => {
-                          setShowSaveTooltip(false)
+                          setShowSaveTooltip(false) // Explicitly close tooltip
                           submitRates()
                         }}
                       >
@@ -1024,7 +1038,7 @@ export default function BidPage() {
                       <TooltipButton
                         $primary
                         onClick={() => {
-                          setShowSaveTooltip(false)
+                          setShowSaveTooltip(false) // Explicitly close tooltip
                           setShowSaveModal(true)
                         }}
                       >
