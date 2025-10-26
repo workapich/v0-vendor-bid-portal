@@ -551,7 +551,7 @@ export default function CitiesPage() {
               />
             </LogoCircle>
             <HeaderText>
-              <HeaderTitle>Vendor Bid Portal</HeaderTitle>
+              <HeaderTitle>Drayage Bid Portal</HeaderTitle>
               <HeaderSubtitle>Admin Dashboard</HeaderSubtitle>
             </HeaderText>
           </HeaderContent>
@@ -855,8 +855,8 @@ export default function CitiesPage() {
             />
           </LogoCircle>
           <HeaderText>
-            <HeaderTitle>Vendor Bid Portal</HeaderTitle>
-            <HeaderSubtitle>Motor Carrier Services</HeaderSubtitle>
+            <HeaderTitle>Drayage Bid Portal</HeaderTitle>
+            {/* <HeaderSubtitle>Motor Carrier Services</HeaderSubtitle> */}
           </HeaderText>
         </HeaderContent>
         <HeaderActions>

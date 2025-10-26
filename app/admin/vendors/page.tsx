@@ -876,7 +876,7 @@ export default function VendorsPage() {
             <Truck size={24} />
           </Logo>
           <HeaderTitle>
-            <h1>Vendor Bid Portal</h1>
+            <h1>Drayage Bid Portal</h1>
             <p>Admin Dashboard</p>
           </HeaderTitle>
         </HeaderLeft>
@@ -894,7 +894,7 @@ export default function VendorsPage() {
           </PageTitleSection>
           <AddButton onClick={() => setOpenDialog(true)}>
             <Truck size={18} />
-            Add New Vendor
+            Whitelist Vendor Email
           </AddButton>
         </PageHeader>
 
@@ -902,7 +902,7 @@ export default function VendorsPage() {
           {vendors.length === 0 ? (
             <EmptyState>
               <h3>No Vendors Found</h3>
-              <p>Click "Add New Vendor" to create your first vendor</p>
+              <p>Click "Whitelist Vendor Email" to create your first vendor</p>
             </EmptyState>
           ) : (
             <TableContainer>

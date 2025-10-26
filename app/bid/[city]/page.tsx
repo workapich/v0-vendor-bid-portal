@@ -551,7 +551,7 @@ export default function BidPage() {
       localStorage.setItem("submittedRates", JSON.stringify(savedRates));
 
       alert("Bid submitted successfully!");
-      router.push("/cities");
+      // router.push("/cities");
     }
   };
 
@@ -570,8 +570,8 @@ export default function BidPage() {
             <Truck size={24} />
           </Logo>
           <HeaderTitle>
-            <h1>Vendor Bid Portal</h1>
-            <p>Motor Carrier Services</p>
+            <h1>Drayage Bid Portal</h1>
+            {/* <p>Motor Carrier Services</p> */}
           </HeaderTitle>
         </HeaderLeft>
         <BackButton onClick={() => router.push("/cities")}>
@@ -637,7 +637,7 @@ export default function BidPage() {
             ) : (
               <>
                 <FormSection>
-                  <SectionTitle>REQUIRED FIELDS</SectionTitle>
+                  <SectionTitle>REQUIRED FEES</SectionTitle>
                   <FieldGrid>
                     <InputGroup>
                       <Label>Base Rate *</Label>
@@ -669,7 +669,7 @@ export default function BidPage() {
                 </FormSection>
 
                 <FormSection>
-                  <SectionTitle>OPTIONAL FIELDS</SectionTitle>
+                  <SectionTitle>INCIDENTAL FEES</SectionTitle>
                   <FieldGridOptional>
                     {[
                       "Chassis",

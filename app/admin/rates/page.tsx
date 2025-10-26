@@ -2958,17 +2958,13 @@ export default function AdminRatesPage() {
             />
           </LogoCircle>
           <HeaderText>
-            <HeaderTitle>Vendor Bid Portal</HeaderTitle>
+            <HeaderTitle>Drayage Bid Portal</HeaderTitle>
             <HeaderSubtitle>
               Admin - Rate Management{selectedCity && ` - ${selectedCity}`}
             </HeaderSubtitle>
           </HeaderText>
         </HeaderContent>
         <HeaderActions>
-          <StatusIndicator>
-            <StatusDot />
-            <StatusText>Admin Portal</StatusText>
-          </StatusIndicator>
           <Button
             variant="outlined"
             size="small"

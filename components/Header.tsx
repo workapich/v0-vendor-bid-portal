@@ -130,7 +130,7 @@ interface HeaderProps {
 }
 
 export default function Header({
-  subtitle = "Motor Carrier Services",
+  subtitle = "",
   showBackButton = false,
   showLogoutButton = false,
   showManageVendors = false,
@@ -145,7 +145,7 @@ export default function Header({
           <StyledTruckIcon />
         </LogoCircle>
         <TitleSection>
-          <Title>Vendor Bid Portal</Title>
+          <Title>Drayage Bid Portal</Title>
           <Subtitle>{subtitle}</Subtitle>
         </TitleSection>
       </LogoSection>
