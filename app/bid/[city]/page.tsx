@@ -861,7 +861,7 @@ export default function BidPage() {
             </RouteIcon>
             <RouteText>
               <h2>{cityName}</h2>
-              <p>Starting Route</p>
+              <p>PORT LOCATION</p>
             </RouteText>
           </RouteInfo>
           <FavoriteButton onClick={toggleFavorite} className={isFavorite ? "favorite" : ""}>
@@ -871,7 +871,7 @@ export default function BidPage() {
 
         <GridLayout>
           <Sidebar>
-            <SidebarTitle>Select Destination</SidebarTitle>
+            <SidebarTitle>Select Inland Location</SidebarTitle>
             <DestinationList>
               {destinations.map((dest) => (
                 <DestinationButton
@@ -898,8 +898,8 @@ export default function BidPage() {
           <FormCard>
             {!selectedDestination ? (
               <EmptyState>
-                <h3>No Destination Selected</h3>
-                <p>Please select a destination from the sidebar to begin entering your bid rates</p>
+                <h3>No Inland Location Selected</h3>
+                <p>Please select an inland location from the sidebar to begin entering your bid rates</p>
               </EmptyState>
             ) : (
               <>

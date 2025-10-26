@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-import styled from "styled-components";
+import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import styled from "styled-components"
 import {
   TextField,
   Chip,
@@ -13,17 +13,8 @@ import {
   DialogContent,
   DialogActions,
   Autocomplete,
-} from "@mui/material";
-import {
-  Search,
-  Truck,
-  LogOut,
-  TrendingUp,
-  Star,
-  Clock,
-  Users,
-  MapPin,
-} from "lucide-react";
+} from "@mui/material"
+import { Search, Truck, LogOut, TrendingUp, Star, Clock, Users, MapPin } from "lucide-react"
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -34,7 +25,7 @@ const PageContainer = styled.div`
   );
   display: flex;
   flex-direction: column;
-`;
+`
 
 const Header = styled.header`
   background: white;
@@ -43,13 +34,13 @@ const Header = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`;
+`
 
 const HeaderContent = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
-`;
+`
 
 const LogoCircle = styled.div`
   width: 3rem;
@@ -59,32 +50,32 @@ const LogoCircle = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-`;
+`
 
 const HeaderText = styled.div`
   display: flex;
   flex-direction: column;
-`;
+`
 
 const HeaderTitle = styled.h1`
   font-size: 1.25rem;
   font-weight: 700;
   color: rgb(15 23 42);
   margin: 0;
-`;
+`
 
 const HeaderSubtitle = styled.p`
   font-size: 0.875rem;
   color: rgb(71 85 105);
   margin: 0;
-`;
+`
 
 const HeaderActions = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
   margin-left: auto;
-`;
+`
 
 const StatusIndicator = styled.div`
   display: flex;
@@ -92,14 +83,14 @@ const StatusIndicator = styled.div`
   gap: 0.5rem;
   font-size: 0.875rem;
   color: rgb(22 163 74);
-`;
+`
 
 const StatusDot = styled.div`
   width: 0.5rem;
   height: 0.5rem;
   background: rgb(22 163 74);
   border-radius: 50%;
-`;
+`
 
 const Main = styled.main`
   flex: 1;
@@ -107,7 +98,7 @@ const Main = styled.main`
   max-width: 112rem;
   margin: 0 auto;
   width: 100%;
-`;
+`
 
 const StatsGrid = styled.div`
   display: grid;
@@ -118,14 +109,14 @@ const StatsGrid = styled.div`
   @media (min-width: 768px) {
     grid-template-columns: repeat(4, 1fr);
   }
-`;
+`
 
 const StatCard = styled.div`
   background: white;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
   padding: 1.5rem;
-`;
+`
 
 const ActionCard = styled.div`
   background: linear-gradient(135deg, rgb(239 246 255), rgb(219 234 254));
@@ -147,7 +138,7 @@ const ActionCard = styled.div`
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
   }
-`;
+`
 
 const ActionGreenCard = styled(ActionCard)`
   background: linear-gradient(135deg, rgb(240 253 244), rgb(220 252 231));
@@ -158,7 +149,7 @@ const ActionGreenCard = styled(ActionCard)`
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2); /* soft green shadow */
   }
-`;
+`
 
 const ActionCardIcon = styled.div`
   width: 3rem;
@@ -168,84 +159,84 @@ const ActionCardIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-`;
+`
 
 const ActionCardTitle = styled.h3`
   font-size: 1.125rem;
   font-weight: 700;
   color: rgb(37 99 235);
   margin: 0;
-`;
+`
 
 const ActionCardIconGreen = styled(ActionCardIcon)`
   background: rgb(34 197 94); /* Tailwind green-500 */
-`;
+`
 
 const ActionCardTitleGreen = styled(ActionCardTitle)`
   color: rgb(34 197 94); /* Tailwind green-500 */
-`;
+`
 
 const ActionCardDescription = styled.p`
   font-size: 0.875rem;
   color: rgb(71 85 105);
   margin: 0;
-`;
+`
 
 const StatHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 0.5rem;
-`;
+`
 
 const StatLabel = styled.span`
   font-size: 0.875rem;
   font-weight: 500;
   color: rgb(71 85 105);
-`;
+`
 
 const StatValueRow = styled.div`
   display: flex;
   align-items: baseline;
   gap: 2rem;
   margin-top: 0.5rem;
-`;
+`
 
 const StatMainValue = styled.div`
   font-size: 1.875rem;
   font-weight: 700;
   color: rgb(15 23 42);
-`;
+`
 
 const StatInlineMetrics = styled.div`
   display: flex;
   gap: 1.5rem;
   align-items: baseline;
-`;
+`
 
 const InlineMetric = styled.div`
   display: flex;
   align-items: baseline;
   gap: 0.5rem;
-`;
+`
 
 const InlineMetricLabel = styled.span`
   font-size: 0.75rem;
   color: rgb(100 116 139);
   font-weight: 500;
-`;
+`
 
 const InlineMetricValue = styled.span`
   font-size: 1rem;
   font-weight: 700;
   color: rgb(37 99 235);
-`;
+`
 
 const StatDescription = styled.p`
   font-size: 0.875rem;
   color: rgb(100 116 139);
   margin-top: 0.25rem;
-`;
+`
 
 const QuickActionsCard = styled.div`
   background: white;
@@ -253,20 +244,20 @@ const QuickActionsCard = styled.div`
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
   padding: 1.5rem;
   margin-bottom: 2rem;
-`;
+`
 
 const QuickActionsTitle = styled.h3`
   font-size: 1rem;
   font-weight: 700;
   color: rgb(15 23 42);
   margin: 0 0 1rem 0;
-`;
+`
 
 const QuickActionsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
-`;
+`
 
 const QuickActionButton = styled.button`
   display: flex;
@@ -286,29 +277,29 @@ const QuickActionButton = styled.button`
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
   }
-`;
+`
 
 const ContentCard = styled.div`
   background: white;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
   padding: 2rem;
-`;
+`
 
 const CardHeader = styled.div`
   margin-bottom: 1.5rem;
-`;
+`
 
 const CardTitle = styled.h2`
   font-size: 1.875rem;
   font-weight: 700;
   color: rgb(15 23 42);
   margin-bottom: 0.5rem;
-`;
+`
 
 const CardDescription = styled.p`
   color: rgb(71 85 105);
-`;
+`
 
 const StepsContainer = styled.div`
   display: flex;
@@ -316,13 +307,13 @@ const StepsContainer = styled.div`
   justify-content: center;
   gap: 1rem;
   margin-bottom: 2rem;
-`;
+`
 
 const StepItem = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
-`;
+`
 
 const StepCircle = styled.div<{ $active?: boolean; $outline?: boolean }>`
   width: 2.5rem;
@@ -335,28 +326,28 @@ const StepCircle = styled.div<{ $active?: boolean; $outline?: boolean }>`
   justify-content: center;
   color: ${(props) => (props.$outline ? "rgb(37 99 235)" : "white")};
   font-weight: 700;
-`;
+`
 
 const StepLabel = styled.span<{ $active?: boolean }>`
   font-weight: 500;
   color: ${(props) => (props.$active ? "rgb(15 23 42)" : "rgb(71 85 105)")};
-`;
+`
 
 const StepDivider = styled.div`
   width: 4rem;
   height: 0.125rem;
   background: rgb(209 213 219);
-`;
+`
 
 const SearchContainer = styled.div`
   margin-bottom: 1.5rem;
-`;
+`
 
 const ChipsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-`;
+`
 
 const StyledChip = styled(Chip)`
   font-size: 1rem !important;
@@ -367,7 +358,7 @@ const StyledChip = styled(Chip)`
   &:hover {
     background-color: rgb(239 246 255) !important;
   }
-`;
+`
 
 const FavoriteStarIcon = styled(Star)`
   width: 1rem;
@@ -375,13 +366,13 @@ const FavoriteStarIcon = styled(Star)`
   color: rgb(37 99 235);
   fill: rgb(37 99 235);
   margin-left: 0.25rem;
-`;
+`
 
 const EmptyState = styled.div`
   text-align: center;
   padding: 3rem 0;
   color: rgb(100 116 139);
-`;
+`
 
 const CITIES = [
   { name: "Atlanta", routes: 12, newRoutes: 3, totalBids: 45 },
@@ -421,7 +412,7 @@ const CITIES = [
   { name: "Tucson", routes: 6, newRoutes: 0, totalBids: 13 },
   { name: "Virginia Beach", routes: 7, newRoutes: 1, totalBids: 16 },
   { name: "Washington D.C.", routes: 19, newRoutes: 4, totalBids: 51 },
-];
+]
 
 const US_CITIES = [
   "New York",
@@ -474,71 +465,69 @@ const US_CITIES = [
   "Tampa",
   "Arlington",
   "New Orleans",
-];
+]
 
 export default function CitiesPage() {
-  const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [userType, setUserType] = useState<"vendor" | "admin">("vendor");
-  const [favoriteCities, setFavoriteCities] = useState<string[]>([]);
-  const [createRouteOpen, setCreateRouteOpen] = useState(false);
-  const [startCity, setStartCity] = useState("");
-  const [endCity, setEndCity] = useState("");
-  const [startCityInput, setStartCityInput] = useState("");
-  const [endCityInput, setEndCityInput] = useState("");
+  const router = useRouter()
+  const [searchTerm, setSearchTerm] = useState("")
+  const [userType, setUserType] = useState<"vendor" | "admin">("vendor")
+  const [favoriteCities, setFavoriteCities] = useState<string[]>([])
+  const [createRouteOpen, setCreateRouteOpen] = useState(false)
+  const [startCity, setStartCity] = useState("")
+  const [endCity, setEndCity] = useState("")
+  const [startCityInput, setStartCityInput] = useState("")
+  const [endCityInput, setEndCityInput] = useState("")
 
   useEffect(() => {
-    const type = localStorage.getItem("userType") as "vendor" | "admin";
-    if (type) setUserType(type);
+    const type = localStorage.getItem("userType") as "vendor" | "admin"
+    if (type) setUserType(type)
 
-    const favorites = JSON.parse(
-      localStorage.getItem("favoriteCities") || "[]"
-    );
-    setFavoriteCities(favorites);
-  }, []);
+    const favorites = JSON.parse(localStorage.getItem("favoriteCities") || "[]")
+    setFavoriteCities(favorites)
+  }, [])
 
-  const filteredCities = CITIES.filter((city) =>
-    city.name.toLowerCase().includes(searchTerm.toLowerCase())
-  ).sort((a, b) => {
-    const aIsFavorite = favoriteCities.includes(a.name);
-    const bIsFavorite = favoriteCities.includes(b.name);
+  const filteredCities = CITIES.filter((city) => city.name.toLowerCase().includes(searchTerm.toLowerCase())).sort(
+    (a, b) => {
+      const aIsFavorite = favoriteCities.includes(a.name)
+      const bIsFavorite = favoriteCities.includes(b.name)
 
-    if (aIsFavorite && !bIsFavorite) return -1;
-    if (!aIsFavorite && bIsFavorite) return 1;
-    return 0;
-  });
+      if (aIsFavorite && !bIsFavorite) return -1
+      if (!aIsFavorite && bIsFavorite) return 1
+      return 0
+    },
+  )
 
   const handleCityClick = (cityName: string) => {
     if (userType === "vendor") {
-      router.push(`/bid/${cityName.toLowerCase().replace(/\s+/g, "-")}`);
+      router.push(`/bid/${cityName.toLowerCase().replace(/\s+/g, "-")}`)
     } else {
-      router.push(`/admin/rates?city=${cityName}`);
+      router.push(`/admin/rates?city=${cityName}`)
     }
-  };
+  }
 
   const handleLogout = () => {
-    localStorage.removeItem("userType");
-    router.push("/");
-  };
+    localStorage.removeItem("userType")
+    router.push("/")
+  }
 
-  const totalBids = CITIES.reduce((sum, city) => sum + city.totalBids, 0);
-  const totalRoutes = CITIES.reduce((sum, city) => sum + city.routes, 0);
-  const activeCities = CITIES.length;
+  const totalBids = CITIES.reduce((sum, city) => sum + city.totalBids, 0)
+  const totalRoutes = CITIES.reduce((sum, city) => sum + city.routes, 0)
+  const activeCities = CITIES.length
 
-  const bidsLast24Hours = 23;
-  const bidsLast7Days = 147;
+  const bidsLast24Hours = 23
+  const bidsLast7Days = 147
 
   const handleCreateRoute = () => {
     if (startCity && endCity) {
-      console.log("Creating route:", { startCity, endCity });
+      console.log("Creating route:", { startCity, endCity })
       // TODO: Add API call to create route
-      setCreateRouteOpen(false);
-      setStartCity("");
-      setEndCity("");
-      setStartCityInput("");
-      setEndCityInput("");
+      setCreateRouteOpen(false)
+      setStartCity("")
+      setEndCity("")
+      setStartCityInput("")
+      setEndCityInput("")
     }
-  };
+  }
 
   if (userType === "admin") {
     return (
@@ -546,9 +535,7 @@ export default function CitiesPage() {
         <Header>
           <HeaderContent>
             <LogoCircle>
-              <Truck
-                style={{ width: "1.5rem", height: "1.5rem", color: "white" }}
-              />
+              <Truck style={{ width: "1.5rem", height: "1.5rem", color: "white" }} />
             </LogoCircle>
             <HeaderText>
               <HeaderTitle>Drayage Bid Portal</HeaderTitle>
@@ -577,34 +564,24 @@ export default function CitiesPage() {
         <Main>
           <CardHeader>
             <CardTitle>Rate Management Dashboard</CardTitle>
-            <CardDescription>
-              View and manage vendor bids across all cities
-            </CardDescription>
+            <CardDescription>View and manage vendor bids across all cities</CardDescription>
           </CardHeader>
 
           <StatsGrid>
             <ActionCard onClick={() => router.push("/admin/vendors")}>
               <ActionCardIcon>
-                <Users
-                  style={{ width: "1.5rem", height: "1.5rem", color: "white" }}
-                />
+                <Users style={{ width: "1.5rem", height: "1.5rem", color: "white" }} />
               </ActionCardIcon>
               <ActionCardTitle>Manage Vendors</ActionCardTitle>
-              <ActionCardDescription>
-                View and create vendors
-              </ActionCardDescription>
+              <ActionCardDescription>View and create vendors</ActionCardDescription>
             </ActionCard>
 
             <ActionGreenCard onClick={() => setCreateRouteOpen(true)}>
               <ActionCardIconGreen>
-                <MapPin
-                  style={{ width: "1.5rem", height: "1.5rem", color: "white" }}
-                />
+                <MapPin style={{ width: "1.5rem", height: "1.5rem", color: "white" }} />
               </ActionCardIconGreen>
               <ActionCardTitleGreen>Create Route</ActionCardTitleGreen>
-              <ActionCardDescription>
-                Add new shipping routes
-              </ActionCardDescription>
+              <ActionCardDescription>Add new shipping routes</ActionCardDescription>
             </ActionGreenCard>
 
             <StatCard>
@@ -653,9 +630,7 @@ export default function CitiesPage() {
           <ContentCard>
             <CardHeader>
               <CardTitle>Select City to View Rates</CardTitle>
-              <CardDescription>
-                Click on any city to view vendor bids
-              </CardDescription>
+              <CardDescription>Click on any city to view vendor bids</CardDescription>
             </CardHeader>
 
             <SearchContainer>
@@ -710,21 +685,12 @@ export default function CitiesPage() {
               ))}
             </ChipsContainer>
 
-            {filteredCities.length === 0 && (
-              <EmptyState>No cities found matching "{searchTerm}"</EmptyState>
-            )}
+            {filteredCities.length === 0 && <EmptyState>No cities found matching "{searchTerm}"</EmptyState>}
           </ContentCard>
         </Main>
 
-        <Dialog
-          open={createRouteOpen}
-          onClose={() => setCreateRouteOpen(false)}
-          maxWidth="sm"
-          fullWidth
-        >
-          <DialogTitle
-            sx={{ fontWeight: 700, fontSize: "1.5rem", color: "rgb(15 23 42)" }}
-          >
+        <Dialog open={createRouteOpen} onClose={() => setCreateRouteOpen(false)} maxWidth="sm" fullWidth>
+          <DialogTitle sx={{ fontWeight: 700, fontSize: "1.5rem", color: "rgb(15 23 42)" }}>
             Create New Route
           </DialogTitle>
           <DialogContent sx={{ paddingTop: "1.5rem !important" }}>
@@ -739,15 +705,9 @@ export default function CitiesPage() {
                 value={startCity}
                 onChange={(event, newValue) => setStartCity(newValue || "")}
                 inputValue={startCityInput}
-                onInputChange={(event, newInputValue) =>
-                  setStartCityInput(newInputValue)
-                }
+                onInputChange={(event, newInputValue) => setStartCityInput(newInputValue)}
                 options={startCityInput.length >= 3 ? US_CITIES : []}
-                noOptionsText={
-                  startCityInput.length < 3
-                    ? "Type at least 3 characters"
-                    : "No cities found"
-                }
+                noOptionsText={startCityInput.length < 3 ? "Type at least 3 characters" : "No cities found"}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -773,15 +733,9 @@ export default function CitiesPage() {
                 value={endCity}
                 onChange={(event, newValue) => setEndCity(newValue || "")}
                 inputValue={endCityInput}
-                onInputChange={(event, newInputValue) =>
-                  setEndCityInput(newInputValue)
-                }
+                onInputChange={(event, newInputValue) => setEndCityInput(newInputValue)}
                 options={endCityInput.length >= 3 ? US_CITIES : []}
-                noOptionsText={
-                  endCityInput.length < 3
-                    ? "Type at least 3 characters"
-                    : "No cities found"
-                }
+                noOptionsText={endCityInput.length < 3 ? "Type at least 3 characters" : "No cities found"}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -807,11 +761,11 @@ export default function CitiesPage() {
           <DialogActions sx={{ padding: "1.5rem" }}>
             <Button
               onClick={() => {
-                setCreateRouteOpen(false);
-                setStartCity("");
-                setEndCity("");
-                setStartCityInput("");
-                setEndCityInput("");
+                setCreateRouteOpen(false)
+                setStartCity("")
+                setEndCity("")
+                setStartCityInput("")
+                setEndCityInput("")
               }}
               sx={{
                 color: "rgb(71 85 105)",
@@ -842,7 +796,7 @@ export default function CitiesPage() {
           </DialogActions>
         </Dialog>
       </PageContainer>
-    );
+    )
   }
 
   return (
@@ -850,9 +804,7 @@ export default function CitiesPage() {
       <Header>
         <HeaderContent>
           <LogoCircle>
-            <Truck
-              style={{ width: "1.5rem", height: "1.5rem", color: "white" }}
-            />
+            <Truck style={{ width: "1.5rem", height: "1.5rem", color: "white" }} />
           </LogoCircle>
           <HeaderText>
             <HeaderTitle>Drayage Bid Portal</HeaderTitle>
@@ -882,20 +834,18 @@ export default function CitiesPage() {
         <ContentCard>
           <div style={{ textAlign: "center", marginBottom: "2rem" }}>
             <CardTitle>Submit Your Bid</CardTitle>
-            <CardDescription>
-              Select the starting city to view and submit rates
-            </CardDescription>
+            <CardDescription>Select the starting city to view and submit rates</CardDescription>
           </div>
 
           <StepsContainer>
             <StepItem>
               <StepCircle>1</StepCircle>
-              <StepLabel $active>Choose Starting Point</StepLabel>
+              <StepLabel $active>Choose Port Location</StepLabel>
             </StepItem>
             <StepDivider />
             <StepItem>
               <StepCircle $outline>2</StepCircle>
-              <StepLabel>Choose Destination and Input Rates</StepLabel>
+              <StepLabel>Choose Inland Location and Input Rates</StepLabel>
             </StepItem>
           </StepsContainer>
 
@@ -972,11 +922,9 @@ export default function CitiesPage() {
             ))}
           </ChipsContainer>
 
-          {filteredCities.length === 0 && (
-            <EmptyState>No cities found matching "{searchTerm}"</EmptyState>
-          )}
+          {filteredCities.length === 0 && <EmptyState>No cities found matching "{searchTerm}"</EmptyState>}
         </ContentCard>
       </Main>
     </PageContainer>
-  );
+  )
 }

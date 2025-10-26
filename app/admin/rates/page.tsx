@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
-import styled from "styled-components";
+import { useRouter, useSearchParams } from "next/navigation"
+import { useState, useEffect } from "react"
+import styled from "styled-components"
 import {
   Table,
   TableBody,
@@ -20,8 +20,8 @@ import {
   DialogContent,
   DialogActions,
   Autocomplete,
-} from "@mui/material";
-import { Truck, LogOut, Search, Download, Plus } from "lucide-react";
+} from "@mui/material"
+import { Truck, LogOut, Search, Plus } from "lucide-react"
 
 // Mock data for US cities, needed for Autocomplete
 const US_CITIES = [
@@ -186,7 +186,7 @@ const US_CITIES = [
   "Slatersville, RI",
   "Augustas, GA",
   "Portland, ME",
-];
+]
 
 const DESTINATIONS: Record<string, Record<number, string>> = {
   boston: {
@@ -206,18 +206,18 @@ const DESTINATIONS: Record<string, Record<number, string>> = {
     2: "Baltimore, MD",
     3: "Washington, DC",
   },
-};
+}
 
 interface RateData {
-  id: string;
-  vendorId: string;
-  vendorEmail: string;
-  startCity: string;
-  endCity: string;
-  baseRate: number;
-  fsc: number;
-  total: number;
-  submittedAt: string;
+  id: string
+  vendorId: string
+  vendorEmail: string
+  startCity: string
+  endCity: string
+  baseRate: number
+  fsc: number
+  total: number
+  submittedAt: string
 }
 
 const PageContainer = styled.div`
@@ -229,7 +229,7 @@ const PageContainer = styled.div`
   );
   display: flex;
   flex-direction: column;
-`;
+`
 
 const Header = styled.header`
   background: white;
@@ -239,13 +239,13 @@ const Header = styled.header`
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgb(226 232 240);
-`;
+`
 
 const HeaderContent = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
-`;
+`
 
 const LogoCircle = styled.div`
   width: 3rem;
@@ -256,59 +256,59 @@ const LogoCircle = styled.div`
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-`;
+`
 
 const HeaderText = styled.div`
   display: flex;
   flex-direction: column;
-`;
+`
 
 const HeaderTitle = styled.h1`
   font-size: 1.25rem;
   font-weight: 700;
   color: rgb(15 23 42);
   margin: 0;
-`;
+`
 
 const HeaderSubtitle = styled.p`
   font-size: 0.875rem;
   color: rgb(71 85 105);
   margin: 0;
-`;
+`
 
 const HeaderActions = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-`;
+`
 
 const StatusIndicator = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-`;
+`
 
 const StatusDot = styled.div`
   width: 0.5rem;
   height: 0.5rem;
   background: rgb(34 197 94);
   border-radius: 50%;
-`;
+`
 
 const StatusText = styled.span`
   font-size: 0.875rem;
   color: rgb(71 85 105);
-`;
+`
 
 const Main = styled.main`
   flex: 1;
   padding: 1.5rem;
-`;
+`
 
 const Container = styled.div`
   max-width: 112rem;
   margin: 0 auto;
-`;
+`
 
 const GridContainer = styled.div`
   display: grid;
@@ -318,7 +318,7 @@ const GridContainer = styled.div`
   @media (min-width: 1024px) {
     grid-template-columns: 1fr 3fr;
   }
-`;
+`
 
 const Sidebar = styled.div`
   background: white;
@@ -330,13 +330,13 @@ const Sidebar = styled.div`
   flex-direction: column;
   height: 80vh;
   overflow-y: auto;
-`;
+`
 
 const SidebarTitle = styled.h4`
   font-weight: 600;
   color: rgb(15 23 42);
   margin-bottom: 1rem;
-`;
+`
 
 const DestinationList = styled.div`
   display: flex;
@@ -344,7 +344,7 @@ const DestinationList = styled.div`
   gap: 0.5rem;
   overflow-y: auto;
   flex: 1;
-`;
+`
 
 const DestinationButton = styled.button<{ $selected?: boolean }>`
   width: 100%;
@@ -354,25 +354,22 @@ const DestinationButton = styled.button<{ $selected?: boolean }>`
   border: none;
   cursor: pointer;
   transition: all 0.2s;
-  background: ${(props) =>
-    props.$selected ? "rgb(37 99 235)" : "rgb(241 245 249)"};
+  background: ${(props) => (props.$selected ? "rgb(37 99 235)" : "rgb(241 245 249)")};
   color: ${(props) => (props.$selected ? "white" : "rgb(15 23 42)")};
 
   &:hover {
-    background: ${(props) =>
-      props.$selected ? "rgb(37 99 235)" : "rgb(226 232 240)"};
+    background: ${(props) => (props.$selected ? "rgb(37 99 235)" : "rgb(226 232 240)")};
   }
-`;
+`
 
 const DestinationName = styled.div`
   font-weight: 500;
-`;
+`
 
 const DestinationCount = styled.div<{ $selected?: boolean }>`
   font-size: 0.875rem;
-  color: ${(props) =>
-    props.$selected ? "rgb(191 219 254)" : "rgb(71 85 105)"};
-`;
+  color: ${(props) => (props.$selected ? "rgb(191 219 254)" : "rgb(71 85 105)")};
+`
 
 const ContentCard = styled.div`
   background: white;
@@ -383,52 +380,52 @@ const ContentCard = styled.div`
   height: 80vh;
   display: flex;
   flex-direction: column;
-`;
+`
 
 const CardHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.5rem;
-`;
+`
 
 const CardHeaderText = styled.div`
   display: flex;
   flex-direction: column;
-`;
+`
 
 const CardTitle = styled.h2`
   font-size: 1.5rem;
   font-weight: 700;
   color: rgb(15 23 42);
   margin-bottom: 0.25rem;
-`;
+`
 
 const CardDescription = styled.p`
   color: rgb(71 85 105);
   margin: 0;
-`;
+`
 
 const SearchContainer = styled.div`
   margin-bottom: 1.5rem;
-`;
+`
 
 const TableWrapper = styled.div`
   flex: 1;
   overflow: auto;
-`;
+`
 
 const EmptyState = styled.div`
   text-align: center;
   padding: 3rem 0;
   color: rgb(100 116 139);
-`;
+`
 
 const TableFooter = styled.div`
   margin-top: 1rem;
   font-size: 0.875rem;
   color: rgb(71 85 105);
-`;
+`
 
 const AddDestinationCard = styled.button`
   width: 100%;
@@ -454,7 +451,7 @@ const AddDestinationCard = styled.button`
   svg {
     flex-shrink: 0;
   }
-`;
+`
 
 const MOCK_RATES = [
   {
@@ -492,39 +489,6 @@ const MOCK_RATES = [
   },
   {
     id: 4,
-    vendorId: "MC-123456",
-    vendorEmail: "vendor1@example.com",
-    startCity: "Atlanta",
-    endCity: "Birmingham, AL",
-    baseRate: 280,
-    fsc: 10.71,
-    total: 310,
-    submittedAt: "2025-01-07 02:20 PM",
-  },
-  {
-    id: 5,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Atlanta",
-    endCity: "Charlotte, NC",
-    baseRate: 480,
-    fsc: 12.5,
-    total: 540,
-    submittedAt: "2025-01-10 09:30 AM",
-  },
-  {
-    id: 6,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Atlanta",
-    endCity: "Jacksonville, FL",
-    baseRate: 630,
-    fsc: 11.11,
-    total: 700,
-    submittedAt: "2025-01-10 02:15 PM",
-  },
-  {
-    id: 7,
     vendorId: "MC-901234",
     vendorEmail: "vendor4@example.com",
     startCity: "Philadelphia",
@@ -535,7 +499,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 11:15 AM",
   },
   {
-    id: 8,
+    id: 5,
     vendorId: "MC-789012",
     vendorEmail: "vendor2@example.com",
     startCity: "Boston",
@@ -546,7 +510,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 11:15 AM",
   },
   {
-    id: 9,
+    id: 6,
     vendorId: "MC-345678",
     vendorEmail: "vendor3@example.com",
     startCity: "Boston",
@@ -557,7 +521,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 09:45 AM",
   },
   {
-    id: 10,
+    id: 7,
     vendorId: "MC-123456",
     vendorEmail: "vendor1@example.com",
     startCity: "Atlanta",
@@ -568,7 +532,29 @@ const MOCK_RATES = [
     submittedAt: "2025-01-07 02:20 PM",
   },
   {
-    id: 11,
+    id: 8,
+    vendorId: "MC-123456",
+    vendorEmail: "john.smith@transport.com",
+    startCity: "Atlanta",
+    endCity: "Charlotte, NC",
+    baseRate: 480,
+    fsc: 12.5,
+    total: 540,
+    submittedAt: "2025-01-10 09:30 AM",
+  },
+  {
+    id: 9,
+    vendorId: "MC-123456",
+    vendorEmail: "john.smith@transport.com",
+    startCity: "Atlanta",
+    endCity: "Jacksonville, FL",
+    baseRate: 630,
+    fsc: 11.11,
+    total: 700,
+    submittedAt: "2025-01-10 02:15 PM",
+  },
+  {
+    id: 10,
     vendorId: "MC-123456",
     vendorEmail: "vendor1@example.com",
     startCity: "New York",
@@ -579,7 +565,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-06 01:30 PM",
   },
   {
-    id: 12,
+    id: 11,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "New York",
@@ -590,7 +576,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-11 10:20 AM",
   },
   {
-    id: 13,
+    id: 12,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "New York",
@@ -601,7 +587,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-11 03:45 PM",
   },
   {
-    id: 14,
+    id: 13,
     vendorId: "MC-789012",
     vendorEmail: "vendor2@example.com",
     startCity: "Chicago",
@@ -612,7 +598,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 09:45 AM",
   },
   {
-    id: 15,
+    id: 14,
     vendorId: "MC-567890",
     vendorEmail: "vendor5@example.com",
     startCity: "Boston",
@@ -623,7 +609,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 01:10 PM",
   },
   {
-    id: 16,
+    id: 15,
     vendorId: "MC-234567",
     vendorEmail: "vendor6@example.com",
     startCity: "Chicago",
@@ -634,7 +620,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 03:45 PM",
   },
   {
-    id: 17,
+    id: 16,
     vendorId: "MC-890123",
     vendorEmail: "vendor7@example.com",
     startCity: "Dallas",
@@ -645,7 +631,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 02:30 PM",
   },
   {
-    id: 18,
+    id: 17,
     vendorId: "MC-456789",
     vendorEmail: "vendor8@example.com",
     startCity: "Los Angeles",
@@ -656,7 +642,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-07 04:15 PM",
   },
   {
-    id: 19,
+    id: 18,
     vendorId: "MC-678901",
     vendorEmail: "vendor9@example.com",
     startCity: "Miami",
@@ -667,7 +653,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-07 11:20 AM",
   },
   {
-    id: 20,
+    id: 19,
     vendorId: "MC-112233",
     vendorEmail: "vendor10@example.com",
     startCity: "Seattle",
@@ -678,7 +664,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 08:50 AM",
   },
   {
-    id: 21,
+    id: 20,
     vendorId: "MC-445566",
     vendorEmail: "vendor11@example.com",
     startCity: "New York",
@@ -689,7 +675,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-06 01:30 PM",
   },
   {
-    id: 22,
+    id: 21,
     vendorId: "MC-778899",
     vendorEmail: "vendor12@example.com",
     startCity: "Phoenix",
@@ -700,7 +686,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-06 10:45 AM",
   },
   {
-    id: 23,
+    id: 22,
     vendorId: "MC-123456",
     vendorEmail: "vendor1@example.com",
     startCity: "Los Angeles",
@@ -711,7 +697,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-06 02:40 PM",
   },
   {
-    id: 24,
+    id: 23,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Los Angeles",
@@ -722,7 +708,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-12 08:30 AM",
   },
   {
-    id: 25,
+    id: 24,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Los Angeles",
@@ -733,7 +719,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-12 01:15 PM",
   },
   {
-    id: 26,
+    id: 25,
     vendorId: "MC-789012",
     vendorEmail: "vendor2@example.com",
     startCity: "Miami",
@@ -744,7 +730,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 10:20 AM",
   },
   {
-    id: 27,
+    id: 26,
     vendorId: "MC-345678",
     vendorEmail: "vendor3@example.com",
     startCity: "Miami",
@@ -755,7 +741,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-07 10:25 AM",
   },
   {
-    id: 28,
+    id: 27,
     vendorId: "MC-234567",
     vendorEmail: "vendor6@example.com",
     startCity: "Seattle",
@@ -766,7 +752,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 08:15 AM",
   },
   {
-    id: 29,
+    id: 28,
     vendorId: "MC-890123",
     vendorEmail: "vendor7@example.com",
     startCity: "Seattle",
@@ -777,7 +763,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-07 04:35 PM",
   },
   {
-    id: 30,
+    id: 29,
     vendorId: "MC-456789",
     vendorEmail: "vendor8@example.com",
     startCity: "New York",
@@ -788,7 +774,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 02:10 PM",
   },
   {
-    id: 31,
+    id: 30,
     vendorId: "MC-678901",
     vendorEmail: "vendor9@example.com",
     startCity: "New York",
@@ -799,7 +785,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-07 11:45 AM",
   },
   {
-    id: 32,
+    id: 31,
     vendorId: "MC-112233",
     vendorEmail: "vendor10@example.com",
     startCity: "Phoenix",
@@ -810,7 +796,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 09:55 AM",
   },
   {
-    id: 33,
+    id: 32,
     vendorId: "MC-445566",
     vendorEmail: "vendor11@example.com",
     startCity: "Denver",
@@ -821,7 +807,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-06 03:30 PM",
   },
   {
-    id: 34,
+    id: 33,
     vendorId: "MC-778899",
     vendorEmail: "vendor12@example.com",
     startCity: "Atlanta",
@@ -832,7 +818,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 10:40 AM",
   },
   {
-    id: 35,
+    id: 34,
     vendorId: "MC-123456",
     vendorEmail: "vendor1@example.com",
     startCity: "Chicago",
@@ -843,7 +829,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-07 09:50 AM",
   },
   {
-    id: 36,
+    id: 35,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Chicago",
@@ -854,7 +840,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-13 09:00 AM",
   },
   {
-    id: 37,
+    id: 36,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Chicago",
@@ -865,7 +851,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-13 02:30 PM",
   },
   {
-    id: 38,
+    id: 37,
     vendorId: "MC-789012",
     vendorEmail: "vendor2@example.com",
     startCity: "Dallas",
@@ -876,7 +862,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 01:30 PM",
   },
   {
-    id: 39,
+    id: 38,
     vendorId: "MC-345678",
     vendorEmail: "vendor3@example.com",
     startCity: "Dallas",
@@ -887,7 +873,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-07 03:10 PM",
   },
   {
-    id: 40,
+    id: 39,
     vendorId: "MC-901234",
     vendorEmail: "vendor4@example.com",
     startCity: "Dallas",
@@ -898,7 +884,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-05 03:20 PM",
   },
   {
-    id: 41,
+    id: 40,
     vendorId: "MC-567890",
     vendorEmail: "vendor5@example.com",
     startCity: "Boston",
@@ -909,7 +895,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 12:40 PM",
   },
   {
-    id: 42,
+    id: 41,
     vendorId: "MC-234567",
     vendorEmail: "vendor6@example.com",
     startCity: "Boston",
@@ -920,7 +906,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 04:20 PM",
   },
   {
-    id: 43,
+    id: 42,
     vendorId: "MC-890123",
     vendorEmail: "vendor7@example.com",
     startCity: "Boston",
@@ -931,7 +917,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-07 08:30 AM",
   },
   {
-    id: 44,
+    id: 43,
     vendorId: "MC-456789",
     vendorEmail: "vendor8@example.com",
     startCity: "Chicago",
@@ -942,7 +928,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 10:15 AM",
   },
   {
-    id: 45,
+    id: 44,
     vendorId: "MC-678901",
     vendorEmail: "vendor9@example.com",
     startCity: "Chicago",
@@ -953,7 +939,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-07 01:45 PM",
   },
   {
-    id: 46,
+    id: 45,
     vendorId: "MC-112233",
     vendorEmail: "vendor10@example.com",
     startCity: "Dallas",
@@ -964,7 +950,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 11:30 AM",
   },
   {
-    id: 47,
+    id: 46,
     vendorId: "MC-445566",
     vendorEmail: "vendor11@example.com",
     startCity: "Dallas",
@@ -975,7 +961,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-07 03:10 PM",
   },
   {
-    id: 48,
+    id: 47,
     vendorId: "MC-778899",
     vendorEmail: "vendor12@example.com",
     startCity: "Los Angeles",
@@ -986,7 +972,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 09:20 AM",
   },
   {
-    id: 49,
+    id: 48,
     vendorId: "MC-123456",
     vendorEmail: "vendor1@example.com",
     startCity: "Los Angeles",
@@ -997,7 +983,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-06 02:40 PM",
   },
   {
-    id: 50,
+    id: 49,
     vendorId: "MC-789012",
     vendorEmail: "vendor2@example.com",
     startCity: "Miami",
@@ -1008,7 +994,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 01:50 PM",
   },
   {
-    id: 51,
+    id: 50,
     vendorId: "MC-345678",
     vendorEmail: "vendor3@example.com",
     startCity: "Miami",
@@ -1019,7 +1005,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-07 10:25 AM",
   },
   {
-    id: 52,
+    id: 51,
     vendorId: "MC-901234",
     vendorEmail: "vendor4@example.com",
     startCity: "Seattle",
@@ -1030,7 +1016,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 08:15 AM",
   },
   {
-    id: 53,
+    id: 52,
     vendorId: "MC-567890",
     vendorEmail: "vendor5@example.com",
     startCity: "Seattle",
@@ -1041,7 +1027,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-07 04:35 PM",
   },
   {
-    id: 54,
+    id: 53,
     vendorId: "MC-234567",
     vendorEmail: "vendor6@example.com",
     startCity: "New York",
@@ -1052,7 +1038,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 02:10 PM",
   },
   {
-    id: 55,
+    id: 54,
     vendorId: "MC-890123",
     vendorEmail: "vendor7@example.com",
     startCity: "New York",
@@ -1063,7 +1049,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-07 11:45 AM",
   },
   {
-    id: 56,
+    id: 55,
     vendorId: "MC-456789",
     vendorEmail: "vendor8@example.com",
     startCity: "Phoenix",
@@ -1074,7 +1060,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 09:55 AM",
   },
   {
-    id: 57,
+    id: 56,
     vendorId: "MC-678901",
     vendorEmail: "vendor9@example.com",
     startCity: "Denver",
@@ -1085,7 +1071,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-06 03:30 PM",
   },
   {
-    id: 58,
+    id: 57,
     vendorId: "MC-123456",
     vendorEmail: "vendor1@example.com",
     startCity: "Atlanta",
@@ -1096,7 +1082,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 12:25 PM",
   },
   {
-    id: 59,
+    id: 58,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Dallas",
@@ -1107,7 +1093,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 10:45 AM",
   },
   {
-    id: 60,
+    id: 59,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Dallas",
@@ -1118,7 +1104,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 03:20 PM",
   },
   {
-    id: 61,
+    id: 60,
     vendorId: "MC-789012",
     vendorEmail: "vendor2@example.com",
     startCity: "Seattle",
@@ -1129,7 +1115,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 08:30 AM",
   },
   {
-    id: 62,
+    id: 61,
     vendorId: "MC-345678",
     vendorEmail: "vendor3@example.com",
     startCity: "Atlanta",
@@ -1140,7 +1126,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 03:10 PM",
   },
   {
-    id: 63,
+    id: 62,
     vendorId: "MC-234567",
     vendorEmail: "vendor6@example.com",
     startCity: "Philadelphia",
@@ -1151,7 +1137,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 09:30 AM",
   },
   {
-    id: 64,
+    id: 63,
     vendorId: "MC-890123",
     vendorEmail: "vendor7@example.com",
     startCity: "Philadelphia",
@@ -1162,7 +1148,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-07 02:15 PM",
   },
   {
-    id: 65,
+    id: 64,
     vendorId: "MC-456789",
     vendorEmail: "vendor8@example.com",
     startCity: "Philadelphia",
@@ -1173,7 +1159,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 10:45 AM",
   },
   {
-    id: 66,
+    id: 65,
     vendorId: "MC-678901",
     vendorEmail: "vendor9@example.com",
     startCity: "Philadelphia",
@@ -1184,7 +1170,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-07 03:20 PM",
   },
   {
-    id: 67,
+    id: 66,
     vendorId: "MC-112233",
     vendorEmail: "vendor10@example.com",
     startCity: "Philadelphia",
@@ -1195,7 +1181,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-08 11:55 AM",
   },
   {
-    id: 68,
+    id: 67,
     vendorId: "MC-445566",
     vendorEmail: "vendor11@example.com",
     startCity: "Philadelphia",
@@ -1206,7 +1192,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-07 08:40 AM",
   },
   {
-    id: 69,
+    id: 68,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Boston",
@@ -1217,7 +1203,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 09:20 AM",
   },
   {
-    id: 70,
+    id: 69,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Boston",
@@ -1228,7 +1214,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 10:45 AM",
   },
   {
-    id: 71,
+    id: 70,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Boston",
@@ -1239,7 +1225,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 02:15 PM",
   },
   {
-    id: 72,
+    id: 71,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Boston",
@@ -1250,7 +1236,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 11:30 AM",
   },
   {
-    id: 73,
+    id: 72,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Boston",
@@ -1261,7 +1247,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 03:40 PM",
   },
   {
-    id: 74,
+    id: 73,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Boston",
@@ -1272,7 +1258,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 01:20 PM",
   },
   {
-    id: 75,
+    id: 74,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Boston",
@@ -1283,7 +1269,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 08:50 AM",
   },
   {
-    id: 76,
+    id: 75,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Boston",
@@ -1294,7 +1280,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 04:10 PM",
   },
   {
-    id: 77,
+    id: 76,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Boston",
@@ -1305,7 +1291,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 12:05 PM",
   },
   {
-    id: 78,
+    id: 77,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Boston",
@@ -1316,7 +1302,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 09:35 AM",
   },
   {
-    id: 79,
+    id: 78,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Atlanta",
@@ -1327,7 +1313,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 10:20 AM",
   },
   {
-    id: 80,
+    id: 79,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Atlanta",
@@ -1338,7 +1324,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 02:45 PM",
   },
   {
-    id: 81,
+    id: 80,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Atlanta",
@@ -1349,7 +1335,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 11:15 AM",
   },
   {
-    id: 82,
+    id: 81,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Atlanta",
@@ -1360,7 +1346,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 03:30 PM",
   },
   {
-    id: 83,
+    id: 82,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Atlanta",
@@ -1371,7 +1357,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 09:50 AM",
   },
   {
-    id: 84,
+    id: 83,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Atlanta",
@@ -1382,7 +1368,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 01:40 PM",
   },
   {
-    id: 85,
+    id: 84,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Atlanta",
@@ -1393,7 +1379,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 10:55 AM",
   },
   {
-    id: 86,
+    id: 85,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Atlanta",
@@ -1404,7 +1390,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 02:20 PM",
   },
   {
-    id: 87,
+    id: 86,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Atlanta",
@@ -1415,7 +1401,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 11:45 AM",
   },
   {
-    id: 88,
+    id: 87,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Atlanta",
@@ -1426,7 +1412,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 03:10 PM",
   },
   {
-    id: 89,
+    id: 88,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Atlanta",
@@ -1437,7 +1423,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 09:25 AM",
   },
   {
-    id: 90,
+    id: 89,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Atlanta",
@@ -1448,7 +1434,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 01:55 PM",
   },
   {
-    id: 91,
+    id: 90,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Atlanta",
@@ -1459,7 +1445,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 10:30 AM",
   },
   {
-    id: 92,
+    id: 91,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Philadelphia",
@@ -1470,7 +1456,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 11:20 AM",
   },
   {
-    id: 93,
+    id: 92,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Philadelphia",
@@ -1481,7 +1467,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 02:35 PM",
   },
   {
-    id: 94,
+    id: 93,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Philadelphia",
@@ -1492,7 +1478,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 09:40 AM",
   },
   {
-    id: 95,
+    id: 94,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Philadelphia",
@@ -1503,7 +1489,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-09 03:25 PM",
   },
   {
-    id: 96,
+    id: 95,
     vendorId: "MC-223344",
     vendorEmail: "vendor13@example.com",
     startCity: "Boston",
@@ -1514,7 +1500,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 08:15 AM",
   },
   {
-    id: 97,
+    id: 96,
     vendorId: "MC-556677",
     vendorEmail: "vendor14@example.com",
     startCity: "Boston",
@@ -1525,7 +1511,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 09:30 AM",
   },
   {
-    id: 98,
+    id: 97,
     vendorId: "MC-889900",
     vendorEmail: "vendor15@example.com",
     startCity: "Boston",
@@ -1536,7 +1522,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 10:45 AM",
   },
   {
-    id: 99,
+    id: 98,
     vendorId: "MC-334455",
     vendorEmail: "vendor16@example.com",
     startCity: "Boston",
@@ -1547,7 +1533,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 11:20 AM",
   },
   {
-    id: 100,
+    id: 99,
     vendorId: "MC-667788",
     vendorEmail: "vendor17@example.com",
     startCity: "Boston",
@@ -1558,7 +1544,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 01:15 PM",
   },
   {
-    id: 101,
+    id: 100,
     vendorId: "MC-990011",
     vendorEmail: "vendor18@example.com",
     startCity: "Boston",
@@ -1569,7 +1555,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 02:30 PM",
   },
   {
-    id: 102,
+    id: 101,
     vendorId: "MC-223344",
     vendorEmail: "vendor13@example.com",
     startCity: "Boston",
@@ -1580,7 +1566,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 03:45 PM",
   },
   {
-    id: 103,
+    id: 102,
     vendorId: "MC-556677",
     vendorEmail: "vendor14@example.com",
     startCity: "Boston",
@@ -1591,7 +1577,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 08:50 AM",
   },
   {
-    id: 104,
+    id: 103,
     vendorId: "MC-889900",
     vendorEmail: "vendor15@example.com",
     startCity: "Boston",
@@ -1602,7 +1588,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 10:10 AM",
   },
   {
-    id: 105,
+    id: 104,
     vendorId: "MC-334455",
     vendorEmail: "vendor16@example.com",
     startCity: "Boston",
@@ -1613,7 +1599,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 11:35 AM",
   },
   {
-    id: 106,
+    id: 105,
     vendorId: "MC-667788",
     vendorEmail: "vendor17@example.com",
     startCity: "Atlanta",
@@ -1624,7 +1610,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 09:15 AM",
   },
   {
-    id: 107,
+    id: 106,
     vendorId: "MC-990011",
     vendorEmail: "vendor18@example.com",
     startCity: "Atlanta",
@@ -1635,7 +1621,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 01:40 PM",
   },
   {
-    id: 108,
+    id: 107,
     vendorId: "MC-223344",
     vendorEmail: "vendor13@example.com",
     startCity: "Atlanta",
@@ -1646,7 +1632,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 10:25 AM",
   },
   {
-    id: 109,
+    id: 108,
     vendorId: "MC-556677",
     vendorEmail: "vendor14@example.com",
     startCity: "Atlanta",
@@ -1657,7 +1643,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 02:50 PM",
   },
   {
-    id: 110,
+    id: 109,
     vendorId: "MC-889900",
     vendorEmail: "vendor15@example.com",
     startCity: "Atlanta",
@@ -1668,7 +1654,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 08:35 AM",
   },
   {
-    id: 111,
+    id: 110,
     vendorId: "MC-334455",
     vendorEmail: "vendor16@example.com",
     startCity: "Atlanta",
@@ -1679,7 +1665,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 11:50 AM",
   },
   {
-    id: 112,
+    id: 111,
     vendorId: "MC-667788",
     vendorEmail: "vendor17@example.com",
     startCity: "Atlanta",
@@ -1690,7 +1676,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 03:20 PM",
   },
   {
-    id: 113,
+    id: 112,
     vendorId: "MC-990011",
     vendorEmail: "vendor18@example.com",
     startCity: "Atlanta",
@@ -1701,7 +1687,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 09:45 AM",
   },
   {
-    id: 114,
+    id: 113,
     vendorId: "MC-223344",
     vendorEmail: "vendor13@example.com",
     startCity: "Atlanta",
@@ -1712,7 +1698,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 01:10 PM",
   },
   {
-    id: 115,
+    id: 114,
     vendorId: "MC-556677",
     vendorEmail: "vendor14@example.com",
     startCity: "Atlanta",
@@ -1723,7 +1709,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 10:35 AM",
   },
   {
-    id: 116,
+    id: 115,
     vendorId: "MC-889900",
     vendorEmail: "vendor15@example.com",
     startCity: "Atlanta",
@@ -1734,7 +1720,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 02:25 PM",
   },
   {
-    id: 117,
+    id: 116,
     vendorId: "MC-334455",
     vendorEmail: "vendor16@example.com",
     startCity: "Atlanta",
@@ -1745,7 +1731,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 08:55 AM",
   },
   {
-    id: 118,
+    id: 117,
     vendorId: "MC-667788",
     vendorEmail: "vendor17@example.com",
     startCity: "Atlanta",
@@ -1756,7 +1742,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 11:40 AM",
   },
   {
-    id: 119,
+    id: 118,
     vendorId: "MC-990011",
     vendorEmail: "vendor18@example.com",
     startCity: "Atlanta",
@@ -1767,7 +1753,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 03:05 PM",
   },
   {
-    id: 120,
+    id: 119,
     vendorId: "MC-223344",
     vendorEmail: "vendor13@example.com",
     startCity: "Philadelphia",
@@ -1778,7 +1764,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 09:20 AM",
   },
   {
-    id: 121,
+    id: 120,
     vendorId: "MC-556677",
     vendorEmail: "vendor14@example.com",
     startCity: "Philadelphia",
@@ -1789,7 +1775,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 01:45 PM",
   },
   {
-    id: 122,
+    id: 121,
     vendorId: "MC-889900",
     vendorEmail: "vendor15@example.com",
     startCity: "Philadelphia",
@@ -1800,7 +1786,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 10:15 AM",
   },
   {
-    id: 123,
+    id: 122,
     vendorId: "MC-334455",
     vendorEmail: "vendor16@example.com",
     startCity: "Philadelphia",
@@ -1811,7 +1797,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 02:40 PM",
   },
   {
-    id: 124,
+    id: 123,
     vendorId: "MC-667788",
     vendorEmail: "vendor17@example.com",
     startCity: "Chicago",
@@ -1822,7 +1808,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 08:25 AM",
   },
   {
-    id: 125,
+    id: 124,
     vendorId: "MC-990011",
     vendorEmail: "vendor18@example.com",
     startCity: "Chicago",
@@ -1833,7 +1819,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 11:30 AM",
   },
   {
-    id: 126,
+    id: 125,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Chicago",
@@ -1844,7 +1830,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 03:15 PM",
   },
   {
-    id: 127,
+    id: 126,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Chicago",
@@ -1855,7 +1841,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 09:50 AM",
   },
   {
-    id: 128,
+    id: 127,
     vendorId: "MC-223344",
     vendorEmail: "vendor13@example.com",
     startCity: "Dallas",
@@ -1866,7 +1852,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 01:25 PM",
   },
   {
-    id: 129,
+    id: 128,
     vendorId: "MC-556677",
     vendorEmail: "vendor14@example.com",
     startCity: "Dallas",
@@ -1877,7 +1863,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 10:40 AM",
   },
   {
-    id: 130,
+    id: 129,
     vendorId: "MC-889900",
     vendorEmail: "vendor15@example.com",
     startCity: "Dallas",
@@ -1888,7 +1874,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 02:55 PM",
   },
   {
-    id: 131,
+    id: 130,
     vendorId: "MC-334455",
     vendorEmail: "vendor16@example.com",
     startCity: "Houston",
@@ -1899,7 +1885,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 08:45 AM",
   },
   {
-    id: 132,
+    id: 131,
     vendorId: "MC-667788",
     vendorEmail: "vendor17@example.com",
     startCity: "Houston",
@@ -1910,7 +1896,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 11:55 AM",
   },
   {
-    id: 133,
+    id: 132,
     vendorId: "MC-990011",
     vendorEmail: "vendor18@example.com",
     startCity: "Los Angeles",
@@ -1921,7 +1907,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 03:30 PM",
   },
   {
-    id: 134,
+    id: 133,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Los Angeles",
@@ -1932,7 +1918,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 09:10 AM",
   },
   {
-    id: 135,
+    id: 134,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Los Angeles",
@@ -1943,7 +1929,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 01:35 PM",
   },
   {
-    id: 136,
+    id: 135,
     vendorId: "MC-223344",
     vendorEmail: "vendor13@example.com",
     startCity: "Miami",
@@ -1954,7 +1940,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 10:50 AM",
   },
   {
-    id: 137,
+    id: 136,
     vendorId: "MC-556677",
     vendorEmail: "vendor14@example.com",
     startCity: "Miami",
@@ -1965,7 +1951,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 03:00 PM",
   },
   {
-    id: 138,
+    id: 137,
     vendorId: "MC-889900",
     vendorEmail: "vendor15@example.com",
     startCity: "Miami",
@@ -1976,7 +1962,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 08:20 AM",
   },
   {
-    id: 139,
+    id: 138,
     vendorId: "MC-334455",
     vendorEmail: "vendor16@example.com",
     startCity: "Seattle",
@@ -1987,7 +1973,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 11:45 AM",
   },
   {
-    id: 140,
+    id: 139,
     vendorId: "MC-667788",
     vendorEmail: "vendor17@example.com",
     startCity: "Seattle",
@@ -1998,7 +1984,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 02:10 PM",
   },
   {
-    id: 141,
+    id: 140,
     vendorId: "MC-990011",
     vendorEmail: "vendor18@example.com",
     startCity: "Seattle",
@@ -2009,7 +1995,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 09:35 AM",
   },
   {
-    id: 142,
+    id: 141,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "New York",
@@ -2020,7 +2006,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 01:50 PM",
   },
   {
-    id: 143,
+    id: 142,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "New York",
@@ -2031,7 +2017,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 10:25 AM",
   },
   {
-    id: 144,
+    id: 143,
     vendorId: "MC-223344",
     vendorEmail: "vendor13@example.com",
     startCity: "New York",
@@ -2042,7 +2028,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 03:40 PM",
   },
   {
-    id: 145,
+    id: 144,
     vendorId: "MC-556677",
     vendorEmail: "vendor14@example.com",
     startCity: "Phoenix",
@@ -2053,7 +2039,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 08:30 AM",
   },
   {
-    id: 146,
+    id: 145,
     vendorId: "MC-889900",
     vendorEmail: "vendor15@example.com",
     startCity: "Phoenix",
@@ -2064,7 +2050,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 12:00 PM",
   },
   {
-    id: 147,
+    id: 146,
     vendorId: "MC-334455",
     vendorEmail: "vendor16@example.com",
     startCity: "Denver",
@@ -2075,7 +2061,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 02:45 PM",
   },
   {
-    id: 148,
+    id: 147,
     vendorId: "MC-667788",
     vendorEmail: "vendor17@example.com",
     startCity: "Denver",
@@ -2086,7 +2072,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 09:15 AM",
   },
   {
-    id: 149,
+    id: 148,
     vendorId: "MC-990011",
     vendorEmail: "vendor18@example.com",
     startCity: "San Francisco",
@@ -2097,7 +2083,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 01:20 PM",
   },
   {
-    id: 150,
+    id: 149,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "San Francisco",
@@ -2108,7 +2094,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 10:55 AM",
   },
   {
-    id: 151,
+    id: 150,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Portland",
@@ -2119,7 +2105,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-10 03:25 PM",
   },
   {
-    id: 152,
+    id: 151,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Atlanta",
@@ -2130,7 +2116,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 02:20 PM",
   },
   {
-    id: 153,
+    id: 152,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Phoenix",
@@ -2141,7 +2127,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-15 09:15 AM",
   },
   {
-    id: 154,
+    id: 153,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Denver",
@@ -2152,7 +2138,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-15 11:30 AM",
   },
   {
-    id: 155,
+    id: 154,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "San Francisco",
@@ -2163,7 +2149,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-15 02:45 PM",
   },
   {
-    id: 156,
+    id: 155,
     vendorId: "MC-789012",
     vendorEmail: "sarah.j@logistics.com",
     startCity: "Philadelphia",
@@ -2174,7 +2160,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 09:30 AM",
   },
   {
-    id: 157,
+    id: 156,
     vendorId: "MC-345678",
     vendorEmail: "mike@davisfreight.com",
     startCity: "Atlanta",
@@ -2185,7 +2171,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 11:45 AM",
   },
   {
-    id: 158,
+    id: 157,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Atlanta",
@@ -2196,7 +2182,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 12:38 PM",
   },
   {
-    id: 159,
+    id: 158,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Seattle",
@@ -2207,7 +2193,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-16 08:00 AM",
   },
   {
-    id: 160,
+    id: 159,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Miami",
@@ -2218,7 +2204,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-16 10:30 AM",
   },
   {
-    id: 161,
+    id: 160,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Portland",
@@ -2229,7 +2215,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-16 01:15 PM",
   },
   {
-    id: 162,
+    id: 161,
     vendorId: "MC-789012",
     vendorEmail: "sarah.j@logistics.com",
     startCity: "Chicago",
@@ -2240,7 +2226,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 02:45 PM",
   },
   {
-    id: 163,
+    id: 162,
     vendorId: "MC-345678",
     vendorEmail: "mike@davisfreight.com",
     startCity: "Dallas",
@@ -2251,7 +2237,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 01:30 PM",
   },
   {
-    id: 164,
+    id: 163,
     vendorId: "MC-223344",
     vendorEmail: "vendor13@example.com",
     startCity: "Atlanta",
@@ -2262,7 +2248,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 10:20 AM",
   },
   {
-    id: 165,
+    id: 164,
     vendorId: "MC-556677",
     vendorEmail: "vendor14@example.com",
     startCity: "Atlanta",
@@ -2273,7 +2259,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 02:35 PM",
   },
   {
-    id: 166,
+    id: 165,
     vendorId: "MC-889900",
     vendorEmail: "vendor15@example.com",
     startCity: "Philadelphia",
@@ -2284,7 +2270,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 09:45 AM",
   },
   {
-    id: 167,
+    id: 166,
     vendorId: "MC-334455",
     vendorEmail: "vendor16@example.com",
     startCity: "Philadelphia",
@@ -2295,7 +2281,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 11:50 AM",
   },
   {
-    id: 168,
+    id: 167,
     vendorId: "MC-667788",
     vendorEmail: "vendor17@example.com",
     startCity: "Philadelphia",
@@ -2306,7 +2292,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 03:15 PM",
   },
   {
-    id: 169,
+    id: 168,
     vendorId: "MC-990011",
     vendorEmail: "vendor18@example.com",
     startCity: "Boston",
@@ -2317,7 +2303,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 08:30 AM",
   },
   {
-    id: 170,
+    id: 169,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Boston",
@@ -2328,7 +2314,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 10:40 AM",
   },
   {
-    id: 171,
+    id: 170,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Boston",
@@ -2339,7 +2325,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 01:55 PM",
   },
   {
-    id: 172,
+    id: 171,
     vendorId: "MC-223344",
     vendorEmail: "vendor13@example.com",
     startCity: "Boston",
@@ -2350,7 +2336,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 03:20 PM",
   },
   {
-    id: 173,
+    id: 172,
     vendorId: "MC-556677",
     vendorEmail: "vendor14@example.com",
     startCity: "Chicago",
@@ -2361,7 +2347,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 09:10 AM",
   },
   {
-    id: 174,
+    id: 173,
     vendorId: "MC-889900",
     vendorEmail: "vendor15@example.com",
     startCity: "Chicago",
@@ -2372,7 +2358,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 11:25 AM",
   },
   {
-    id: 175,
+    id: 174,
     vendorId: "MC-334455",
     vendorEmail: "vendor16@example.com",
     startCity: "Chicago",
@@ -2383,7 +2369,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 02:40 PM",
   },
   {
-    id: 176,
+    id: 175,
     vendorId: "MC-667788",
     vendorEmail: "vendor17@example.com",
     startCity: "Dallas",
@@ -2394,7 +2380,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 08:55 AM",
   },
   {
-    id: 177,
+    id: 176,
     vendorId: "MC-990011",
     vendorEmail: "vendor18@example.com",
     startCity: "Dallas",
@@ -2405,7 +2391,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 10:30 AM",
   },
   {
-    id: 178,
+    id: 177,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Dallas",
@@ -2416,7 +2402,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 01:15 PM",
   },
   {
-    id: 179,
+    id: 178,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Los Angeles",
@@ -2427,7 +2413,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 09:35 AM",
   },
   {
-    id: 180,
+    id: 179,
     vendorId: "MC-223344",
     vendorEmail: "vendor13@example.com",
     startCity: "Los Angeles",
@@ -2438,7 +2424,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 11:50 AM",
   },
   {
-    id: 181,
+    id: 180,
     vendorId: "MC-556677",
     vendorEmail: "vendor14@example.com",
     startCity: "Miami",
@@ -2449,7 +2435,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 10:05 AM",
   },
   {
-    id: 182,
+    id: 181,
     vendorId: "MC-889900",
     vendorEmail: "vendor15@example.com",
     startCity: "Miami",
@@ -2460,7 +2446,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 02:20 PM",
   },
   {
-    id: 183,
+    id: 182,
     vendorId: "MC-334455",
     vendorEmail: "vendor16@example.com",
     startCity: "Seattle",
@@ -2471,7 +2457,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 08:45 AM",
   },
   {
-    id: 184,
+    id: 183,
     vendorId: "MC-667788",
     vendorEmail: "vendor17@example.com",
     startCity: "Seattle",
@@ -2482,7 +2468,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 11:10 AM",
   },
   {
-    id: 185,
+    id: 184,
     vendorId: "MC-990011",
     vendorEmail: "vendor18@example.com",
     startCity: "New York",
@@ -2493,7 +2479,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 01:35 PM",
   },
   {
-    id: 186,
+    id: 185,
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "New York",
@@ -2504,7 +2490,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 03:50 PM",
   },
   {
-    id: 187,
+    id: 186,
     vendorId: "MC-333444",
     vendorEmail: "lisa.martinez@quickship.com",
     startCity: "Phoenix",
@@ -2515,7 +2501,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 09:25 AM",
   },
   {
-    id: 188,
+    id: 187,
     vendorId: "MC-223344",
     vendorEmail: "vendor13@example.com",
     startCity: "Denver",
@@ -2526,7 +2512,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 11:40 AM",
   },
   {
-    id: 189,
+    id: 188,
     vendorId: "MC-556677",
     vendorEmail: "vendor14@example.com",
     startCity: "Houston",
@@ -2537,7 +2523,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 02:05 PM",
   },
   {
-    id: 190,
+    id: 189,
     vendorId: "MC-889900",
     vendorEmail: "vendor15@example.com",
     startCity: "San Francisco",
@@ -2548,7 +2534,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 08:20 AM",
   },
   {
-    id: 191,
+    id: 190,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Chicago",
@@ -2559,7 +2545,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-12 11:20 AM",
   },
   {
-    id: 192,
+    id: 191,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Dallas",
@@ -2570,7 +2556,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-12 02:45 PM",
   },
   {
-    id: 193,
+    id: 192,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Phoenix",
@@ -2581,7 +2567,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-13 09:15 AM",
   },
   {
-    id: 194,
+    id: 193,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Denver",
@@ -2592,7 +2578,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-13 10:30 AM",
   },
   {
-    id: 195,
+    id: 194,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "San Francisco",
@@ -2603,7 +2589,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-13 01:50 PM",
   },
   {
-    id: 196,
+    id: 195,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Seattle",
@@ -2614,7 +2600,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-13 03:25 PM",
   },
   {
-    id: 197,
+    id: 196,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Miami",
@@ -2625,7 +2611,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 08:40 AM",
   },
   {
-    id: 198,
+    id: 197,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Philadelphia",
@@ -2636,7 +2622,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 11:15 AM",
   },
   {
-    id: 199,
+    id: 198,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Boston",
@@ -2647,7 +2633,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-14 02:30 PM",
   },
   {
-    id: 200,
+    id: 199,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Atlanta",
@@ -2658,7 +2644,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-15 09:00 AM",
   },
   {
-    id: 201,
+    id: 200,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Portland",
@@ -2669,7 +2655,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-15 10:45 AM",
   },
   {
-    id: 202,
+    id: 201,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "New York",
@@ -2680,7 +2666,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-15 01:20 PM",
   },
   {
-    id: 203,
+    id: 202,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Chicago",
@@ -2691,7 +2677,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-15 03:55 PM",
   },
   {
-    id: 204,
+    id: 203,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Los Angeles",
@@ -2702,7 +2688,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-16 08:10 AM",
   },
   {
-    id: 205,
+    id: 204,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Dallas",
@@ -2713,7 +2699,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-16 10:35 AM",
   },
   {
-    id: 206,
+    id: 205,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Phoenix",
@@ -2724,7 +2710,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-16 01:50 PM",
   },
   {
-    id: 207,
+    id: 206,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Denver",
@@ -2735,7 +2721,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-16 03:15 PM",
   },
   {
-    id: 208,
+    id: 207,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "San Francisco",
@@ -2746,7 +2732,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-17 09:30 AM",
   },
   {
-    id: 209,
+    id: 208,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Seattle",
@@ -2757,7 +2743,7 @@ const MOCK_RATES = [
     submittedAt: "2025-01-17 11:45 AM",
   },
   {
-    id: 210,
+    id: 209,
     vendorId: "MC-123456",
     vendorEmail: "john.smith@transport.com",
     startCity: "Miami",
@@ -2767,47 +2753,36 @@ const MOCK_RATES = [
     total: 350,
     submittedAt: "2025-01-17 02:20 PM",
   },
-];
+]
 
 export default function AdminRatesPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const selectedCity = searchParams.get("city");
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const selectedCity = searchParams.get("city")
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [orderBy, setOrderBy] = useState<keyof RateData>("submittedAt");
-  const [order, setOrder] = useState<"asc" | "desc">("desc");
-  const [selectedDestination, setSelectedDestination] = useState<string | null>(
-    null
-  );
-  const [rates, setRates] = useState<RateData[]>([]);
+  const [searchTerm, setSearchTerm] = useState("")
+  const [orderBy, setOrderBy] = useState<keyof RateData>("submittedAt")
+  const [order, setOrder] = useState<"asc" | "desc">("desc")
+  const [selectedDestination, setSelectedDestination] = useState<string | null>(null)
+  const [rates, setRates] = useState<RateData[]>([])
 
-  const [openAddDestDialog, setOpenAddDestDialog] = useState(false);
-  const [newDestination, setNewDestination] = useState<string | null>(null);
-  const [newDestinationInput, setNewDestinationInput] = useState("");
+  const [openAddDestDialog, setOpenAddDestDialog] = useState(false)
+  const [newDestination, setNewDestination] = useState<string | null>(null)
+  const [newDestinationInput, setNewDestinationInput] = useState("")
 
   useEffect(() => {
     const loadRates = () => {
-      const submittedRates = JSON.parse(
-        localStorage.getItem("submittedRates") || "{}"
-      );
-      const ratesArray: RateData[] = [];
+      const submittedRates = JSON.parse(localStorage.getItem("submittedRates") || "{}")
+      const ratesArray: RateData[] = []
 
       Object.entries(submittedRates).forEach(([key, value]: [string, any]) => {
-        const [city, destId] = key.split("-");
-        const cityName = city.charAt(0).toUpperCase() + city.slice(1);
-        const destName =
-          DESTINATIONS[city]?.[Number.parseInt(destId)] || "Unknown";
+        const [city, destId] = key.split("-")
+        const cityName = city.charAt(0).toUpperCase() + city.slice(1)
+        const destName = DESTINATIONS[city]?.[Number.parseInt(destId)] || "Unknown"
 
-        const baseRate = Number.parseFloat(
-          value.baseRate?.replace(/[^0-9.]/g, "") || "0"
-        );
-        const fsc = Number.parseFloat(
-          value.fsc?.replace(/[^0-9.]/g, "") || "0"
-        );
-        const total = Number.parseFloat(
-          value.total?.replace(/[^0-9.]/g, "") || "0"
-        );
+        const baseRate = Number.parseFloat(value.baseRate?.replace(/[^0-9.]/g, "") || "0")
+        const fsc = Number.parseFloat(value.fsc?.replace(/[^0-9.]/g, "") || "0")
+        const total = Number.parseFloat(value.total?.replace(/[^0-9.]/g, "") || "0")
 
         ratesArray.push({
           id: key,
@@ -2826,96 +2801,79 @@ export default function AdminRatesPage() {
             minute: "2-digit",
             hour12: true,
           }),
-        });
-      });
+        })
+      })
 
       // Combine MOCK_RATES with the loaded rates
-      const allRates = [...MOCK_RATES, ...ratesArray];
+      const allRates = [...MOCK_RATES, ...ratesArray]
 
       // Ensure unique IDs if necessary, or handle potential overlaps if mock and local storage can have same IDs
       const uniqueRates = allRates.reduce((acc, rate) => {
         if (!acc.some((r) => r.id === String(rate.id))) {
-          acc.push({ ...rate, id: String(rate.id) });
+          acc.push({ ...rate, id: String(rate.id) })
         }
-        return acc;
-      }, [] as RateData[]);
-      ``;
+        return acc
+      }, [] as RateData[])
+      ;``
 
-      setRates(uniqueRates);
-    };
+      setRates(uniqueRates)
+    }
 
-    loadRates();
-  }, []);
+    loadRates()
+  }, [])
 
   const handleSort = (property: keyof RateData) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-  };
+    const isAsc = orderBy === property && order === "asc"
+    setOrder(isAsc ? "desc" : "asc")
+    setOrderBy(property)
+  }
 
   const filteredRates = rates
     .filter((rate) => {
-      const matchesCity = selectedCity
-        ? rate.startCity.toLowerCase() === selectedCity.toLowerCase()
-        : true;
+      const matchesCity = selectedCity ? rate.startCity.toLowerCase() === selectedCity.toLowerCase() : true
       const matchesDestination =
-        selectedCity?.toLowerCase() === "atlanta" && selectedDestination
-          ? rate.endCity === selectedDestination
-          : true;
+        selectedCity?.toLowerCase() === "atlanta" && selectedDestination ? rate.endCity === selectedDestination : true
       const matchesSearch =
         rate.vendorId.toLowerCase().includes(searchTerm.toLowerCase()) ||
         rate.vendorEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
         rate.startCity.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        rate.endCity.toLowerCase().includes(searchTerm.toLowerCase());
+        rate.endCity.toLowerCase().includes(searchTerm.toLowerCase())
 
-      return matchesCity && matchesDestination && matchesSearch;
+      return matchesCity && matchesDestination && matchesSearch
     })
     .sort((a, b) => {
-      if (
-        selectedCity?.toLowerCase() === "atlanta" &&
-        orderBy === "submittedAt"
-      ) {
-        const destCompare = a.endCity.localeCompare(b.endCity);
-        if (destCompare !== 0) return destCompare;
-        return order === "asc"
-          ? a.submittedAt.localeCompare(b.submittedAt)
-          : b.submittedAt.localeCompare(a.submittedAt);
+      if (selectedCity?.toLowerCase() === "atlanta" && orderBy === "submittedAt") {
+        const destCompare = a.endCity.localeCompare(b.endCity)
+        if (destCompare !== 0) return destCompare
+        return order === "asc" ? a.submittedAt.localeCompare(b.submittedAt) : b.submittedAt.localeCompare(a.submittedAt)
       }
 
-      const aValue = a[orderBy];
-      const bValue = b[orderBy];
+      const aValue = a[orderBy]
+      const bValue = b[orderBy]
 
       if (typeof aValue === "string" && typeof bValue === "string") {
-        return order === "asc"
-          ? aValue.localeCompare(bValue)
-          : bValue.localeCompare(aValue);
+        return order === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue)
       }
 
       if (typeof aValue === "number" && typeof bValue === "number") {
-        return order === "asc" ? aValue - bValue : bValue - aValue;
+        return order === "asc" ? aValue - bValue : bValue - aValue
       }
 
-      return 0;
-    });
+      return 0
+    })
 
   const atlantaDestinations =
     selectedCity?.toLowerCase() === "atlanta"
-      ? Array.from(
-          new Set(
-            rates
-              .filter((r) => r.startCity.toLowerCase() === "atlanta")
-              .map((r) => r.endCity)
-          )
-        ).sort()
-      : [];
+      ? Array.from(new Set(rates.filter((r) => r.startCity.toLowerCase() === "atlanta").map((r) => r.endCity))).sort()
+      : []
 
   const handleExport = () => {
-    alert("Exporting rates to CSV...");
-  };
+    alert("Exporting rates to CSV...")
+  }
 
   const handleLogout = () => {
-    router.push("/");
-  };
+    router.push("/")
+  }
 
   const handleAddDestination = () => {
     if (newDestination && selectedCity) {
@@ -2937,31 +2895,27 @@ export default function AdminRatesPage() {
           minute: "2-digit",
           hour12: true,
         }),
-      };
+      }
 
-      const updatedRates = [...rates, newRate];
-      setRates(updatedRates);
+      const updatedRates = [...rates, newRate]
+      setRates(updatedRates)
 
-      setNewDestination(null);
-      setNewDestinationInput("");
-      setOpenAddDestDialog(false);
+      setNewDestination(null)
+      setNewDestinationInput("")
+      setOpenAddDestDialog(false)
     }
-  };
+  }
 
   return (
     <PageContainer>
       <Header>
         <HeaderContent>
           <LogoCircle>
-            <Truck
-              style={{ width: "1.5rem", height: "1.5rem", color: "white" }}
-            />
+            <Truck style={{ width: "1.5rem", height: "1.5rem", color: "white" }} />
           </LogoCircle>
           <HeaderText>
             <HeaderTitle>Drayage Bid Portal</HeaderTitle>
-            <HeaderSubtitle>
-              Admin - Rate Management{selectedCity && ` - ${selectedCity}`}
-            </HeaderSubtitle>
+            <HeaderSubtitle>Admin - Rate Management{selectedCity && ` - ${selectedCity}`}</HeaderSubtitle>
           </HeaderText>
         </HeaderContent>
         <HeaderActions>
@@ -3014,10 +2968,8 @@ export default function AdminRatesPage() {
                 <DestinationList>
                   {atlantaDestinations.map((dest) => {
                     const count = rates.filter(
-                      (r) =>
-                        r.startCity.toLowerCase() === "atlanta" &&
-                        r.endCity === dest
-                    ).length;
+                      (r) => r.startCity.toLowerCase() === "atlanta" && r.endCity === dest,
+                    ).length
                     return (
                       <DestinationButton
                         key={dest}
@@ -3025,13 +2977,11 @@ export default function AdminRatesPage() {
                         $selected={selectedDestination === dest}
                       >
                         <DestinationName>{dest}</DestinationName>
-                        <DestinationCount
-                          $selected={selectedDestination === dest}
-                        >
+                        <DestinationCount $selected={selectedDestination === dest}>
                           {count} {count === 1 ? "rate" : "rates"}
                         </DestinationCount>
                       </DestinationButton>
-                    );
+                    )
                   })}
                 </DestinationList>
               </Sidebar>
@@ -3075,11 +3025,7 @@ export default function AdminRatesPage() {
                 </SearchContainer>
 
                 <TableWrapper>
-                  <TableContainer
-                    component={Paper}
-                    variant="outlined"
-                    sx={{ height: "100%" }}
-                  >
+                  <TableContainer component={Paper} variant="outlined" sx={{ height: "100%" }}>
                     <Table stickyHeader>
                       <TableHead>
                         <TableRow sx={{ backgroundColor: "rgb(248 250 252)" }}>
@@ -3095,9 +3041,7 @@ export default function AdminRatesPage() {
                           <TableCell sx={{ fontWeight: 700 }}>
                             <TableSortLabel
                               active={orderBy === "vendorEmail"}
-                              direction={
-                                orderBy === "vendorEmail" ? order : "asc"
-                              }
+                              direction={orderBy === "vendorEmail" ? order : "asc"}
                               onClick={() => handleSort("vendorEmail")}
                             >
                               Email
@@ -3115,9 +3059,7 @@ export default function AdminRatesPage() {
                           <TableCell sx={{ fontWeight: 700 }}>
                             <TableSortLabel
                               active={orderBy === "submittedAt"}
-                              direction={
-                                orderBy === "submittedAt" ? order : "asc"
-                              }
+                              direction={orderBy === "submittedAt" ? order : "asc"}
                               onClick={() => handleSort("submittedAt")}
                             >
                               Submitted
@@ -3173,12 +3115,8 @@ export default function AdminRatesPage() {
                             >
                               {rate.submittedAt}
                             </TableCell>
-                            <TableCell align="right">
-                              ${rate.baseRate.toFixed(2)}
-                            </TableCell>
-                            <TableCell align="right">
-                              {rate.fsc.toFixed(2)}%
-                            </TableCell>
+                            <TableCell align="right">${rate.baseRate.toFixed(2)}</TableCell>
+                            <TableCell align="right">{rate.fsc.toFixed(2)}%</TableCell>
                             <TableCell align="right">
                               <span
                                 style={{
@@ -3196,22 +3134,14 @@ export default function AdminRatesPage() {
                   </TableContainer>
                 </TableWrapper>
 
-                {filteredRates.length === 0 && (
-                  <EmptyState>
-                    No rates found matching your search criteria
-                  </EmptyState>
-                )}
+                {filteredRates.length === 0 && <EmptyState>No rates found matching your search criteria</EmptyState>}
               </ContentCard>
             </GridContainer>
           ) : (
             <ContentCard>
               <CardHeader>
                 <CardHeaderText>
-                  <CardTitle>
-                    {selectedCity
-                      ? `${selectedCity} Vendor Rates`
-                      : "All Vendor Rates"}
-                  </CardTitle>
+                  <CardTitle>{selectedCity ? `${selectedCity} Vendor Rates` : "All Vendor Rates"}</CardTitle>
                   <CardDescription>
                     {selectedCity
                       ? `View and manage bids starting from ${selectedCity}`
@@ -3260,9 +3190,7 @@ export default function AdminRatesPage() {
                         <TableCell sx={{ fontWeight: 700 }}>
                           <TableSortLabel
                             active={orderBy === "vendorEmail"}
-                            direction={
-                              orderBy === "vendorEmail" ? order : "asc"
-                            }
+                            direction={orderBy === "vendorEmail" ? order : "asc"}
                             onClick={() => handleSort("vendorEmail")}
                           >
                             Email
@@ -3272,12 +3200,10 @@ export default function AdminRatesPage() {
                           <TableCell sx={{ fontWeight: 700 }}>
                             <TableSortLabel
                               active={orderBy === "startCity"}
-                              direction={
-                                orderBy === "startCity" ? order : "asc"
-                              }
+                              direction={orderBy === "startCity" ? order : "asc"}
                               onClick={() => handleSort("startCity")}
                             >
-                              Start City
+                              Port Location
                             </TableSortLabel>
                           </TableCell>
                         )}
@@ -3287,15 +3213,13 @@ export default function AdminRatesPage() {
                             direction={orderBy === "endCity" ? order : "asc"}
                             onClick={() => handleSort("endCity")}
                           >
-                            Destination
+                            Inland Location
                           </TableSortLabel>
                         </TableCell>
                         <TableCell sx={{ fontWeight: 700 }}>
                           <TableSortLabel
                             active={orderBy === "submittedAt"}
-                            direction={
-                              orderBy === "submittedAt" ? order : "asc"
-                            }
+                            direction={orderBy === "submittedAt" ? order : "asc"}
                             onClick={() => handleSort("submittedAt")}
                           >
                             Submitted
@@ -3342,9 +3266,7 @@ export default function AdminRatesPage() {
                             {rate.vendorId}
                           </TableCell>
                           <TableCell>{rate.vendorEmail}</TableCell>
-                          {!selectedCity && (
-                            <TableCell>{rate.startCity}</TableCell>
-                          )}
+                          {!selectedCity && <TableCell>{rate.startCity}</TableCell>}
                           <TableCell>{rate.endCity}</TableCell>
                           <TableCell
                             sx={{
@@ -3354,12 +3276,8 @@ export default function AdminRatesPage() {
                           >
                             {rate.submittedAt}
                           </TableCell>
-                          <TableCell align="right">
-                            ${rate.baseRate.toFixed(2)}
-                          </TableCell>
-                          <TableCell align="right">
-                            {rate.fsc.toFixed(2)}%
-                          </TableCell>
+                          <TableCell align="right">${rate.baseRate.toFixed(2)}</TableCell>
+                          <TableCell align="right">{rate.fsc.toFixed(2)}%</TableCell>
                           <TableCell align="right">
                             <span
                               style={{
@@ -3377,11 +3295,7 @@ export default function AdminRatesPage() {
                 </TableContainer>
               </TableWrapper>
 
-              {filteredRates.length === 0 && (
-                <EmptyState>
-                  No rates found matching your search criteria
-                </EmptyState>
-              )}
+              {filteredRates.length === 0 && <EmptyState>No rates found matching your search criteria</EmptyState>}
 
               <TableFooter>
                 Showing {filteredRates.length} of {rates.length} total rates
@@ -3391,12 +3305,7 @@ export default function AdminRatesPage() {
         </Container>
       </Main>
 
-      <Dialog
-        open={openAddDestDialog}
-        onClose={() => setOpenAddDestDialog(false)}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={openAddDestDialog} onClose={() => setOpenAddDestDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Add New Destination</DialogTitle>
         <DialogContent>
           <div style={{ paddingTop: "1rem" }}>
@@ -3405,52 +3314,37 @@ export default function AdminRatesPage() {
               value={newDestination}
               inputValue={newDestinationInput}
               onInputChange={(event, newInputValue) => {
-                setNewDestinationInput(newInputValue);
+                setNewDestinationInput(newInputValue)
               }}
               onChange={(event, newValue) => {
-                setNewDestination(newValue);
+                setNewDestination(newValue)
               }}
               renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Destination Route"
-                  placeholder="Type at least 3 characters..."
-                />
+                <TextField {...params} label="Inland Location Route" placeholder="Type at least 3 characters..." />
               )}
               filterOptions={(options, state) => {
-                if (state.inputValue.length < 3) return [];
-                return options.filter((option) =>
-                  option.toLowerCase().includes(state.inputValue.toLowerCase())
-                );
+                if (state.inputValue.length < 3) return []
+                return options.filter((option) => option.toLowerCase().includes(state.inputValue.toLowerCase()))
               }}
-              noOptionsText={
-                newDestinationInput.length < 3
-                  ? "Type at least 3 characters"
-                  : "No cities found"
-              }
+              noOptionsText={newDestinationInput.length < 3 ? "Type at least 3 characters" : "No cities found"}
             />
           </div>
         </DialogContent>
         <DialogActions>
           <Button
             onClick={() => {
-              setOpenAddDestDialog(false);
-              setNewDestination(null);
-              setNewDestinationInput("");
+              setOpenAddDestDialog(false)
+              setNewDestination(null)
+              setNewDestinationInput("")
             }}
           >
             Cancel
           </Button>
-          <Button
-            onClick={handleAddDestination}
-            variant="contained"
-            color="primary"
-            disabled={!newDestination}
-          >
+          <Button onClick={handleAddDestination} variant="contained" color="primary" disabled={!newDestination}>
             Submit
           </Button>
         </DialogActions>
       </Dialog>
     </PageContainer>
-  );
+  )
 }
