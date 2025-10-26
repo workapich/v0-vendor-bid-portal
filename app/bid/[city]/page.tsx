@@ -385,7 +385,7 @@ const SaveTemplateTooltip = styled.div<{ $show: boolean }>`
   padding: 1.25rem;
   z-index: 1000;
   display: ${(props) => (props.$show ? "block" : "none")};
-  min-width: 350px;
+  min-width: 420px; // Made tooltip wider
 
   &::after {
     content: "";
@@ -407,33 +407,15 @@ const SaveTemplateTooltip = styled.div<{ $show: boolean }>`
   }
 `
 
-const TooltipText = styled.p`
-  margin: 0 0 1rem 0;
-  color: #334155;
-  font-size: 0.9375rem;
-  line-height: 1.5;
-`
-
-const TooltipButtons = styled.div`
-  display: flex;
-  gap: 0.75rem;
-  justify-content: flex-end;
-`
-
-const TooltipButton = styled.button<{ $primary?: boolean }>`
-  padding: 0.625rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: 2px solid ${(props) => (props.$primary ? "#2563eb" : "#e2e8f0")};
-  background: ${(props) => (props.$primary ? "#2563eb" : "white")};
-  color: ${(props) => (props.$primary ? "white" : "#334155")};
-
-  &:hover {
-    background: ${(props) => (props.$primary ? "#1d4ed8" : "#f8fafc")};
-    border-color: ${(props) => (props.$primary ? "#1d4ed8" : "#cbd5e1")};
-  }
+const ModalOverlay = styled.div<{ $show: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  display: ${(props) => (props.$show ? "block" : "none")};
 `
 
 const SaveTemplateModal = styled.div<{ $show: boolean }>`
@@ -493,6 +475,22 @@ const ModalButtons = styled.div`
   display: flex;
   gap: 0.75rem;
   justify-content: flex-end;
+`
+
+const TooltipButton = styled.button<{ $primary?: boolean }>`
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid ${(props) => (props.$primary ? "#2563eb" : "#e2e8f0")};
+  background: ${(props) => (props.$primary ? "#2563eb" : "white")};
+  color: ${(props) => (props.$primary ? "white" : "#334155")};
+
+  &:hover {
+    background: ${(props) => (props.$primary ? "#1d4ed8" : "#f8fafc")};
+    border-color: ${(props) => (props.$primary ? "#1d4ed8" : "#cbd5e1")};
+  }
 `
 
 const FieldGrid = styled.div`
@@ -695,6 +693,23 @@ export default function BidPage() {
     }
   }, [cityName, selectedDestination, city])
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showSaveTooltip) {
+        const target = event.target as HTMLElement
+        // Check if click is outside the tooltip and submit button
+        if (!target.closest("[data-tooltip]") && !target.closest("[data-submit-button]")) {
+          setShowSaveTooltip(false)
+        }
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [showSaveTooltip])
+
   const toggleFavorite = () => {
     const favorites = JSON.parse(localStorage.getItem("favoriteCities") || "[]")
     let updatedFavorites
@@ -822,7 +837,7 @@ export default function BidPage() {
     localStorage.setItem("submittedRates", JSON.stringify(savedRates))
 
     alert("Bid submitted successfully!")
-    setShowSaveTooltip(false)
+    setShowSaveTooltip(false) // Close tooltip after submission
   }
 
   const handleSubmit = () => {
@@ -841,6 +856,12 @@ export default function BidPage() {
     const rateKey = `${city}-${destId}`
     return !!submittedRates[rateKey]
   }
+
+  const TooltipText = styled.div`
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    color: #64748b;
+  `
 
   return (
     <PageContainer>
@@ -978,24 +999,35 @@ export default function BidPage() {
                   </FieldGridOptional>
                 </FormSection>
 
-                <SubmitButton onClick={handleSubmit} disabled={!isFormValid} $enabled={isFormValid as any}>
+                <SubmitButton
+                  onClick={handleSubmit}
+                  disabled={!isFormValid}
+                  $enabled={isFormValid as any}
+                  data-submit-button // Added data attribute for click detection
+                >
                   Submit Bid
-                  <SaveTemplateTooltip $show={showSaveTooltip}>
+                  <SaveTemplateTooltip $show={showSaveTooltip} data-tooltip>
+                    {" "}
+                    {/* Added data attribute */}
                     <TooltipText>
                       Before submitting the rates, do you want to save your accessorial rates as a template?
                     </TooltipText>
-                    <TooltipButtons>
-                      <TooltipButton onClick={submitRates}>No, just submit</TooltipButton>
+                    <ModalButtons>
+                      <TooltipButton onClick={submitRates}>
+                        {" "}
+                        {/* Closes tooltip on click */}
+                        No, just submit
+                      </TooltipButton>
                       <TooltipButton
                         $primary
                         onClick={() => {
-                          setShowSaveTooltip(false)
+                          setShowSaveTooltip(false) // Close tooltip
                           setShowSaveModal(true)
                         }}
                       >
                         Yes, save template
                       </TooltipButton>
-                    </TooltipButtons>
+                    </ModalButtons>
                   </SaveTemplateTooltip>
                 </SubmitButton>
               </>
@@ -1004,7 +1036,7 @@ export default function BidPage() {
         </GridLayout>
       </Main>
 
-      <div $show={showSaveModal} onClick={() => setShowSaveModal(false)} />
+      <ModalOverlay $show={showSaveModal} onClick={() => setShowSaveModal(false)} />
       <SaveTemplateModal $show={showSaveModal}>
         <ModalTitle>Save Accessorial Template</ModalTitle>
         <ModalInputGroup>
