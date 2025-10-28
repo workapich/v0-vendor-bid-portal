@@ -25,172 +25,151 @@ import { Truck, LogOut, Search, Plus } from "lucide-react"
 
 // Mock data for US cities, needed for Autocomplete
 const US_CITIES = [
-  "New York, NY",
-  "Los Angeles, CA",
-  "Chicago, IL",
-  "Houston, TX",
-  "Phoenix, AZ",
-  "Philadelphia, PA",
-  "San Antonio, TX",
-  "San Diego, CA",
-  "Dallas, TX",
-  "San Jose, CA",
-  "Austin, TX",
-  "Jacksonville, FL",
-  "Fort Worth, TX",
-  "Columbus, OH",
-  "Charlotte, NC",
-  "San Francisco, CA",
-  "Indianapolis, IN",
-  "Seattle, WA",
-  "Denver, CO",
-  "Washington, DC",
-  "Boston, MA",
-  "El Paso, TX",
-  "Nashville, TN",
-  "Detroit, MI",
-  "Oklahoma City, OK",
-  "Portland, OR",
-  "Las Vegas, NV",
-  "Memphis, TN",
-  "Louisville, KY",
-  "Baltimore, MD",
-  "Milwaukee, WI",
-  "Albuquerque, NM",
-  "Tucson, AZ",
-  "Fresno, CA",
-  "Sacramento, CA",
-  "Kansas City, MO",
-  "Atlanta, GA",
-  "Colorado Springs, CO",
-  "Omaha, NE",
-  "Raleigh, NC",
-  "Miami, FL",
-  "Oakland, CA",
-  "Minneapolis, MN",
-  "Tulsa, OK",
-  "Cleveland, OH",
-  "Wichita, KS",
-  "Arlington, TX",
-  "New Orleans, LA",
-  "Bakersfield, CA",
-  "Tampa, FL",
-  "Aurora, CO",
-  "Honolulu, HI",
-  "Anaheim, CA",
-  "Santa Ana, CA",
-  "St. Louis, MO",
-  "Riverside, CA",
-  "Corpus Christi, TX",
-  "Lexington, KY",
-  "Pittsburgh, PA",
-  "Anchorage, AK",
-  "Stockton, CA",
-  "Cincinnati, OH",
-  "St. Paul, MN",
-  "Toledo, OH",
-  "Newark, NJ",
-  "Greensboro, NC",
-  "Chandler, AZ",
-  "Plano, TX",
-  "Lincoln, NE",
-  "Orlando, FL",
-  "Irvine, CA",
-  "Newark, CA",
-  "Durham, NC",
-  "Chula Vista, CA",
-  "Fort Wayne, IN",
-  "Jersey City, NJ",
-  "St. Petersburg, FL",
-  "Laredo, TX",
-  "Buffalo, NY",
-  "Madison, WI",
-  "Lubbock, TX",
-  "Scottsdale, AZ",
-  "Reno, NV",
-  "Glendale, AZ",
-  "Norfolk, VA",
-  "Baton Rouge, LA",
-  "Boise, ID",
-  "Hialeah, FL",
-  "Gilbert, AZ",
-  "Chesapeake, VA",
-  "Irving, TX",
-  "San Bernardino, CA",
-  "Fremont, CA",
-  "Spokane, WA",
-  "San Francisco, CA",
-  "Richmond, VA",
-  "Des Moines, IA",
-  "Tacoma, WA",
-  "San Jose, CA",
-  "Fontana, CA",
-  "Modesto, CA",
-  "Salt Lake City, UT",
-  "Santa Clarita, CA",
-  "Birmingham, AL",
   "Akron, OH",
-  "Worcester, MA",
-  "Knoxville, TN",
-  "Oxnard, CA",
-  "Augusta, GA",
-  "Manchester, NH",
-  "Fort Lauderdale, FL",
-  "Fayetteville, NC",
-  "Springfield, MA",
-  "Rochester, NY",
-  "Little Rock, AR",
-  "Moreno Valley, CA",
-  "Renton, WA",
-  "Long Beach, CA",
-  "Oceanside, CA",
-  "Davis, CA",
-  "New Haven, CT",
-  "Columbia, SC",
-  "Springfield, MO",
-  "Vancouver, BC",
-  "Salem, OR",
-  "Fort Collins, CO",
+  "Albuquerque, NM",
   "Alexandria, VA",
-  "Knoxville, TN",
-  "Chattanooga, TN",
-  "Santa Barbara, CA",
-  "Flagstaff, AZ",
-  "Boulder, CO",
-  "San Jose, CA",
-  "Oakland, CA",
-  "Fort Lauderdale, FL",
-  "Key West, FL",
-  "Savannah, GA",
-  "Greenville, SC",
-  "Pittsburgh, PA",
-  "Burlington, VT",
-  "Albany, NY",
-  "Manchester, NH",
-  "Colorado Springs, CO",
-  "Minneapolis, MN",
-  "Orlando, FL",
-  "Eugene, OR",
-  "New Orleans, LA",
-  "San Antonio, TX",
+  "Anaheim, CA",
+  "Anchorage, AK",
+  "Arlington, TX",
+  "Atlanta, GA",
+  "Augusta, GA",
+  "Aurora, CO",
   "Austin, TX",
-  "Houston, TX",
-  "Philadelphia, PA",
+  "Bakersfield, CA",
   "Baltimore, MD",
-  "Washington, DC",
-  "New York, NY",
+  "Baton Rouge, LA",
+  "Birmingham, AL",
+  "Boise, ID",
   "Boston, MA",
-  "Providence, RI",
+  "Boulder, CO",
+  "Buffalo, NY",
+  "Burlington, VT",
+  "Chandler, AZ",
+  "Charlotte, NC",
+  "Chattanooga, TN",
+  "Chesapeake, VA",
+  "Chicago, IL",
+  "Chula Vista, CA",
+  "Cincinnati, OH",
+  "Cleveland, OH",
+  "Colorado Springs, CO",
+  "Columbia, SC",
+  "Columbus, OH",
+  "Corpus Christi, TX",
+  "Dallas, TX",
+  "Davis, CA",
+  "Denver, CO",
+  "Des Moines, IA",
+  "Detroit, MI",
+  "Durham, NC",
+  "El Paso, TX",
+  "Eugene, OR",
+  "Fayetteville, NC",
+  "Flagstaff, AZ",
+  "Fontana, CA",
+  "Fort Collins, CO",
+  "Fort Lauderdale, FL",
+  "Fort Wayne, IN",
+  "Fort Worth, TX",
+  "Franklin, NH",
+  "Fremont, CA",
+  "Fresno, CA",
+  "Gilbert, AZ",
+  "Glendale, AZ",
+  "Greensboro, NC",
+  "Greenville, SC",
   "Hartford, CT",
-  "Franlin, NH",
-  "Slatersville, RI",
-  "Augustas, GA",
+  "Hialeah, FL",
+  "Honolulu, HI",
+  "Houston, TX",
+  "Indianapolis, IN",
+  "Irvine, CA",
+  "Irving, TX",
+  "Jacksonville, FL",
+  "Jersey City, NJ",
+  "Kansas City, MO",
+  "Key West, FL",
+  "Knoxville, TN",
+  "Laredo, TX",
+  "Las Vegas, NV",
+  "Lexington, KY",
+  "Lincoln, NE",
+  "Little Rock, AR",
+  "Long Beach, CA",
+  "Los Angeles, CA",
+  "Louisville, KY",
+  "Lubbock, TX",
+  "Madison, WI",
+  "Manchester, NH",
+  "Memphis, TN",
+  "Miami, FL",
+  "Milwaukee, WI",
+  "Minneapolis, MN",
+  "Modesto, CA",
+  "Moreno Valley, CA",
+  "Nashville, TN",
+  "New Haven, CT",
+  "New Orleans, LA",
+  "New York, NY",
+  "Newark, CA",
+  "Newark, NJ",
+  "Norfolk, VA",
+  "Oakland, CA",
+  "Oceanside, CA",
+  "Oklahoma City, OK",
+  "Omaha, NE",
+  "Orlando, FL",
+  "Oxnard, CA",
+  "Philadelphia, PA",
+  "Phoenix, AZ",
+  "Pittsburgh, PA",
+  "Plano, TX",
   "Portland, ME",
+  "Portland, OR",
+  "Providence, RI",
+  "Raleigh, NC",
+  "Reno, NV",
+  "Renton, WA",
+  "Richmond, VA",
+  "Riverside, CA",
+  "Rochester, NY",
+  "Sacramento, CA",
+  "Salem, OR",
+  "Salt Lake City, UT",
+  "San Antonio, TX",
+  "San Bernardino, CA",
+  "San Diego, CA",
+  "San Francisco, CA",
+  "San Jose, CA",
+  "Santa Ana, CA",
+  "Santa Barbara, CA",
+  "Santa Clarita, CA",
+  "Savannah, GA",
+  "Scottsdale, AZ",
+  "Seattle, WA",
+  "Slatersville, RI",
+  "Spokane, WA",
+  "Springfield, MA",
+  "Springfield, MO",
+  "St. Louis, MO",
+  "St. Paul, MN",
+  "St. Petersburg, FL",
+  "Stockton, CA",
+  "Tacoma, WA",
+  "Tampa, FL",
+  "Toledo, OH",
+  "Tucson, AZ",
+  "Tulsa, OK",
+  "Vancouver, BC",
+  "Virginia Beach, VA",
+  "Washington, DC",
+  "Wichita, KS",
+  "Worcester, MA",
 ]
 
 const DESTINATIONS: Record<string, Record<number, string>> = {
   boston: {
-    1: "Franlin, NH",
+    1: "Franklin, NH",
     2: "Slatersville, RI",
     3: "Augustas, GA",
     4: "Portland, ME",
@@ -459,7 +438,7 @@ const MOCK_RATES = [
     vendorId: "MC-123456",
     vendorEmail: "vendor1@example.com",
     startCity: "Boston",
-    endCity: "Franlin, NH",
+    endCity: "Franklin, NH",
     baseRate: 450,
     fsc: 11.11,
     total: 500,
@@ -1196,7 +1175,7 @@ const MOCK_RATES = [
     vendorId: "MC-111222",
     vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Boston",
-    endCity: "Franlin, NH",
+    endCity: "Franklin, NH",
     baseRate: 460,
     fsc: 10.87,
     total: 510,
@@ -1493,7 +1472,7 @@ const MOCK_RATES = [
     vendorId: "MC-223344",
     vendorEmail: "vendor13@example.com",
     startCity: "Boston",
-    endCity: "Franlin, NH",
+    endCity: "Franklin, NH",
     baseRate: 455,
     fsc: 10.99,
     total: 505,
@@ -2296,7 +2275,7 @@ const MOCK_RATES = [
     vendorId: "MC-990011",
     vendorEmail: "vendor18@example.com",
     startCity: "Boston",
-    endCity: "Franlin, NH",
+    endCity: "Franklin, NH",
     baseRate: 448,
     fsc: 11.16,
     total: 498,
@@ -2814,7 +2793,6 @@ export default function AdminRatesPage() {
         }
         return acc
       }, [] as RateData[])
-      ;``
 
       setRates(uniqueRates)
     }
@@ -3253,46 +3231,46 @@ export default function AdminRatesPage() {
                           </TableSortLabel>
                         </TableCell>
                       </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {filteredRates.map((rate) => (
-                        <TableRow key={rate.id} hover>
-                          <TableCell
-                            sx={{
-                              fontFamily: "monospace",
-                              fontSize: "0.875rem",
+                    </Table>
+                  </TableHead>
+                  <TableBody>
+                    {filteredRates.map((rate) => (
+                      <TableRow key={rate.id} hover>
+                        <TableCell
+                          sx={{
+                            fontFamily: "monospace",
+                            fontSize: "0.875rem",
+                          }}
+                        >
+                          {rate.vendorId}
+                        </TableCell>
+                        <TableCell>{rate.vendorEmail}</TableCell>
+                        {!selectedCity && <TableCell>{rate.startCity}</TableCell>}
+                        <TableCell>{rate.endCity}</TableCell>
+                        <TableCell
+                          sx={{
+                            fontSize: "0.875rem",
+                            color: "rgb(71 85 105)",
+                          }}
+                        >
+                          {rate.submittedAt}
+                        </TableCell>
+                        <TableCell align="right">${rate.baseRate.toFixed(2)}</TableCell>
+                        <TableCell align="right">{rate.fsc.toFixed(2)}%</TableCell>
+                        <TableCell align="right">
+                          <span
+                            style={{
+                              fontWeight: 700,
+                              color: "rgb(37 99 235)",
                             }}
                           >
-                            {rate.vendorId}
-                          </TableCell>
-                          <TableCell>{rate.vendorEmail}</TableCell>
-                          {!selectedCity && <TableCell>{rate.startCity}</TableCell>}
-                          <TableCell>{rate.endCity}</TableCell>
-                          <TableCell
-                            sx={{
-                              fontSize: "0.875rem",
-                              color: "rgb(71 85 105)",
-                            }}
-                          >
-                            {rate.submittedAt}
-                          </TableCell>
-                          <TableCell align="right">${rate.baseRate.toFixed(2)}</TableCell>
-                          <TableCell align="right">{rate.fsc.toFixed(2)}%</TableCell>
-                          <TableCell align="right">
-                            <span
-                              style={{
-                                fontWeight: 700,
-                                color: "rgb(37 99 235)",
-                              }}
-                            >
-                              ${rate.total.toFixed(2)}
-                            </span>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                            ${rate.total.toFixed(2)}
+                          </span>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </TableWrapper>
 
               {filteredRates.length === 0 && <EmptyState>No rates found matching your search criteria</EmptyState>}

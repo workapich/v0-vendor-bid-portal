@@ -577,11 +577,11 @@ const SubmitButton = styled.button<{ $enabled?: boolean }>`
 
 const DESTINATIONS = {
   boston: [
-    { id: 1, name: "Franlin, NH" },
-    { id: 2, name: "Slatersville, RI" },
-    { id: 3, name: "Augustas, GA" },
+    { id: 1, name: "Augusta, GA" },
+    { id: 2, name: "Franklin, NH" },
+    { id: 3, name: "Hartford, CT" },
     { id: 4, name: "Portland, ME" },
-    { id: 5, name: "Hartford, CT" },
+    { id: 5, name: "Slatersville, RI" },
   ],
   atlanta: [
     { id: 1, name: "Birmingham, AL" },
@@ -589,8 +589,8 @@ const DESTINATIONS = {
     { id: 3, name: "Nashville, TN" },
   ],
   philadelphia: [
-    { id: 1, name: "New York, NY" },
-    { id: 2, name: "Baltimore, MD" },
+    { id: 1, name: "Baltimore, MD" },
+    { id: 2, name: "New York, NY" },
     { id: 3, name: "Washington, DC" },
   ],
 }
