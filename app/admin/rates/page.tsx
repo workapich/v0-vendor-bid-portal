@@ -1,6 +1,44 @@
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation"
+// Mock data for US cities, needed for Autocomplete
+const US_CITIES = [
+  "Akron, OH",
+  "Albuquerque, NM",
+  "Alexandria, VA",
+  "Anaheim, CA",
+  "Anchorage, AK",
+  "Arlington, TX",
+  "Atlanta, GA",
+  "Augusta, GA",
+  "Aurora, CO",
+  "Austin, TX",
+  "Bakersfield, CA",
+  "Baltimore, MD",
+  "Baton Rouge, LA",
+  "Birmingham, AL",
+  "Boise, ID",
+  "Boston, MA",
+  "Boulder, CO",
+  "Buffalo, NY",
+  "Burlington, VT",
+  "Chandler, AZ",
+  "Charlotte, NC",
+  "Chattanooga, TN",
+  "Chesapeake, VA",
+  "Chicago, IL",
+  "Chula Vista, CA",
+  "Cincinnati, OH",
+  "Cleveland, OH",
+  "Colorado Springs, CO",\
+  "0\
+<|endoftext|>**Created Question**:\
+You are tasked with merging an existing code block (`app/admin/rates/page.tsx`) with updates to create a finalized, updated code block. Here's how to proceed:
+\
+1. First, examine the existing `app/admin/rates/page.tsx\`:
+<existing_code>
+"use client"
+
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect } from "react"
 import styled from "styled-components"
 import {
@@ -21,7 +59,7 @@ import {
   DialogActions,
   Autocomplete,
 } from "@mui/material"
-import { Truck, LogOut, Search, Plus } from "lucide-react"
+import { Truck, LogOut, Search, Plus } from 'lucide-react'
 
 // Mock data for US cities, needed for Autocomplete
 const US_CITIES = [
@@ -199,238 +237,334 @@ interface RateData {
   submittedAt: string
 }
 
-const PageContainer = styled.div`
-  min-height: 100vh;
-  background: linear-gradient(
-    to bottom right,
-    rgb(248 250 252),
-    rgb(226 232 240)
-  );
-  display: flex;
-  flex-direction: column;
-`
+const PageContainer = styled.div`\
+  min-height: 100vh;\
+  background: linear-gradient(\
+    to bottom right,\
+    rgb(248 250 252),\
+    rgb(226 232 240)\
+)
+display: flex
+\
+  flex-direction: column
+;`
 
 const Header = styled.header`
-  background: white;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
-  padding: 1rem 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid rgb(226 232 240);
-`
+background: white
+\
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1)
+\
+  padding: 1rem 1.5rem
+display: flex
+\
+  align-items: center
+\
+  justify-content: space-between
+\
+  border-bottom: 1px solid rgb(226 232 240)
+;`
 
 const HeaderContent = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-`
+display: flex
+\
+  align-items: center
+\
+  gap: 0.75rem
+;`
 
 const LogoCircle = styled.div`
-  width: 3rem;
-  height: 3rem;
-  background: rgb(37 99 235);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-`
+\
+  width: 3rem
+\
+  height: 3rem
+\
+  background: rgb(37 99 235)
+\
+  border-radius: 50%
+display: flex
+\
+  align-items: center
+\
+  justify-content: center
+\
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1)
+;`
 
 const HeaderText = styled.div`
-  display: flex;
-  flex-direction: column;
-`
+display: flex
+\
+  flex-direction: column
+;`
 
 const HeaderTitle = styled.h1`
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: rgb(15 23 42);
-  margin: 0;
-`
+\
+  font-size: 1.25rem
+\
+  font-weight: 700
+\
+  color: rgb(15 23 42)
+margin: 0
+;`
 
 const HeaderSubtitle = styled.p`
-  font-size: 0.875rem;
-  color: rgb(71 85 105);
-  margin: 0;
-`
+font - size
+: 0.875rem
+color: rgb(71 85 105)
+margin: 0
+;`
 
 const HeaderActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`
+display: flex
+align - items
+: center
+gap:
+0.5rem
+;`
 
 const StatusIndicator = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`
+display: flex
+align - items
+: center
+gap:
+0.5rem
+;`
 
 const StatusDot = styled.div`
-  width: 0.5rem;
-  height: 0.5rem;
-  background: rgb(34 197 94);
-  border-radius: 50%;
-`
+width:
+0.5rem
+height:
+0.5rem
+background: rgb(34 197 94)
+border - radius
+: 50%
+;`
 
 const StatusText = styled.span`
-  font-size: 0.875rem;
-  color: rgb(71 85 105);
-`
+font - size
+: 0.875rem
+color: rgb(71 85 105)
+;`
 
 const Main = styled.main`
-  flex: 1;
-  padding: 1.5rem;
-`
+flex: 1
+padding:
+1.5rem
+;`
 
 const Container = styled.div`
-  max-width: 112rem;
-  margin: 0 auto;
-`
+max - width
+: 112rem
+margin: 0
+auto
+;`
 
 const GridContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
+display: grid
+grid - template - columns
+: 1fr
+gap:
+1.5rem
 
-  @media (min-width: 1024px) {
-    grid-template-columns: 1fr 3fr;
-  }
-`
+@media (min-width: 1024px)
+{
+  grid - template - columns
+  : 1fr 3fr
+}
+;`
 
 const Sidebar = styled.div`
-  background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
-  padding: 1rem;
-  border: 1px solid rgb(226 232 240);
-  display: flex;
-  flex-direction: column;
-  height: 80vh;
-  overflow-y: auto;
-`
+background: white
+border - radius
+: 0.5rem
+box - shadow
+: 0 1px 3px 0 rgb(0 0 0 / 0.1)
+padding:
+1rem
+border:
+1px solid rgb(226 232 240)
+display: flex
+flex - direction
+: column
+height:
+80vh
+overflow - y
+: auto
+;`
 
 const SidebarTitle = styled.h4`
-  font-weight: 600;
-  color: rgb(15 23 42);
-  margin-bottom: 1rem;
-`
+font - weight
+: 600
+color: rgb(15 23 42)
+margin - bottom
+: 1rem
+;`
 
 const DestinationList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  overflow-y: auto;
-  flex: 1;
-`
+display: flex
+flex - direction
+: column
+gap:
+0.5rem
+overflow - y
+: auto
+flex: 1
+;`
 
 const DestinationButton = styled.button<{ $selected?: boolean }>`
-  width: 100%;
-  text-align: left;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s;
-  background: ${(props) => (props.$selected ? "rgb(37 99 235)" : "rgb(241 245 249)")};
-  color: ${(props) => (props.$selected ? "white" : "rgb(15 23 42)")};
+width: 100%;
+text - align
+: left
+padding:
+0.75rem 1rem
+border - radius
+: 0.5rem
+border: none
+cursor: pointer
+transition: all
+0.2s
+background: $
+{
+  ;(props) => (props.$selected ? "rgb(37 99 235)" : "rgb(241 245 249)")
+}
+color: $
+{
+  ;(props) => (props.$selected ? "white" : "rgb(15 23 42)")
+}
 
-  &:hover {
-    background: ${(props) => (props.$selected ? "rgb(37 99 235)" : "rgb(226 232 240)")};
-  }
-`
+&:hover
+{
+  background: $
+  ;(props) => (props.$selected ? "rgb(37 99 235)" : "rgb(226 232 240)")
+}
+;`
 
 const DestinationName = styled.div`
-  font-weight: 500;
-`
+font - weight
+: 500
+;`
 
 const DestinationCount = styled.div<{ $selected?: boolean }>`
-  font-size: 0.875rem;
-  color: ${(props) => (props.$selected ? "rgb(191 219 254)" : "rgb(71 85 105)")};
-`
+font - size
+: 0.875rem
+color: $
+{
+  ;(props) => (props.$selected ? "rgb(191 219 254)" : "rgb(71 85 105)")
+}
+;`
 
 const ContentCard = styled.div`
-  background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
-  padding: 1.5rem;
-  border: 1px solid rgb(226 232 240);
-  height: 80vh;
-  display: flex;
-  flex-direction: column;
-`
+background: white
+border - radius
+: 0.5rem
+box - shadow
+: 0 1px 3px 0 rgb(0 0 0 / 0.1)
+padding:
+1.5rem
+border:
+1px solid rgb(226 232 240)
+height:
+80vh
+display: flex
+flex - direction
+: column
+;`
 
 const CardHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-`
+display: flex
+align - items
+: center
+justify - content
+: space-between
+margin - bottom
+: 1.5rem
+;`
 
 const CardHeaderText = styled.div`
-  display: flex;
-  flex-direction: column;
-`
+display: flex
+flex - direction
+: column
+;`
 
 const CardTitle = styled.h2`
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: rgb(15 23 42);
-  margin-bottom: 0.25rem;
-`
+font - size
+: 1.5rem
+font - weight
+: 700
+color: rgb(15 23 42)
+margin - bottom
+: 0.25rem
+;`
 
 const CardDescription = styled.p`
-  color: rgb(71 85 105);
-  margin: 0;
-`
+color: rgb(71 85 105);
+margin: 0
+;`
 
 const SearchContainer = styled.div`
-  margin-bottom: 1.5rem;
-`
+margin - bottom
+: 1.5rem
+;`
 
 const TableWrapper = styled.div`
-  flex: 1;
-  overflow: auto;
-`
+flex: 1
+overflow: auto
+;`
 
 const EmptyState = styled.div`
-  text-align: center;
-  padding: 3rem 0;
-  color: rgb(100 116 139);
-`
+text - align
+: center
+padding:
+3rem 0
+color: rgb(100 116 139)
+;`
 
 const TableFooter = styled.div`
-  margin-top: 1rem;
-  font-size: 0.875rem;
-  color: rgb(71 85 105);
-`
+margin - top
+: 1rem
+font - size
+: 0.875rem
+color: rgb(71 85 105)
+;`
 
 const AddDestinationCard = styled.button`
-  width: 100%;
-  text-align: left;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  border: 2px dashed #2563eb;
-  background: #eff6ff;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: #2563eb;
-  font-weight: 600;
-  margin-bottom: 1rem;
+width: 100%;
+text - align
+: left
+padding:
+1rem
+border - radius
+: 0.5rem
+border:
+2px dashed #2563eb
+background: #eff6ff
+cursor: pointer
+transition: all
+0.2s
+display: flex
+align - items
+: center
+gap:
+0.75rem
+color: #
+2563eb
+font - weight
+: 600
+margin - bottom
+: 1rem
 
-  &:hover {
-    background: #dbeafe;
-    border-color: #1d4ed8;
-  }
+&:hover
+{
+  background: #dbeafe
+  border - color
+  : #1d4ed8
+}
 
-  svg {
-    flex-shrink: 0;
-  }
-`
+svg
+{
+  flex - shrink
+  : 0
+}
+;`
 
 const MOCK_RATES = [
   {
@@ -1271,8 +1405,8 @@ const MOCK_RATES = [
   },
   {
     id: 77,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
+    vendorId: "MC-111222",
+    vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Boston",
     endCity: "Augustas, GA",
     baseRate: 1850,
@@ -1403,8 +1537,8 @@ const MOCK_RATES = [
   },
   {
     id: 89,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
+    vendorId: "MC-111222",
+    vendorEmail: "robert.chen@fasthaul.com",
     startCity: "Atlanta",
     endCity: "Savannah, GA",
     baseRate: 445,
@@ -2743,7 +2877,7 @@ export default function AdminRatesPage() {
   const [orderBy, setOrderBy] = useState<keyof RateData>("submittedAt")
   const [order, setOrder] = useState<"asc" | "desc">("desc")
   const [selectedDestination, setSelectedDestination] = useState<string | null>(null)
-  const [rates, setRates] = useState<RateData[]>([])
+  const [rates, setRates] = []
 
   const [openAddDestDialog, setOpenAddDestDialog] = useState(false)
   const [newDestination, setNewDestination] = useState<string | null>(null)
@@ -2857,7 +2991,16 @@ export default function AdminRatesPage() {
     if (newDestination && selectedCity) {
       // Add the new destination to the rates list
       const newRate: RateData = {
-        id: `${selectedCity.toLowerCase()}-${Date.now()}`,
+        id: `
+$
+{
+  selectedCity.toLowerCase()
+}
+;-$
+{
+  Date.now()
+}
+;`,
         vendorId: "PENDING",
         vendorEmail: "pending@example.com",
         startCity: selectedCity.charAt(0).toUpperCase() + selectedCity.slice(1),
@@ -2893,7 +3036,11 @@ export default function AdminRatesPage() {
           </LogoCircle>
           <HeaderText>
             <HeaderTitle>Drayage Bid Portal</HeaderTitle>
-            <HeaderSubtitle>Admin - Rate Management{selectedCity && ` - ${selectedCity}`}</HeaderSubtitle>
+            <HeaderSubtitle>Admin - Rate Management{selectedCity && ` - $
+{
+  selectedCity
+}
+;`}</HeaderSubtitle>
           </HeaderText>
         </HeaderContent>
         <HeaderActions>
@@ -2969,11 +3116,18 @@ export default function AdminRatesPage() {
                   <CardHeaderText>
                     <CardTitle>
                       Atlanta Vendor Rates
-                      {selectedDestination && ` - ${selectedDestination}`}
+                      {selectedDestination && ` - $
+{
+  selectedDestination
+}
+;`}
                     </CardTitle>
                     <CardDescription>
                       {selectedDestination
-                        ? `Viewing rates for ${selectedDestination}`
+                        ? `
+Viewing
+rates
+for ${selectedDestination}`
                         : "Select a destination to view rates"}
                     </CardDescription>
                   </CardHeaderText>
@@ -3119,10 +3273,23 @@ export default function AdminRatesPage() {
             <ContentCard>
               <CardHeader>
                 <CardHeaderText>
-                  <CardTitle>{selectedCity ? `${selectedCity} Vendor Rates` : "All Vendor Rates"}</CardTitle>
+                  <CardTitle>{selectedCity ? `${selectedCity}
+Vendor
+Rates` : "All Vendor Rates"}</CardTitle>
                   <CardDescription>
                     {selectedCity
-                      ? `View and manage bids starting from ${selectedCity}`
+                      ? `
+View
+and
+manage
+bids
+starting
+from
+$
+{
+  selectedCity
+}
+;`
                       : "View and manage all submitted vendor bids"}
                   </CardDescription>
                 </CardHeaderText>
@@ -3231,57 +3398,56 @@ export default function AdminRatesPage() {
                           </TableSortLabel>
                         </TableCell>
                       </TableRow>
-                    </Table>
-                  </TableHead>
-                  <TableBody>
-                    {filteredRates.map((rate) => (
-                      <TableRow key={rate.id} hover>
-                        <TableCell
-                          sx={{
-                            fontFamily: "monospace",
-                            fontSize: "0.875rem",
-                          }}
-                        >
-                          {rate.vendorId}
-                        </TableCell>
-                        <TableCell>{rate.vendorEmail}</TableCell>
-                        {!selectedCity && <TableCell>{rate.startCity}</TableCell>}
-                        <TableCell>{rate.endCity}</TableCell>
-                        <TableCell
-                          sx={{
-                            fontSize: "0.875rem",
-                            color: "rgb(71 85 105)",
-                          }}
-                        >
-                          {rate.submittedAt}
-                        </TableCell>
-                        <TableCell align="right">${rate.baseRate.toFixed(2)}</TableCell>
-                        <TableCell align="right">{rate.fsc.toFixed(2)}%</TableCell>
-                        <TableCell align="right">
-                          <span
-                            style={{
-                              fontWeight: 700,
-                              color: "rgb(37 99 235)",
+                    </TableHead>
+                    <TableBody>
+                      {filteredRates.map((rate) => (
+                        <TableRow key={rate.id} hover>
+                          <TableCell
+                            sx={{
+                              fontFamily: "monospace",
+                              fontSize: "0.875rem",
                             }}
                           >
-                            ${rate.total.toFixed(2)}
-                          </span>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableWrapper>
+                            {rate.vendorId}
+                          </TableCell>
+                          <TableCell>{rate.vendorEmail}</TableCell>
+                          {!selectedCity && <TableCell>{rate.startCity}</TableCell>}
+                          <TableCell>{rate.endCity}</TableCell>
+                          <TableCell
+                            sx={{
+                              fontSize: "0.875rem",
+                              color: "rgb(71 85 105)",
+                            }}
+                          >
+                            {rate.submittedAt}
+                          </TableCell>
+                          <TableCell align="right">${rate.baseRate.toFixed(2)}</TableCell>
+                          <TableCell align="right">{rate.fsc.toFixed(2)}%</TableCell>
+                          <TableCell align="right">
+                            <span
+                              style={{
+                                fontWeight: 700,
+                                color: "rgb(37 99 235)",
+                              }}
+                            >
+                              ${rate.total.toFixed(2)}
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
 
-              {filteredRates.length === 0 && <EmptyState>No rates found matching your search criteria</EmptyState>}
+                {filteredRates.length === 0 && <EmptyState>No rates found matching your search criteria</EmptyState>}
 
-              <TableFooter>
-                Showing {filteredRates.length} of {rates.length} total rates
-              </TableFooter>
-            </ContentCard>
+                <TableFooter>
+                  Showing {filteredRates.length} of {rates.length} total rates
+                </TableFooter>
+              </ContentCard>
+            </Container>
           )}
-        </Container>
-      </Main>
+        </Main>
 
       <Dialog open={openAddDestDialog} onClose={() => setOpenAddDestDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Add New Destination</DialogTitle>
@@ -3326,3 +3492,410 @@ export default function AdminRatesPage() {
     </PageContainer>
   )
 }
+
+</existing_code>
+
+2. Now, look at the updates to be made:
+<updates>
+
+import { Truck, LogOut, Search, Plus, ChevronDown, ChevronUp } from 'lucide-react'
+
+
+const TableWrapper = styled.div`
+width: 100%;
+overflow - x
+: auto
+border - radius
+: 0.5rem
+border:
+1px solid rgb(226 232 240)
+
+&::-webkit-scrollbar
+{
+  height:
+  8px
+}
+
+&::-webkit-scrollbar-track
+{
+  background: rgb(241 245 249);
+}
+
+&::-webkit-scrollbar-thumb
+{
+  background: rgb(203 213 225);
+  border - radius
+  : 4px
+
+  &:hover
+  background: rgb(148 163 184);
+}
+;`
+
+const ExpandButton = styled.button`
+display: flex
+align - items
+: center
+justify - content
+: center
+width:
+2rem
+height:
+2rem
+padding: 0
+background: white
+border:
+1px solid rgb(226 232 240)
+border - radius
+: 0.375rem
+cursor: pointer
+transition: all
+0.2s
+color: rgb(100 116 139)
+
+&:hover
+{
+  background: rgb(248 250 252);
+  border - color
+  : rgb(203 213 225)
+  color: rgb(51 65 85)
+}
+
+&.expanded
+{
+  background: rgb(37 99 235);
+  border - color
+  : rgb(37 99 235)
+  color: white
+
+  &:hover
+  background: rgb(29 78 216);
+  border - color
+  : rgb(29 78 216)
+}
+;`
+
+const DetailRow = styled(TableRow)<{ $isExpanded: boolean }>`
+display: $
+{
+  ;(props) => (props.$isExpanded ? "table-row" : "none")
+}
+
+$
+{
+  ;(props) =>
+    props.$isExpanded &&
+    `
+    background: rgb(248 250 252);
+    
+    & td {
+      padding: 1.5rem;
+      border-bottom: 2px solid rgb(226 232 240);
+      background: rgb(248 250 252);
+    }
+  `
+}
+;`
+
+const DetailContent = styled.div`
+display: grid
+grid - template - columns
+: repeat(auto-fit, minmax(250px, 1fr))
+gap:
+1.5rem
+padding:
+1rem 0
+;`
+
+const DetailField = styled.div`
+display: flex
+flex - direction
+: column
+gap:
+0.375rem
+;`
+
+const DetailLabel = styled.label`
+font - size
+: 0.75rem
+font - weight
+: 700
+color: rgb(100 116 139)
+text - transform
+: uppercase
+letter - spacing
+: 0.05em
+;`
+
+const DetailValue = styled.div`
+font - size
+: 0.95rem
+color: rgb(15 23 42)
+font - weight
+: 500
+word-
+break
+:
+break
+;
+;-word
+;`
+
+// ... existing code in main export function ...
+
+export default function AdminRatesPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [rates, setRates] = useState<RateData[]>([])
+  const [filteredRates, setFilteredRates] = useState<RateData[]>([])
+  const [searchTerm, setSearchTerm] = useState("")
+  const [order, setOrder] = useState<"asc" | "desc">("asc")
+  const [orderBy, setOrderBy] = useState<keyof RateData>("submittedAt")
+  const [selectedCity, setSelectedCity] = useState<string | null>(null)
+  const [selectedDestination, setSelectedDestination] = useState<string>("")
+  const [expandedRowId, setExpandedRowId] = useState<string | null>(null)  // Add state for expanded rows
+  const [openDialog, setOpenDialog] = useState(false)
+  const [newRate, setNewRate] = useState({
+    vendorId: "",
+    vendorEmail: "",
+    startCity: "",
+    endCity: "",
+    baseRate: "",
+    fsc: "",
+  })
+
+
+  const toggleExpandRow = (rateId: string) => {
+    setExpandedRowId(expandedRowId === rateId ? null : rateId)
+  }
+
+  // ... existing code for useEffect, handleSort, handleAddRate ...
+
+  return (
+    <PageContainer>
+      {/* ... existing Header and Main sections ... */}
+
+      {/* Update the table rendering section: */}
+      <TableWrapper>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow sx={{ backgroundColor: "rgb(248 250 252)" }}>
+              <TableCell sx={{ fontWeight: 700, width: "50px" }}>
+                {/* Expand/Collapse column */}
+              </TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>
+                <TableSortLabel
+                  active={orderBy === "vendorId"}
+                  direction={orderBy === "vendorId" ? order : "asc"}
+                  onClick={() => handleSort("vendorId")}
+                >
+                  Vendor ID
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>
+                <TableSortLabel
+                  active={orderBy === "vendorEmail"}
+                  direction={orderBy === "vendorEmail" ? order : "asc"}
+                  onClick={() => handleSort("vendorEmail")}
+                >
+                  Email
+                </TableSortLabel>
+              </TableCell>
+              {!selectedCity && (
+                <TableCell sx={{ fontWeight: 700 }}>
+                  <TableSortLabel
+                    active={orderBy === "startCity"}
+                    direction={orderBy === "startCity" ? order : "asc"}
+                    onClick={() => handleSort("startCity")}
+                  >
+                    Port Location
+                  </TableSortLabel>
+                </TableCell>
+              )}
+              <TableCell sx={{ fontWeight: 700 }}>
+                <TableSortLabel
+                  active={orderBy === "endCity"}
+                  direction={orderBy === "endCity" ? order : "asc"}
+                  onClick={() => handleSort("endCity")}
+                >
+                  Inland Location
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>
+                <TableSortLabel
+                  active={orderBy === "submittedAt"}
+                  direction={orderBy === "submittedAt" ? order : "asc"}
+                  onClick={() => handleSort("submittedAt")}
+                >
+                  Submitted
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ fontWeight: 700 }} align="right">
+                <TableSortLabel
+                  active={orderBy === "baseRate"}
+                  direction={orderBy === "baseRate" ? order : "asc"}
+                  onClick={() => handleSort("baseRate")}
+                >
+                  Base Rate
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ fontWeight: 700 }} align="right">
+                <TableSortLabel
+                  active={orderBy === "fsc"}
+                  direction={orderBy === "fsc" ? order : "asc"}
+                  onClick={() => handleSort("fsc")}
+                >
+                  FSC %
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ fontWeight: 700 }} align="right">
+                <TableSortLabel
+                  active={orderBy === "total"}
+                  direction={orderBy === "total" ? order : "asc"}
+                  onClick={() => handleSort("total")}
+                >
+                  Total
+                </TableSortLabel>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredRates.map((rate) => (
+              <>
+                <TableRow key={rate.id} hover>
+                  <TableCell sx={{ width: "50px" }}>
+                    <ExpandButton
+                      className={expandedRowId === rate.id ? "expanded" : ""}
+                      onClick={() => toggleExpandRow(rate.id)}
+                      title="View full details"
+                    >
+                      {expandedRowId === rate.id ? (
+                        <ChevronUp size={18} />
+                      ) : (
+                        <ChevronDown size={18} />
+                      )}
+                    </ExpandButton>
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontFamily: "monospace",
+                      fontWeight: 600,
+                      color: "rgb(37 99 235)",
+                    }}
+                  >
+                    {rate.vendorId}
+                  </TableCell>
+                  <TableCell>{rate.vendorEmail}</TableCell>
+                  {!selectedCity && (
+                    <TableCell sx={{ color: "rgb(64 74 90)" }}>
+                      {rate.startCity}
+                    </TableCell>
+                  )}
+                  <TableCell sx={{ color: "rgb(64 74 90)" }}>
+                    {rate.endCity}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "0.875rem", color: "rgb(100 116 139)" }}>
+                    {new Date(rate.submittedAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: "rgb(15 23 42)" }} align="right">
+                    ${rate.baseRate.toFixed(2)}
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: "rgb(15 23 42)" }} align="right">
+                    {rate.fsc.toFixed(2)}%
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 700, color: "rgb(37 99 235)" }} align="right">
+                    ${rate.total.toFixed(2)}
+                  </TableCell>
+                </TableRow>
+
+                <DetailRow
+                  $isExpanded={expandedRowId === rate.id}
+                  key={`
+$
+{
+  rate.id
+}
+;-details`}
+                >
+                  <TableCell colSpan={9}>
+                    <DetailContent>
+                      <DetailField>
+                        <DetailLabel>Vendor ID</DetailLabel>
+                        <DetailValue>{rate.vendorId}</DetailValue>
+                      </DetailField>
+                      <DetailField>
+                        <DetailLabel>Vendor Email</DetailLabel>
+                        <DetailValue>{rate.vendorEmail}</DetailValue>
+                      </DetailField>
+                      <DetailField>
+                        <DetailLabel>Port Location</DetailLabel>
+                        <DetailValue>{rate.startCity}</DetailValue>
+                      </DetailField>
+                      <DetailField>
+                        <DetailLabel>Inland Location</DetailLabel>
+                        <DetailValue>{rate.endCity}</DetailValue>
+                      </DetailField>
+                      <DetailField>
+                        <DetailLabel>Base Rate</DetailLabel>
+                        <DetailValue>${rate.baseRate.toFixed(2)}</DetailValue>
+                      </DetailField>
+                      <DetailField>
+                        <DetailLabel>FSC %</DetailLabel>
+                        <DetailValue>{rate.fsc.toFixed(2)}%</DetailValue>
+                      </DetailField>
+                      <DetailField>
+                        <DetailLabel>Total Rate</DetailLabel>
+                        <DetailValue>${rate.total.toFixed(2)}</DetailValue>
+                      </DetailField>
+                      <DetailField>
+                        <DetailLabel>Submitted At</DetailLabel>
+                        <DetailValue>
+                          {new Date(rate.submittedAt).toLocaleString()}
+                        </DetailValue>
+                      </DetailField>
+                      <DetailField>
+                        <DetailLabel>Bid ID</DetailLabel>
+                        <DetailValue sx={{ fontFamily: "monospace", fontSize: "0.875rem" }}>
+                          {rate.id}
+                        </DetailValue>
+                      </DetailField>
+                    </DetailContent>
+                  </TableCell>
+                </DetailRow>
+              </>
+            ))}
+          </TableBody>
+        </Table>
+      </TableWrapper>
+
+      {/* ... rest of existing code ... */}
+    </PageContainer>
+  )
+}
+</updates>
+
+3. Your task is to merge these updates into the existing `
+app/admin/rates/page.tsx`, creating a single, cohesive piece of code.
+
+4. Identify the locations in the existing code where updates need to be made. Look for markers like "/** rest of code here **/" in the updates, which indicate where the new code should be inserted.
+
+5. For each update:
+   a. Locate the corresponding section in the existing code.
+   b. Replace the existing code between the markers with the new code from the updates.
+   c. If there are no clear markers, use your best judgment to determine where the new code should be inserted based on the context and structure of the existing code.
+
+6. Ensure that the merged code maintains consistent formatting, indentation, and style with the rest of the code block.
+
+7. Write your answer inside <merged_code> tags. You should only respond with <merged_code> tags + the code inside them. DO NOT wrap the code in backticks or any other formatting.
+
+8. Here is a simple example to illustrate the process:
+
+const x = "updated value";
+
+
+Remember to maintain the overall structure and integrity of the original code while incorporating the updates seamlessly.
+
+Please begin with <merged_code> just as shown in the example:
+<|im_start|><|im_start|>
+<|im_start|><|im_start|>
+<|im_start|>
