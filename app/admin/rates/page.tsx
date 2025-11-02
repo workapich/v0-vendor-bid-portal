@@ -1,44 +1,6 @@
 "use client"
 
-// Mock data for US cities, needed for Autocomplete
-const US_CITIES = [
-  "Akron, OH",
-  "Albuquerque, NM",
-  "Alexandria, VA",
-  "Anaheim, CA",
-  "Anchorage, AK",
-  "Arlington, TX",
-  "Atlanta, GA",
-  "Augusta, GA",
-  "Aurora, CO",
-  "Austin, TX",
-  "Bakersfield, CA",
-  "Baltimore, MD",
-  "Baton Rouge, LA",
-  "Birmingham, AL",
-  "Boise, ID",
-  "Boston, MA",
-  "Boulder, CO",
-  "Buffalo, NY",
-  "Burlington, VT",
-  "Chandler, AZ",
-  "Charlotte, NC",
-  "Chattanooga, TN",
-  "Chesapeake, VA",
-  "Chicago, IL",
-  "Chula Vista, CA",
-  "Cincinnati, OH",
-  "Cleveland, OH",
-  "Colorado Springs, CO",\
-  "0\
-<|endoftext|>**Created Question**:\
-You are tasked with merging an existing code block (`app/admin/rates/page.tsx`) with updates to create a finalized, updated code block. Here's how to proceed:
-\
-1. First, examine the existing `app/admin/rates/page.tsx\`:
-<existing_code>
-"use client"
-
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from "next/navigation"
 import { useState, useEffect } from "react"
 import styled from "styled-components"
 import {
@@ -53,15 +15,12 @@ import {
   TextField,
   InputAdornment,
   TableSortLabel,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Autocomplete,
+  Collapse,
+  Box,
 } from "@mui/material"
-import { Truck, LogOut, Search, Plus } from 'lucide-react'
+import { Truck, LogOut, Search, ChevronDown, ChevronUp } from "lucide-react"
 
-// Mock data for US cities, needed for Autocomplete
+// Mock data for US cities
 const US_CITIES = [
   "Akron, OH",
   "Albuquerque, NM",
@@ -149,53 +108,60 @@ const US_CITIES = [
   "New Haven, CT",
   "New Orleans, LA",
   "New York, NY",
-  "Newark, CA",
   "Newark, NJ",
+  "Newport Beach, CA",
   "Norfolk, VA",
   "Oakland, CA",
-  "Oceanside, CA",
   "Oklahoma City, OK",
   "Omaha, NE",
   "Orlando, FL",
+  "Overland Park, KS",
   "Oxnard, CA",
   "Philadelphia, PA",
   "Phoenix, AZ",
   "Pittsburgh, PA",
   "Plano, TX",
-  "Portland, ME",
   "Portland, OR",
+  "Portland, ME",
   "Providence, RI",
   "Raleigh, NC",
+  "Rancho Cucamonga, CA",
   "Reno, NV",
-  "Renton, WA",
   "Richmond, VA",
   "Riverside, CA",
   "Rochester, NY",
   "Sacramento, CA",
+  "Saint Paul, MN",
   "Salem, OR",
-  "Salt Lake City, UT",
+  "Saltish, CA",
   "San Antonio, TX",
-  "San Bernardino, CA",
   "San Diego, CA",
   "San Francisco, CA",
   "San Jose, CA",
   "Santa Ana, CA",
-  "Santa Barbara, CA",
   "Santa Clarita, CA",
+  "Santa Rosa, CA",
   "Savannah, GA",
   "Scottsdale, AZ",
   "Seattle, WA",
+  "Shreveport, LA",
   "Slatersville, RI",
   "Spokane, WA",
+  "Springfield, IL",
   "Springfield, MA",
   "Springfield, MO",
   "St. Louis, MO",
-  "St. Paul, MN",
-  "St. Petersburg, FL",
+  "Stamford, CT",
   "Stockton, CA",
-  "Tacoma, WA",
+  "Syracuse, NY",
+  "Tallahassee, FL",
   "Tampa, FL",
+  "Tempe, AZ",
+  "Thornton, CO",
+  "Thousand Oaks, CA",
   "Toledo, OH",
+  "Toronto, ON",
+  "Torrance, CA",
   "Tucson, AZ",
   "Tulsa, OK",
   "Vancouver, BC",
@@ -235,2752 +201,233 @@ interface RateData {
   fsc: number
   total: number
   submittedAt: string
+  chassis?: string
+  yardStorage?: string
+  hazmat?: string
+  bond?: string
+  split?: string
+  flip?: string
+  overweight?: string
+  prepull?: string
 }
 
-const PageContainer = styled.div`\
-  min-height: 100vh;\
-  background: linear-gradient(\
-    to bottom right,\
-    rgb(248 250 252),\
-    rgb(226 232 240)\
-)
-display: flex
-\
-  flex-direction: column
-;`
+const PageContainer = styled.div`
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, rgb(248 250 252), rgb(226 232 240));
+  display: flex;
+  flex-direction: column;
+`
 
 const Header = styled.header`
-background: white
-\
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1)
-\
-  padding: 1rem 1.5rem
-display: flex
-\
-  align-items: center
-\
-  justify-content: space-between
-\
-  border-bottom: 1px solid rgb(226 232 240)
-;`
+  background: white;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgb(226 232 240);
+`
 
 const HeaderContent = styled.div`
-display: flex
-\
-  align-items: center
-\
-  gap: 0.75rem
-;`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+`
 
 const LogoCircle = styled.div`
-\
-  width: 3rem
-\
-  height: 3rem
-\
-  background: rgb(37 99 235)
-\
-  border-radius: 50%
-display: flex
-\
-  align-items: center
-\
-  justify-content: center
-\
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1)
-;`
+  width: 3rem;
+  height: 3rem;
+  background: rgb(37 99 235);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+`
 
 const HeaderText = styled.div`
-display: flex
-\
-  flex-direction: column
-;`
+  display: flex;
+  flex-direction: column;
+`
 
 const HeaderTitle = styled.h1`
-\
-  font-size: 1.25rem
-\
-  font-weight: 700
-\
-  color: rgb(15 23 42)
-margin: 0
-;`
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: rgb(15 23 42);
+`
 
 const HeaderSubtitle = styled.p`
-font - size
-: 0.875rem
-color: rgb(71 85 105)
-margin: 0
-;`
+  font-size: 0.875rem;
+  color: rgb(100 116 139);
+  margin: 0;
+`
 
 const HeaderActions = styled.div`
-display: flex
-align - items
-: center
-gap:
-0.5rem
-;`
-
-const StatusIndicator = styled.div`
-display: flex
-align - items
-: center
-gap:
-0.5rem
-;`
-
-const StatusDot = styled.div`
-width:
-0.5rem
-height:
-0.5rem
-background: rgb(34 197 94)
-border - radius
-: 50%
-;`
-
-const StatusText = styled.span`
-font - size
-: 0.875rem
-color: rgb(71 85 105)
-;`
-
-const Main = styled.main`
-flex: 1
-padding:
-1.5rem
-;`
-
-const Container = styled.div`
-max - width
-: 112rem
-margin: 0
-auto
-;`
+  display: flex;
+  gap: 0.5rem;
+`
 
 const GridContainer = styled.div`
-display: grid
-grid - template - columns
-: 1fr
-gap:
-1.5rem
-
-@media (min-width: 1024px)
-{
-  grid - template - columns
-  : 1fr 3fr
-}
-;`
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  flex: 1;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`
 
 const Sidebar = styled.div`
-background: white
-border - radius
-: 0.5rem
-box - shadow
-: 0 1px 3px 0 rgb(0 0 0 / 0.1)
-padding:
-1rem
-border:
-1px solid rgb(226 232 240)
-display: flex
-flex - direction
-: column
-height:
-80vh
-overflow - y
-: auto
-;`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`
 
-const SidebarTitle = styled.h4`
-font - weight
-: 600
-color: rgb(15 23 42)
-margin - bottom
-: 1rem
-;`
+const SidebarTitle = styled.h2`
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgb(15 23 42);
+  margin: 0 0 0.5rem 0;
+`
 
-const DestinationList = styled.div`
-display: flex
-flex - direction
-: column
-gap:
-0.5rem
-overflow - y
-: auto
-flex: 1
-;`
+const DestinationButton = styled(Button)<{ isSelected?: boolean }>`
+  && {
+    width: 100%;
+    text-align: left;
+    justify-content: flex-start;
+    padding: 0.75rem 1rem;
+    background: ${(props) => (props.isSelected ? "rgb(37 99 235)" : "white")};
+    color: ${(props) => (props.isSelected ? "white" : "rgb(15 23 42)")};
+    border: 1px solid ${(props) => (props.isSelected ? "transparent" : "rgb(226 232 240)")};
+    text-transform: none;
+    font-weight: 500;
+    
+    &:hover {
+      background: ${(props) => (props.isSelected ? "rgb(29 78 216)" : "rgb(248 250 252)")};
+    }
+  }
+`
 
-const DestinationButton = styled.button<{ $selected?: boolean }>`
-width: 100%;
-text - align
-: left
-padding:
-0.75rem 1rem
-border - radius
-: 0.5rem
-border: none
-cursor: pointer
-transition: all
-0.2s
-background: $
-{
-  ;(props) => (props.$selected ? "rgb(37 99 235)" : "rgb(241 245 249)")
-}
-color: $
-{
-  ;(props) => (props.$selected ? "white" : "rgb(15 23 42)")
-}
+const ContentCard = styled(Paper)`
+  && {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  }
+`
 
-&:hover
-{
-  background: $
-  ;(props) => (props.$selected ? "rgb(37 99 235)" : "rgb(226 232 240)")
-}
-;`
+const ContentHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgb(226 232 240);
+`
 
-const DestinationName = styled.div`
-font - weight
-: 500
-;`
-
-const DestinationCount = styled.div<{ $selected?: boolean }>`
-font - size
-: 0.875rem
-color: $
-{
-  ;(props) => (props.$selected ? "rgb(191 219 254)" : "rgb(71 85 105)")
-}
-;`
-
-const ContentCard = styled.div`
-background: white
-border - radius
-: 0.5rem
-box - shadow
-: 0 1px 3px 0 rgb(0 0 0 / 0.1)
-padding:
-1.5rem
-border:
-1px solid rgb(226 232 240)
-height:
-80vh
-display: flex
-flex - direction
-: column
-;`
-
-const CardHeader = styled.div`
-display: flex
-align - items
-: center
-justify - content
-: space-between
-margin - bottom
-: 1.5rem
-;`
-
-const CardHeaderText = styled.div`
-display: flex
-flex - direction
-: column
-;`
-
-const CardTitle = styled.h2`
-font - size
-: 1.5rem
-font - weight
-: 700
-color: rgb(15 23 42)
-margin - bottom
-: 0.25rem
-;`
-
-const CardDescription = styled.p`
-color: rgb(71 85 105);
-margin: 0
-;`
-
-const SearchContainer = styled.div`
-margin - bottom
-: 1.5rem
-;`
+const SearchBox = styled(TextField)`
+  && {
+    flex: 1;
+    max-width: 400px;
+    
+    .MuiOutlinedInput-root {
+      background: white;
+      border-radius: 0.5rem;
+      
+      &:hover fieldset {
+        border-color: rgb(148 163 184);
+      }
+      
+      &.Mui-focused fieldset {
+        border-color: rgb(37 99 235);
+      }
+    }
+  }
+`
 
 const TableWrapper = styled.div`
-flex: 1
-overflow: auto
-;`
+  overflow-x: auto;
+  flex: 1;
+`
 
-const EmptyState = styled.div`
-text - align
-: center
-padding:
-3rem 0
-color: rgb(100 116 139)
-;`
+const StyledTableCell = styled(TableCell)<{ isTotal?: boolean }>`
+  && {
+    padding: 1rem;
+    border-bottom: 1px solid rgb(226 232 240);
+    background: ${(props) => (props.isTotal ? "rgb(237 242 247)" : "white")};
+    color: ${(props) => (props.isTotal ? "rgb(37 99 235)" : "rgb(15 23 42)")};
+    font-weight: ${(props) => (props.isTotal ? "600" : "500")};
+  }
+`
 
-const TableFooter = styled.div`
-margin - top
-: 1rem
-font - size
-: 0.875rem
-color: rgb(71 85 105)
-;`
+const ExpandedDetailsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+  background: rgb(248 250 252);
+  border-top: 1px solid rgb(226 232 240);
+`
 
-const AddDestinationCard = styled.button`
-width: 100%;
-text - align
-: left
-padding:
-1rem
-border - radius
-: 0.5rem
-border:
-2px dashed #2563eb
-background: #eff6ff
-cursor: pointer
-transition: all
-0.2s
-display: flex
-align - items
-: center
-gap:
-0.75rem
-color: #
-2563eb
-font - weight
-: 600
-margin - bottom
-: 1rem
-
-&:hover
-{
-  background: #dbeafe
-  border - color
-  : #1d4ed8
-}
-
-svg
-{
-  flex - shrink
-  : 0
-}
-;`
-
-const MOCK_RATES = [
-  {
-    id: 1,
-    vendorId: "MC-123456",
-    vendorEmail: "vendor1@example.com",
-    startCity: "Boston",
-    endCity: "Franklin, NH",
-    baseRate: 450,
-    fsc: 11.11,
-    total: 500,
-    submittedAt: "2025-01-08 10:30 AM",
-  },
-  {
-    id: 2,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Boston",
-    endCity: "Providence, RI",
-    baseRate: 320,
-    fsc: 12.5,
-    total: 360,
-    submittedAt: "2025-01-09 08:15 AM",
-  },
-  {
-    id: 3,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Boston",
-    endCity: "Hartford, CT",
-    baseRate: 540,
-    fsc: 11.11,
-    total: 600,
-    submittedAt: "2025-01-09 11:45 AM",
-  },
-  {
-    id: 4,
-    vendorId: "MC-901234",
-    vendorEmail: "vendor4@example.com",
-    startCity: "Philadelphia",
-    endCity: "Baltimore, MD",
-    baseRate: 180,
-    fsc: 11.11,
-    total: 200,
-    submittedAt: "2025-01-08 11:15 AM",
-  },
-  {
-    id: 5,
-    vendorId: "MC-789012",
-    vendorEmail: "vendor2@example.com",
-    startCity: "Boston",
-    endCity: "Slatersville, RI",
-    baseRate: 320,
-    fsc: 10.94,
-    total: 355,
-    submittedAt: "2025-01-08 11:15 AM",
-  },
-  {
-    id: 6,
-    vendorId: "MC-345678",
-    vendorEmail: "vendor3@example.com",
-    startCity: "Boston",
-    endCity: "Augustas, GA",
-    baseRate: 1800,
-    fsc: 11.11,
-    total: 2000,
-    submittedAt: "2025-01-08 09:45 AM",
-  },
-  {
-    id: 7,
-    vendorId: "MC-123456",
-    vendorEmail: "vendor1@example.com",
-    startCity: "Atlanta",
-    endCity: "Birmingham, AL",
-    baseRate: 280,
-    fsc: 10.71,
-    total: 310,
-    submittedAt: "2025-01-07 02:20 PM",
-  },
-  {
-    id: 8,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Atlanta",
-    endCity: "Charlotte, NC",
-    baseRate: 480,
-    fsc: 12.5,
-    total: 540,
-    submittedAt: "2025-01-10 09:30 AM",
-  },
-  {
-    id: 9,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Atlanta",
-    endCity: "Jacksonville, FL",
-    baseRate: 630,
-    fsc: 11.11,
-    total: 700,
-    submittedAt: "2025-01-10 02:15 PM",
-  },
-  {
-    id: 10,
-    vendorId: "MC-123456",
-    vendorEmail: "vendor1@example.com",
-    startCity: "New York",
-    endCity: "Philadelphia, PA",
-    baseRate: 180,
-    fsc: 11.11,
-    total: 200,
-    submittedAt: "2025-01-06 01:30 PM",
-  },
-  {
-    id: 11,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "New York",
-    endCity: "Boston, MA",
-    baseRate: 360,
-    fsc: 11.11,
-    total: 400,
-    submittedAt: "2025-01-11 10:20 AM",
-  },
-  {
-    id: 12,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "New York",
-    endCity: "Washington, DC",
-    baseRate: 405,
-    fsc: 11.11,
-    total: 450,
-    submittedAt: "2025-01-11 03:45 PM",
-  },
-  {
-    id: 13,
-    vendorId: "MC-789012",
-    vendorEmail: "vendor2@example.com",
-    startCity: "Chicago",
-    endCity: "Milwaukee, WI",
-    baseRate: 180,
-    fsc: 11.11,
-    total: 200,
-    submittedAt: "2025-01-08 09:45 AM",
-  },
-  {
-    id: 14,
-    vendorId: "MC-567890",
-    vendorEmail: "vendor5@example.com",
-    startCity: "Boston",
-    endCity: "Portland, ME",
-    baseRate: 380,
-    fsc: 10.53,
-    total: 420,
-    submittedAt: "2025-01-08 01:10 PM",
-  },
-  {
-    id: 15,
-    vendorId: "MC-234567",
-    vendorEmail: "vendor6@example.com",
-    startCity: "Chicago",
-    endCity: "Milwaukee, WI",
-    baseRate: 220,
-    fsc: 9.09,
-    total: 240,
-    submittedAt: "2025-01-08 03:45 PM",
-  },
-  {
-    id: 16,
-    vendorId: "MC-890123",
-    vendorEmail: "vendor7@example.com",
-    startCity: "Dallas",
-    endCity: "Fort Worth, TX",
-    baseRate: 150,
-    fsc: 13.33,
-    total: 170,
-    submittedAt: "2025-01-08 02:30 PM",
-  },
-  {
-    id: 17,
-    vendorId: "MC-456789",
-    vendorEmail: "vendor8@example.com",
-    startCity: "Los Angeles",
-    endCity: "San Diego, CA",
-    baseRate: 340,
-    fsc: 11.76,
-    total: 380,
-    submittedAt: "2025-01-07 04:15 PM",
-  },
-  {
-    id: 18,
-    vendorId: "MC-678901",
-    vendorEmail: "vendor9@example.com",
-    startCity: "Miami",
-    endCity: "Tampa, FL",
-    baseRate: 420,
-    fsc: 9.52,
-    total: 460,
-    submittedAt: "2025-01-07 11:20 AM",
-  },
-  {
-    id: 19,
-    vendorId: "MC-112233",
-    vendorEmail: "vendor10@example.com",
-    startCity: "Seattle",
-    endCity: "Portland, OR",
-    baseRate: 290,
-    fsc: 10.34,
-    total: 320,
-    submittedAt: "2025-01-08 08:50 AM",
-  },
-  {
-    id: 20,
-    vendorId: "MC-445566",
-    vendorEmail: "vendor11@example.com",
-    startCity: "New York",
-    endCity: "Philadelphia, PA",
-    baseRate: 180,
-    fsc: 11.11,
-    total: 200,
-    submittedAt: "2025-01-06 01:30 PM",
-  },
-  {
-    id: 21,
-    vendorId: "MC-778899",
-    vendorEmail: "vendor12@example.com",
-    startCity: "Phoenix",
-    endCity: "Tucson, AZ",
-    baseRate: 260,
-    fsc: 15.38,
-    total: 300,
-    submittedAt: "2025-01-06 10:45 AM",
-  },
-  {
-    id: 22,
-    vendorId: "MC-123456",
-    vendorEmail: "vendor1@example.com",
-    startCity: "Los Angeles",
-    endCity: "Phoenix, AZ",
-    baseRate: 720,
-    fsc: 11.11,
-    total: 800,
-    submittedAt: "2025-01-06 02:40 PM",
-  },
-  {
-    id: 23,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Los Angeles",
-    endCity: "San Diego, CA",
-    baseRate: 225,
-    fsc: 11.11,
-    total: 250,
-    submittedAt: "2025-01-12 08:30 AM",
-  },
-  {
-    id: 24,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Los Angeles",
-    endCity: "Las Vegas, NV",
-    baseRate: 495,
-    fsc: 11.11,
-    total: 550,
-    submittedAt: "2025-01-12 01:15 PM",
-  },
-  {
-    id: 25,
-    vendorId: "MC-789012",
-    vendorEmail: "vendor2@example.com",
-    startCity: "Miami",
-    endCity: "Orlando, FL",
-    baseRate: 360,
-    fsc: 11.11,
-    total: 400,
-    submittedAt: "2025-01-08 10:20 AM",
-  },
-  {
-    id: 26,
-    vendorId: "MC-345678",
-    vendorEmail: "vendor3@example.com",
-    startCity: "Miami",
-    endCity: "Jacksonville, FL",
-    baseRate: 540,
-    fsc: 11.11,
-    total: 600,
-    submittedAt: "2025-01-07 10:25 AM",
-  },
-  {
-    id: 27,
-    vendorId: "MC-234567",
-    vendorEmail: "vendor6@example.com",
-    startCity: "Seattle",
-    endCity: "Spokane, WA",
-    baseRate: 450,
-    fsc: 11.11,
-    total: 500,
-    submittedAt: "2025-01-08 08:15 AM",
-  },
-  {
-    id: 28,
-    vendorId: "MC-890123",
-    vendorEmail: "vendor7@example.com",
-    startCity: "Seattle",
-    endCity: "Vancouver, BC",
-    baseRate: 320,
-    fsc: 12.5,
-    total: 360,
-    submittedAt: "2025-01-07 04:35 PM",
-  },
-  {
-    id: 29,
-    vendorId: "MC-456789",
-    vendorEmail: "vendor8@example.com",
-    startCity: "New York",
-    endCity: "Boston, MA",
-    baseRate: 380,
-    fsc: 10.53,
-    total: 420,
-    submittedAt: "2025-01-08 02:10 PM",
-  },
-  {
-    id: 30,
-    vendorId: "MC-678901",
-    vendorEmail: "vendor9@example.com",
-    startCity: "New York",
-    endCity: "Washington, DC",
-    baseRate: 420,
-    fsc: 9.52,
-    total: 460,
-    submittedAt: "2025-01-07 11:45 AM",
-  },
-  {
-    id: 31,
-    vendorId: "MC-112233",
-    vendorEmail: "vendor10@example.com",
-    startCity: "Phoenix",
-    endCity: "Albuquerque, NM",
-    baseRate: 630,
-    fsc: 11.11,
-    total: 700,
-    submittedAt: "2025-01-08 09:55 AM",
-  },
-  {
-    id: 32,
-    vendorId: "MC-445566",
-    vendorEmail: "vendor11@example.com",
-    startCity: "Denver",
-    endCity: "Salt Lake City, UT",
-    baseRate: 720,
-    fsc: 11.11,
-    total: 800,
-    submittedAt: "2025-01-06 03:30 PM",
-  },
-  {
-    id: 33,
-    vendorId: "MC-778899",
-    vendorEmail: "vendor12@example.com",
-    startCity: "Atlanta",
-    endCity: "Charlotte, NC",
-    baseRate: 450,
-    fsc: 11.11,
-    total: 500,
-    submittedAt: "2025-01-08 10:40 AM",
-  },
-  {
-    id: 34,
-    vendorId: "MC-123456",
-    vendorEmail: "vendor1@example.com",
-    startCity: "Chicago",
-    endCity: "St. Louis, MO",
-    baseRate: 540,
-    fsc: 11.11,
-    total: 600,
-    submittedAt: "2025-01-07 09:50 AM",
-  },
-  {
-    id: 35,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Chicago",
-    endCity: "Indianapolis, IN",
-    baseRate: 315,
-    fsc: 11.11,
-    total: 350,
-    submittedAt: "2025-01-13 09:00 AM",
-  },
-  {
-    id: 36,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Chicago",
-    endCity: "Detroit, MI",
-    baseRate: 495,
-    fsc: 11.11,
-    total: 550,
-    submittedAt: "2025-01-13 02:30 PM",
-  },
-  {
-    id: 37,
-    vendorId: "MC-789012",
-    vendorEmail: "vendor2@example.com",
-    startCity: "Dallas",
-    endCity: "Austin, TX",
-    baseRate: 360,
-    fsc: 11.11,
-    total: 400,
-    submittedAt: "2025-01-08 01:30 PM",
-  },
-  {
-    id: 38,
-    vendorId: "MC-345678",
-    vendorEmail: "vendor3@example.com",
-    startCity: "Dallas",
-    endCity: "Houston, TX",
-    baseRate: 450,
-    fsc: 11.11,
-    total: 500,
-    submittedAt: "2025-01-07 03:10 PM",
-  },
-  {
-    id: 39,
-    vendorId: "MC-901234",
-    vendorEmail: "vendor4@example.com",
-    startCity: "Dallas",
-    endCity: "San Antonio, TX",
-    baseRate: 380,
-    fsc: 10.53,
-    total: 420,
-    submittedAt: "2025-01-05 03:20 PM",
-  },
-  {
-    id: 40,
-    vendorId: "MC-567890",
-    vendorEmail: "vendor5@example.com",
-    startCity: "Boston",
-    endCity: "Providence, RI",
-    baseRate: 140,
-    fsc: 14.29,
-    total: 160,
-    submittedAt: "2025-01-08 12:40 PM",
-  },
-  {
-    id: 41,
-    vendorId: "MC-234567",
-    vendorEmail: "vendor6@example.com",
-    startCity: "Boston",
-    endCity: "Worcester, MA",
-    baseRate: 210,
-    fsc: 9.52,
-    total: 230,
-    submittedAt: "2025-01-08 04:20 PM",
-  },
-  {
-    id: 42,
-    vendorId: "MC-890123",
-    vendorEmail: "vendor7@example.com",
-    startCity: "Boston",
-    endCity: "Hartford, CT",
-    baseRate: 270,
-    fsc: 11.11,
-    total: 300,
-    submittedAt: "2025-01-07 08:30 AM",
-  },
-  {
-    id: 43,
-    vendorId: "MC-456789",
-    vendorEmail: "vendor8@example.com",
-    startCity: "Chicago",
-    endCity: "Indianapolis, IN",
-    baseRate: 350,
-    fsc: 11.43,
-    total: 390,
-    submittedAt: "2025-01-08 10:15 AM",
-  },
-  {
-    id: 44,
-    vendorId: "MC-678901",
-    vendorEmail: "vendor9@example.com",
-    startCity: "Chicago",
-    endCity: "Detroit, MI",
-    baseRate: 480,
-    fsc: 10.42,
-    total: 530,
-    submittedAt: "2025-01-07 01:45 PM",
-  },
-  {
-    id: 45,
-    vendorId: "MC-112233",
-    vendorEmail: "vendor10@example.com",
-    startCity: "Dallas",
-    endCity: "Austin, TX",
-    baseRate: 320,
-    fsc: 12.5,
-    total: 360,
-    submittedAt: "2025-01-08 11:30 AM",
-  },
-  {
-    id: 46,
-    vendorId: "MC-445566",
-    vendorEmail: "vendor11@example.com",
-    startCity: "Dallas",
-    endCity: "Houston, TX",
-    baseRate: 450,
-    fsc: 11.11,
-    total: 500,
-    submittedAt: "2025-01-07 03:10 PM",
-  },
-  {
-    id: 47,
-    vendorId: "MC-778899",
-    vendorEmail: "vendor12@example.com",
-    startCity: "Los Angeles",
-    endCity: "Las Vegas, NV",
-    baseRate: 540,
-    fsc: 11.11,
-    total: 600,
-    submittedAt: "2025-01-08 09:20 AM",
-  },
-  {
-    id: 48,
-    vendorId: "MC-123456",
-    vendorEmail: "vendor1@example.com",
-    startCity: "Los Angeles",
-    endCity: "Phoenix, AZ",
-    baseRate: 720,
-    fsc: 11.11,
-    total: 800,
-    submittedAt: "2025-01-06 02:40 PM",
-  },
-  {
-    id: 49,
-    vendorId: "MC-789012",
-    vendorEmail: "vendor2@example.com",
-    startCity: "Miami",
-    endCity: "Orlando, FL",
-    baseRate: 380,
-    fsc: 10.53,
-    total: 420,
-    submittedAt: "2025-01-08 01:50 PM",
-  },
-  {
-    id: 50,
-    vendorId: "MC-345678",
-    vendorEmail: "vendor3@example.com",
-    startCity: "Miami",
-    endCity: "Jacksonville, FL",
-    baseRate: 540,
-    fsc: 11.11,
-    total: 600,
-    submittedAt: "2025-01-07 10:25 AM",
-  },
-  {
-    id: 51,
-    vendorId: "MC-901234",
-    vendorEmail: "vendor4@example.com",
-    startCity: "Seattle",
-    endCity: "Spokane, WA",
-    baseRate: 450,
-    fsc: 11.11,
-    total: 500,
-    submittedAt: "2025-01-08 08:15 AM",
-  },
-  {
-    id: 52,
-    vendorId: "MC-567890",
-    vendorEmail: "vendor5@example.com",
-    startCity: "Seattle",
-    endCity: "Vancouver, BC",
-    baseRate: 320,
-    fsc: 12.5,
-    total: 360,
-    submittedAt: "2025-01-07 04:35 PM",
-  },
-  {
-    id: 53,
-    vendorId: "MC-234567",
-    vendorEmail: "vendor6@example.com",
-    startCity: "New York",
-    endCity: "Boston, MA",
-    baseRate: 380,
-    fsc: 10.53,
-    total: 420,
-    submittedAt: "2025-01-08 02:10 PM",
-  },
-  {
-    id: 54,
-    vendorId: "MC-890123",
-    vendorEmail: "vendor7@example.com",
-    startCity: "New York",
-    endCity: "Washington, DC",
-    baseRate: 420,
-    fsc: 9.52,
-    total: 460,
-    submittedAt: "2025-01-07 11:45 AM",
-  },
-  {
-    id: 55,
-    vendorId: "MC-456789",
-    vendorEmail: "vendor8@example.com",
-    startCity: "Phoenix",
-    endCity: "Albuquerque, NM",
-    baseRate: 630,
-    fsc: 11.11,
-    total: 700,
-    submittedAt: "2025-01-08 09:55 AM",
-  },
-  {
-    id: 56,
-    vendorId: "MC-678901",
-    vendorEmail: "vendor9@example.com",
-    startCity: "Denver",
-    endCity: "Salt Lake City, UT",
-    baseRate: 720,
-    fsc: 11.11,
-    total: 800,
-    submittedAt: "2025-01-06 03:30 PM",
-  },
-  {
-    id: 57,
-    vendorId: "MC-123456",
-    vendorEmail: "vendor1@example.com",
-    startCity: "Atlanta",
-    endCity: "Nashville, TN",
-    baseRate: 400,
-    fsc: 10.0,
-    total: 440,
-    submittedAt: "2025-01-08 12:25 PM",
-  },
-  {
-    id: 58,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Dallas",
-    endCity: "Houston, TX",
-    baseRate: 450,
-    fsc: 11.11,
-    total: 500,
-    submittedAt: "2025-01-14 10:45 AM",
-  },
-  {
-    id: 59,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Dallas",
-    endCity: "San Antonio, TX",
-    baseRate: 495,
-    fsc: 11.11,
-    total: 550,
-    submittedAt: "2025-01-14 03:20 PM",
-  },
-  {
-    id: 60,
-    vendorId: "MC-789012",
-    vendorEmail: "vendor2@example.com",
-    startCity: "Seattle",
-    endCity: "Portland, OR",
-    baseRate: 315,
-    fsc: 11.11,
-    total: 350,
-    submittedAt: "2025-01-09 08:30 AM",
-  },
-  {
-    id: 61,
-    vendorId: "MC-345678",
-    vendorEmail: "vendor3@example.com",
-    startCity: "Atlanta",
-    endCity: "Savannah, GA",
-    baseRate: 450,
-    fsc: 11.11,
-    total: 500,
-    submittedAt: "2025-01-08 03:10 PM",
-  },
-  {
-    id: 62,
-    vendorId: "MC-234567",
-    vendorEmail: "vendor6@example.com",
-    startCity: "Philadelphia",
-    endCity: "New York, NY",
-    baseRate: 180,
-    fsc: 11.11,
-    total: 200,
-    submittedAt: "2025-01-08 09:30 AM",
-  },
-  {
-    id: 63,
-    vendorId: "MC-890123",
-    vendorEmail: "vendor7@example.com",
-    startCity: "Philadelphia",
-    endCity: "New York, NY",
-    baseRate: 175,
-    fsc: 11.43,
-    total: 195,
-    submittedAt: "2025-01-07 02:15 PM",
-  },
-  {
-    id: 64,
-    vendorId: "MC-456789",
-    vendorEmail: "vendor8@example.com",
-    startCity: "Philadelphia",
-    endCity: "Baltimore, MD",
-    baseRate: 220,
-    fsc: 10.91,
-    total: 244,
-    submittedAt: "2025-01-08 10:45 AM",
-  },
-  {
-    id: 65,
-    vendorId: "MC-678901",
-    vendorEmail: "vendor9@example.com",
-    startCity: "Philadelphia",
-    endCity: "Baltimore, MD",
-    baseRate: 215,
-    fsc: 11.63,
-    total: 240,
-    submittedAt: "2025-01-07 03:20 PM",
-  },
-  {
-    id: 66,
-    vendorId: "MC-112233",
-    vendorEmail: "vendor10@example.com",
-    startCity: "Philadelphia",
-    endCity: "Washington, DC",
-    baseRate: 280,
-    fsc: 10.71,
-    total: 310,
-    submittedAt: "2025-01-08 11:55 AM",
-  },
-  {
-    id: 67,
-    vendorId: "MC-445566",
-    vendorEmail: "vendor11@example.com",
-    startCity: "Philadelphia",
-    endCity: "Washington, DC",
-    baseRate: 275,
-    fsc: 11.11,
-    total: 305,
-    submittedAt: "2025-01-07 08:40 AM",
-  },
-  {
-    id: 68,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Boston",
-    endCity: "Franklin, NH",
-    baseRate: 460,
-    fsc: 10.87,
-    total: 510,
-    submittedAt: "2025-01-09 09:20 AM",
-  },
-  {
-    id: 69,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "Boston",
-    endCity: "Slatersville, RI",
-    baseRate: 330,
-    fsc: 12.12,
-    total: 370,
-    submittedAt: "2025-01-09 10:45 AM",
-  },
-  {
-    id: 70,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Boston",
-    endCity: "Portland, ME",
-    baseRate: 390,
-    fsc: 10.26,
-    total: 430,
-    submittedAt: "2025-01-09 02:15 PM",
-  },
-  {
-    id: 71,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "Boston",
-    endCity: "Hartford, CT",
-    baseRate: 280,
-    fsc: 10.71,
-    total: 310,
-    submittedAt: "2025-01-09 11:30 AM",
-  },
-  {
-    id: 72,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Boston",
-    endCity: "Providence, RI",
-    baseRate: 145,
-    fsc: 13.79,
-    total: 165,
-    submittedAt: "2025-01-09 03:40 PM",
-  },
-  {
-    id: 73,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "Boston",
-    endCity: "Worcester, MA",
-    baseRate: 220,
-    fsc: 9.09,
-    total: 240,
-    submittedAt: "2025-01-09 01:20 PM",
-  },
-  {
-    id: 74,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Boston",
-    endCity: "Burlington, VT",
-    baseRate: 370,
-    fsc: 10.81,
-    total: 410,
-    submittedAt: "2025-01-09 08:50 AM",
-  },
-  {
-    id: 75,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "Boston",
-    endCity: "Albany, NY",
-    baseRate: 330,
-    fsc: 12.12,
-    total: 370,
-    submittedAt: "2025-01-09 04:10 PM",
-  },
-  {
-    id: 76,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Boston",
-    endCity: "Manchester, NH",
-    baseRate: 195,
-    fsc: 10.26,
-    total: 215,
-    submittedAt: "2025-01-09 12:05 PM",
-  },
-  {
-    id: 77,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Boston",
-    endCity: "Augustas, GA",
-    baseRate: 1850,
-    fsc: 10.81,
-    total: 2050,
-    submittedAt: "2025-01-09 09:35 AM",
-  },
-  {
-    id: 78,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Atlanta",
-    endCity: "Birmingham, AL",
-    baseRate: 285,
-    fsc: 10.53,
-    total: 315,
-    submittedAt: "2025-01-09 10:20 AM",
-  },
-  {
-    id: 79,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "Atlanta",
-    endCity: "Birmingham, AL",
-    baseRate: 275,
-    fsc: 10.91,
-    total: 305,
-    submittedAt: "2025-01-09 02:45 PM",
-  },
-  {
-    id: 80,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Atlanta",
-    endCity: "Charlotte, NC",
-    baseRate: 435,
-    fsc: 11.49,
-    total: 485,
-    submittedAt: "2025-01-09 11:15 AM",
-  },
-  {
-    id: 81,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "Atlanta",
-    endCity: "Charlotte, NC",
-    baseRate: 425,
-    fsc: 11.76,
-    total: 475,
-    submittedAt: "2025-01-09 03:30 PM",
-  },
-  {
-    id: 82,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Atlanta",
-    endCity: "Nashville, TN",
-    baseRate: 1265,
-    fsc: 10.28,
-    total: 1395,
-    submittedAt: "2025-01-09 09:50 AM",
-  },
-  {
-    id: 83,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "Atlanta",
-    endCity: "Nashville, TN",
-    baseRate: 1245,
-    fsc: 11.24,
-    total: 1385,
-    submittedAt: "2025-01-09 01:40 PM",
-  },
-  {
-    id: 84,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Atlanta",
-    endCity: "Chattanooga, TN",
-    baseRate: 225,
-    fsc: 13.33,
-    total: 255,
-    submittedAt: "2025-01-09 10:55 AM",
-  },
-  {
-    id: 85,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "Atlanta",
-    endCity: "Greenville, SC",
-    baseRate: 275,
-    fsc: 10.91,
-    total: 305,
-    submittedAt: "2025-01-09 02:20 PM",
-  },
-  {
-    id: 86,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Atlanta",
-    endCity: "Jacksonville, FL",
-    baseRate: 550,
-    fsc: 10.91,
-    total: 610,
-    submittedAt: "2025-01-09 11:45 AM",
-  },
-  {
-    id: 87,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "Atlanta",
-    endCity: "Knoxville, TN",
-    baseRate: 355,
-    fsc: 11.27,
-    total: 395,
-    submittedAt: "2025-01-09 03:10 PM",
-  },
-  {
-    id: 88,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Atlanta",
-    endCity: "Memphis, TN",
-    baseRate: 620,
-    fsc: 11.29,
-    total: 690,
-    submittedAt: "2025-01-09 09:25 AM",
-  },
-  {
-    id: 89,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Atlanta",
-    endCity: "Savannah, GA",
-    baseRate: 445,
-    fsc: 11.24,
-    total: 495,
-    submittedAt: "2025-01-09 01:55 PM",
-  },
-  {
-    id: 90,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Atlanta",
-    endCity: "Tampa, FL",
-    baseRate: 730,
-    fsc: 10.96,
-    total: 810,
-    submittedAt: "2025-01-09 10:30 AM",
-  },
-  {
-    id: 91,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "Philadelphia",
-    endCity: "New York, NY",
-    baseRate: 185,
-    fsc: 10.81,
-    total: 205,
-    submittedAt: "2025-01-09 11:20 AM",
-  },
-  {
-    id: 92,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Philadelphia",
-    endCity: "Baltimore, MD",
-    baseRate: 225,
-    fsc: 11.11,
-    total: 250,
-    submittedAt: "2025-01-09 02:35 PM",
-  },
-  {
-    id: 93,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "Philadelphia",
-    endCity: "Washington, DC",
-    baseRate: 285,
-    fsc: 10.53,
-    total: 315,
-    submittedAt: "2025-01-09 09:40 AM",
-  },
-  {
-    id: 94,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Philadelphia",
-    endCity: "Pittsburgh, PA",
-    baseRate: 550,
-    fsc: 10.91,
-    total: 610,
-    submittedAt: "2025-01-09 03:25 PM",
-  },
-  {
-    id: 95,
-    vendorId: "MC-223344",
-    vendorEmail: "vendor13@example.com",
-    startCity: "Boston",
-    endCity: "Franklin, NH",
-    baseRate: 455,
-    fsc: 10.99,
-    total: 505,
-    submittedAt: "2025-01-10 08:15 AM",
-  },
-  {
-    id: 96,
-    vendorId: "MC-556677",
-    vendorEmail: "vendor14@example.com",
-    startCity: "Boston",
-    endCity: "Slatersville, RI",
-    baseRate: 325,
-    fsc: 11.54,
-    total: 363,
-    submittedAt: "2025-01-10 09:30 AM",
-  },
-  {
-    id: 97,
-    vendorId: "MC-889900",
-    vendorEmail: "vendor15@example.com",
-    startCity: "Boston",
-    endCity: "Portland, ME",
-    baseRate: 385,
-    fsc: 10.39,
-    total: 425,
-    submittedAt: "2025-01-10 10:45 AM",
-  },
-  {
-    id: 98,
-    vendorId: "MC-334455",
-    vendorEmail: "vendor16@example.com",
-    startCity: "Boston",
-    endCity: "Hartford, CT",
-    baseRate: 275,
-    fsc: 10.91,
-    total: 305,
-    submittedAt: "2025-01-10 11:20 AM",
-  },
-  {
-    id: 99,
-    vendorId: "MC-667788",
-    vendorEmail: "vendor17@example.com",
-    startCity: "Boston",
-    endCity: "Providence, RI",
-    baseRate: 150,
-    fsc: 13.33,
-    total: 170,
-    submittedAt: "2025-01-10 01:15 PM",
-  },
-  {
-    id: 100,
-    vendorId: "MC-990011",
-    vendorEmail: "vendor18@example.com",
-    startCity: "Boston",
-    endCity: "Worcester, MA",
-    baseRate: 215,
-    fsc: 9.3,
-    total: 235,
-    submittedAt: "2025-01-10 02:30 PM",
-  },
-  {
-    id: 101,
-    vendorId: "MC-223344",
-    vendorEmail: "vendor13@example.com",
-    startCity: "Boston",
-    endCity: "Burlington, VT",
-    baseRate: 365,
-    fsc: 10.96,
-    total: 405,
-    submittedAt: "2025-01-10 03:45 PM",
-  },
-  {
-    id: 102,
-    vendorId: "MC-556677",
-    vendorEmail: "vendor14@example.com",
-    startCity: "Boston",
-    endCity: "Albany, NY",
-    baseRate: 325,
-    fsc: 12.31,
-    total: 365,
-    submittedAt: "2025-01-10 08:50 AM",
-  },
-  {
-    id: 103,
-    vendorId: "MC-889900",
-    vendorEmail: "vendor15@example.com",
-    startCity: "Boston",
-    endCity: "Manchester, NH",
-    baseRate: 200,
-    fsc: 10.0,
-    total: 220,
-    submittedAt: "2025-01-10 10:10 AM",
-  },
-  {
-    id: 104,
-    vendorId: "MC-334455",
-    vendorEmail: "vendor16@example.com",
-    startCity: "Boston",
-    endCity: "Augustas, GA",
-    baseRate: 1820,
-    fsc: 10.99,
-    total: 2020,
-    submittedAt: "2025-01-10 11:35 AM",
-  },
-  {
-    id: 105,
-    vendorId: "MC-667788",
-    vendorEmail: "vendor17@example.com",
-    startCity: "Atlanta",
-    endCity: "Birmingham, AL",
-    baseRate: 290,
-    fsc: 10.34,
-    total: 320,
-    submittedAt: "2025-01-10 09:15 AM",
-  },
-  {
-    id: 106,
-    vendorId: "MC-990011",
-    vendorEmail: "vendor18@example.com",
-    startCity: "Atlanta",
-    endCity: "Birmingham, AL",
-    baseRate: 280,
-    fsc: 10.71,
-    total: 310,
-    submittedAt: "2025-01-10 01:40 PM",
-  },
-  {
-    id: 107,
-    vendorId: "MC-223344",
-    vendorEmail: "vendor13@example.com",
-    startCity: "Atlanta",
-    endCity: "Charlotte, NC",
-    baseRate: 430,
-    fsc: 11.63,
-    total: 480,
-    submittedAt: "2025-01-10 10:25 AM",
-  },
-  {
-    id: 108,
-    vendorId: "MC-556677",
-    vendorEmail: "vendor14@example.com",
-    startCity: "Atlanta",
-    endCity: "Charlotte, NC",
-    baseRate: 445,
-    fsc: 11.24,
-    total: 495,
-    submittedAt: "2025-01-10 02:50 PM",
-  },
-  {
-    id: 109,
-    vendorId: "MC-889900",
-    vendorEmail: "vendor15@example.com",
-    startCity: "Atlanta",
-    endCity: "Nashville, TN",
-    baseRate: 1255,
-    fsc: 10.76,
-    total: 1390,
-    submittedAt: "2025-01-10 08:35 AM",
-  },
-  {
-    id: 110,
-    vendorId: "MC-334455",
-    vendorEmail: "vendor16@example.com",
-    startCity: "Atlanta",
-    endCity: "Nashville, TN",
-    baseRate: 1235,
-    fsc: 11.34,
-    total: 1375,
-    submittedAt: "2025-01-10 11:50 AM",
-  },
-  {
-    id: 111,
-    vendorId: "MC-667788",
-    vendorEmail: "vendor17@example.com",
-    startCity: "Atlanta",
-    endCity: "Nashville, TN",
-    baseRate: 1275,
-    fsc: 10.59,
-    total: 1410,
-    submittedAt: "2025-01-10 03:20 PM",
-  },
-  {
-    id: 112,
-    vendorId: "MC-990011",
-    vendorEmail: "vendor18@example.com",
-    startCity: "Atlanta",
-    endCity: "Chattanooga, TN",
-    baseRate: 235,
-    fsc: 12.77,
-    total: 265,
-    submittedAt: "2025-01-10 09:45 AM",
-  },
-  {
-    id: 113,
-    vendorId: "MC-223344",
-    vendorEmail: "vendor13@example.com",
-    startCity: "Atlanta",
-    endCity: "Greenville, SC",
-    baseRate: 285,
-    fsc: 10.53,
-    total: 315,
-    submittedAt: "2025-01-10 01:10 PM",
-  },
-  {
-    id: 114,
-    vendorId: "MC-556677",
-    vendorEmail: "vendor14@example.com",
-    startCity: "Atlanta",
-    endCity: "Jacksonville, FL",
-    baseRate: 545,
-    fsc: 11.01,
-    total: 605,
-    submittedAt: "2025-01-10 10:35 AM",
-  },
-  {
-    id: 115,
-    vendorId: "MC-889900",
-    vendorEmail: "vendor15@example.com",
-    startCity: "Atlanta",
-    endCity: "Knoxville, TN",
-    baseRate: 365,
-    fsc: 10.96,
-    total: 405,
-    submittedAt: "2025-01-10 02:25 PM",
-  },
-  {
-    id: 116,
-    vendorId: "MC-334455",
-    vendorEmail: "vendor16@example.com",
-    startCity: "Atlanta",
-    endCity: "Memphis, TN",
-    baseRate: 625,
-    fsc: 11.2,
-    total: 695,
-    submittedAt: "2025-01-10 08:55 AM",
-  },
-  {
-    id: 117,
-    vendorId: "MC-667788",
-    vendorEmail: "vendor17@example.com",
-    startCity: "Atlanta",
-    endCity: "Savannah, GA",
-    baseRate: 455,
-    fsc: 10.99,
-    total: 505,
-    submittedAt: "2025-01-10 11:40 AM",
-  },
-  {
-    id: 118,
-    vendorId: "MC-990011",
-    vendorEmail: "vendor18@example.com",
-    startCity: "Atlanta",
-    endCity: "Tampa, FL",
-    baseRate: 735,
-    fsc: 10.88,
-    total: 815,
-    submittedAt: "2025-01-10 03:05 PM",
-  },
-  {
-    id: 119,
-    vendorId: "MC-223344",
-    vendorEmail: "vendor13@example.com",
-    startCity: "Philadelphia",
-    endCity: "New York, NY",
-    baseRate: 190,
-    fsc: 10.53,
-    total: 210,
-    submittedAt: "2025-01-10 09:20 AM",
-  },
-  {
-    id: 120,
-    vendorId: "MC-556677",
-    vendorEmail: "vendor14@example.com",
-    startCity: "Philadelphia",
-    endCity: "Baltimore, MD",
-    baseRate: 230,
-    fsc: 10.87,
-    total: 255,
-    submittedAt: "2025-01-10 01:45 PM",
-  },
-  {
-    id: 121,
-    vendorId: "MC-889900",
-    vendorEmail: "vendor15@example.com",
-    startCity: "Philadelphia",
-    endCity: "Washington, DC",
-    baseRate: 290,
-    fsc: 10.34,
-    total: 320,
-    submittedAt: "2025-01-10 10:15 AM",
-  },
-  {
-    id: 122,
-    vendorId: "MC-334455",
-    vendorEmail: "vendor16@example.com",
-    startCity: "Philadelphia",
-    endCity: "Pittsburgh, PA",
-    baseRate: 545,
-    fsc: 11.01,
-    total: 605,
-    submittedAt: "2025-01-10 02:40 PM",
-  },
-  {
-    id: 123,
-    vendorId: "MC-667788",
-    vendorEmail: "vendor17@example.com",
-    startCity: "Chicago",
-    endCity: "Milwaukee, WI",
-    baseRate: 225,
-    fsc: 8.89,
-    total: 245,
-    submittedAt: "2025-01-10 08:25 AM",
-  },
-  {
-    id: 124,
-    vendorId: "MC-990011",
-    vendorEmail: "vendor18@example.com",
-    startCity: "Chicago",
-    endCity: "Indianapolis, IN",
-    baseRate: 355,
-    fsc: 11.27,
-    total: 395,
-    submittedAt: "2025-01-10 11:30 AM",
-  },
-  {
-    id: 125,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Chicago",
-    endCity: "Detroit, MI",
-    baseRate: 485,
-    fsc: 10.31,
-    total: 535,
-    submittedAt: "2025-01-10 03:15 PM",
-  },
-  {
-    id: 126,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "Chicago",
-    endCity: "St. Louis, MO",
-    baseRate: 545,
-    fsc: 11.01,
-    total: 605,
-    submittedAt: "2025-01-10 09:50 AM",
-  },
-  {
-    id: 127,
-    vendorId: "MC-223344",
-    vendorEmail: "vendor13@example.com",
-    startCity: "Dallas",
-    endCity: "Fort Worth, TX",
-    baseRate: 155,
-    fsc: 12.9,
-    total: 175,
-    submittedAt: "2025-01-10 01:25 PM",
-  },
-  {
-    id: 128,
-    vendorId: "MC-556677",
-    vendorEmail: "vendor14@example.com",
-    startCity: "Dallas",
-    endCity: "Austin, TX",
-    baseRate: 325,
-    fsc: 12.31,
-    total: 365,
-    submittedAt: "2025-01-10 10:40 AM",
-  },
-  {
-    id: 129,
-    vendorId: "MC-889900",
-    vendorEmail: "vendor15@example.com",
-    startCity: "Dallas",
-    endCity: "Houston, TX",
-    baseRate: 455,
-    fsc: 10.99,
-    total: 505,
-    submittedAt: "2025-01-10 02:55 PM",
-  },
-  {
-    id: 130,
-    vendorId: "MC-334455",
-    vendorEmail: "vendor16@example.com",
-    startCity: "Houston",
-    endCity: "San Antonio, TX",
-    baseRate: 385,
-    fsc: 10.39,
-    total: 425,
-    submittedAt: "2025-01-10 08:45 AM",
-  },
-  {
-    id: 131,
-    vendorId: "MC-667788",
-    vendorEmail: "vendor17@example.com",
-    startCity: "Houston",
-    endCity: "New Orleans, LA",
-    baseRate: 635,
-    fsc: 11.02,
-    total: 705,
-    submittedAt: "2025-01-10 11:55 AM",
-  },
-  {
-    id: 132,
-    vendorId: "MC-990011",
-    vendorEmail: "vendor18@example.com",
-    startCity: "Los Angeles",
-    endCity: "San Diego, CA",
-    baseRate: 345,
-    fsc: 11.59,
-    total: 385,
-    submittedAt: "2025-01-10 03:30 PM",
-  },
-  {
-    id: 133,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Los Angeles",
-    endCity: "Las Vegas, NV",
-    baseRate: 545,
-    fsc: 11.01,
-    total: 605,
-    submittedAt: "2025-01-10 09:10 AM",
-  },
-  {
-    id: 134,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "Los Angeles",
-    endCity: "Phoenix, AZ",
-    baseRate: 725,
-    fsc: 11.03,
-    total: 805,
-    submittedAt: "2025-01-10 01:35 PM",
-  },
-  {
-    id: 135,
-    vendorId: "MC-223344",
-    vendorEmail: "vendor13@example.com",
-    startCity: "Miami",
-    endCity: "Tampa, FL",
-    baseRate: 425,
-    fsc: 9.41,
-    total: 465,
-    submittedAt: "2025-01-10 10:50 AM",
-  },
-  {
-    id: 136,
-    vendorId: "MC-556677",
-    vendorEmail: "vendor14@example.com",
-    startCity: "Miami",
-    endCity: "Orlando, FL",
-    baseRate: 385,
-    fsc: 10.39,
-    total: 425,
-    submittedAt: "2025-01-10 03:00 PM",
-  },
-  {
-    id: 137,
-    vendorId: "MC-889900",
-    vendorEmail: "vendor15@example.com",
-    startCity: "Miami",
-    endCity: "Jacksonville, FL",
-    baseRate: 545,
-    fsc: 11.01,
-    total: 605,
-    submittedAt: "2025-01-10 08:20 AM",
-  },
-  {
-    id: 138,
-    vendorId: "MC-334455",
-    vendorEmail: "vendor16@example.com",
-    startCity: "Seattle",
-    endCity: "Portland, OR",
-    baseRate: 295,
-    fsc: 10.17,
-    total: 325,
-    submittedAt: "2025-01-10 11:45 AM",
-  },
-  {
-    id: 139,
-    vendorId: "MC-667788",
-    vendorEmail: "vendor17@example.com",
-    startCity: "Seattle",
-    endCity: "Spokane, WA",
-    baseRate: 448,
-    fsc: 11.16,
-    total: 498,
-    submittedAt: "2025-01-10 02:10 PM",
-  },
-  {
-    id: 140,
-    vendorId: "MC-990011",
-    vendorEmail: "vendor18@example.com",
-    startCity: "Seattle",
-    endCity: "Vancouver, BC",
-    baseRate: 325,
-    fsc: 12.31,
-    total: 365,
-    submittedAt: "2025-01-10 09:35 AM",
-  },
-  {
-    id: 141,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "New York",
-    endCity: "Philadelphia, PA",
-    baseRate: 185,
-    fsc: 10.81,
-    total: 205,
-    submittedAt: "2025-01-10 01:50 PM",
-  },
-  {
-    id: 142,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "New York",
-    endCity: "Boston, MA",
-    baseRate: 385,
-    fsc: 10.39,
-    total: 425,
-    submittedAt: "2025-01-10 10:25 AM",
-  },
-  {
-    id: 143,
-    vendorId: "MC-223344",
-    vendorEmail: "vendor13@example.com",
-    startCity: "New York",
-    endCity: "Washington, DC",
-    baseRate: 425,
-    fsc: 9.41,
-    total: 465,
-    submittedAt: "2025-01-10 03:40 PM",
-  },
-  {
-    id: 144,
-    vendorId: "MC-556677",
-    vendorEmail: "vendor14@example.com",
-    startCity: "Phoenix",
-    endCity: "Tucson, AZ",
-    baseRate: 265,
-    fsc: 15.09,
-    total: 305,
-    submittedAt: "2025-01-10 08:30 AM",
-  },
-  {
-    id: 145,
-    vendorId: "MC-889900",
-    vendorEmail: "vendor15@example.com",
-    startCity: "Phoenix",
-    endCity: "Albuquerque, NM",
-    baseRate: 635,
-    fsc: 11.02,
-    total: 705,
-    submittedAt: "2025-01-10 12:00 PM",
-  },
-  {
-    id: 146,
-    vendorId: "MC-334455",
-    vendorEmail: "vendor16@example.com",
-    startCity: "Denver",
-    endCity: "Colorado Springs, CO",
-    baseRate: 195,
-    fsc: 10.26,
-    total: 215,
-    submittedAt: "2025-01-10 02:45 PM",
-  },
-  {
-    id: 147,
-    vendorId: "MC-667788",
-    vendorEmail: "vendor17@example.com",
-    startCity: "Denver",
-    endCity: "Salt Lake City, UT",
-    baseRate: 725,
-    fsc: 11.03,
-    total: 805,
-    submittedAt: "2025-01-10 09:15 AM",
-  },
-  {
-    id: 148,
-    vendorId: "MC-990011",
-    vendorEmail: "vendor18@example.com",
-    startCity: "San Francisco",
-    endCity: "Sacramento, CA",
-    baseRate: 185,
-    fsc: 10.81,
-    total: 205,
-    submittedAt: "2025-01-10 01:20 PM",
-  },
-  {
-    id: 149,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "San Francisco",
-    endCity: "Los Angeles, CA",
-    baseRate: 725,
-    fsc: 11.03,
-    total: 805,
-    submittedAt: "2025-01-10 10:55 AM",
-  },
-  {
-    id: 150,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "Portland",
-    endCity: "Eugene, OR",
-    baseRate: 225,
-    fsc: 13.33,
-    total: 255,
-    submittedAt: "2025-01-10 03:25 PM",
-  },
-  {
-    id: 151,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Atlanta",
-    endCity: "Birmingham, AL",
-    baseRate: 280,
-    fsc: 10.71,
-    total: 310,
-    submittedAt: "2025-01-14 02:20 PM",
-  },
-  {
-    id: 152,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Phoenix",
-    endCity: "Tucson, AZ",
-    baseRate: 225,
-    fsc: 11.11,
-    total: 250,
-    submittedAt: "2025-01-15 09:15 AM",
-  },
-  {
-    id: 153,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Denver",
-    endCity: "Colorado Springs, CO",
-    baseRate: 135,
-    fsc: 11.11,
-    total: 150,
-    submittedAt: "2025-01-15 11:30 AM",
-  },
-  {
-    id: 154,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "San Francisco",
-    endCity: "Sacramento, CA",
-    baseRate: 180,
-    fsc: 11.11,
-    total: 200,
-    submittedAt: "2025-01-15 02:45 PM",
-  },
-  {
-    id: 155,
-    vendorId: "MC-789012",
-    vendorEmail: "sarah.j@logistics.com",
-    startCity: "Philadelphia",
-    endCity: "Pittsburgh, PA",
-    baseRate: 540,
-    fsc: 11.11,
-    total: 600,
-    submittedAt: "2025-01-14 09:30 AM",
-  },
-  {
-    id: 156,
-    vendorId: "MC-345678",
-    vendorEmail: "mike@davisfreight.com",
-    startCity: "Atlanta",
-    endCity: "Charlotte, NC",
-    baseRate: 420,
-    fsc: 9.52,
-    total: 460,
-    submittedAt: "2025-01-14 11:45 AM",
-  },
-  {
-    id: 157,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Atlanta",
-    endCity: "Nashville, TN",
-    baseRate: 1250,
-    fsc: 15.0,
-    total: 1437.5,
-    submittedAt: "2025-01-14 12:38 PM",
-  },
-  {
-    id: 158,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Seattle",
-    endCity: "Spokane, WA",
-    baseRate: 495,
-    fsc: 11.11,
-    total: 550,
-    submittedAt: "2025-01-16 08:00 AM",
-  },
-  {
-    id: 159,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Miami",
-    endCity: "Tampa, FL",
-    baseRate: 450,
-    fsc: 11.11,
-    total: 500,
-    submittedAt: "2025-01-16 10:30 AM",
-  },
-  {
-    id: 160,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Portland",
-    endCity: "Eugene, OR",
-    baseRate: 225,
-    fsc: 11.11,
-    total: 250,
-    submittedAt: "2025-01-16 01:15 PM",
-  },
-  {
-    id: 161,
-    vendorId: "MC-789012",
-    vendorEmail: "sarah.j@logistics.com",
-    startCity: "Chicago",
-    endCity: "Minneapolis, MN",
-    baseRate: 720,
-    fsc: 11.11,
-    total: 800,
-    submittedAt: "2025-01-14 02:45 PM",
-  },
-  {
-    id: 162,
-    vendorId: "MC-345678",
-    vendorEmail: "mike@davisfreight.com",
-    startCity: "Dallas",
-    endCity: "Austin, TX",
-    baseRate: 360,
-    fsc: 11.11,
-    total: 400,
-    submittedAt: "2025-01-14 01:30 PM",
-  },
-  {
-    id: 163,
-    vendorId: "MC-223344",
-    vendorEmail: "vendor13@example.com",
-    startCity: "Atlanta",
-    endCity: "Charlotte, NC",
-    baseRate: 425,
-    fsc: 11.76,
-    total: 475,
-    submittedAt: "2025-01-14 10:20 AM",
-  },
-  {
-    id: 164,
-    vendorId: "MC-556677",
-    vendorEmail: "vendor14@example.com",
-    startCity: "Atlanta",
-    endCity: "Charlotte, NC",
-    baseRate: 440,
-    fsc: 11.36,
-    total: 490,
-    submittedAt: "2025-01-14 02:35 PM",
-  },
-  {
-    id: 165,
-    vendorId: "MC-889900",
-    vendorEmail: "vendor15@example.com",
-    startCity: "Philadelphia",
-    endCity: "New York, NY",
-    baseRate: 182,
-    fsc: 10.99,
-    total: 202,
-    submittedAt: "2025-01-14 09:45 AM",
-  },
-  {
-    id: 166,
-    vendorId: "MC-334455",
-    vendorEmail: "vendor16@example.com",
-    startCity: "Philadelphia",
-    endCity: "Baltimore, MD",
-    baseRate: 218,
-    fsc: 11.01,
-    total: 242,
-    submittedAt: "2025-01-14 11:50 AM",
-  },
-  {
-    id: 167,
-    vendorId: "MC-667788",
-    vendorEmail: "vendor17@example.com",
-    startCity: "Philadelphia",
-    endCity: "Washington, DC",
-    baseRate: 282,
-    fsc: 10.64,
-    total: 312,
-    submittedAt: "2025-01-14 03:15 PM",
-  },
-  {
-    id: 168,
-    vendorId: "MC-990011",
-    vendorEmail: "vendor18@example.com",
-    startCity: "Boston",
-    endCity: "Franklin, NH",
-    baseRate: 448,
-    fsc: 11.16,
-    total: 498,
-    submittedAt: "2025-01-14 08:30 AM",
-  },
-  {
-    id: 169,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Boston",
-    endCity: "Slatersville, RI",
-    baseRate: 318,
-    fsc: 11.01,
-    total: 353,
-    submittedAt: "2025-01-14 10:40 AM",
-  },
-  {
-    id: 170,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "Boston",
-    endCity: "Portland, ME",
-    baseRate: 378,
-    fsc: 10.58,
-    total: 418,
-    submittedAt: "2025-01-14 01:55 PM",
-  },
-  {
-    id: 171,
-    vendorId: "MC-223344",
-    vendorEmail: "vendor13@example.com",
-    startCity: "Boston",
-    endCity: "Hartford, CT",
-    baseRate: 268,
-    fsc: 11.19,
-    total: 298,
-    submittedAt: "2025-01-14 03:20 PM",
-  },
-  {
-    id: 172,
-    vendorId: "MC-556677",
-    vendorEmail: "vendor14@example.com",
-    startCity: "Chicago",
-    endCity: "Milwaukee, WI",
-    baseRate: 218,
-    fsc: 9.17,
-    total: 238,
-    submittedAt: "2025-01-14 09:10 AM",
-  },
-  {
-    id: 173,
-    vendorId: "MC-889900",
-    vendorEmail: "vendor15@example.com",
-    startCity: "Chicago",
-    endCity: "Indianapolis, IN",
-    baseRate: 348,
-    fsc: 11.49,
-    total: 388,
-    submittedAt: "2025-01-14 11:25 AM",
-  },
-  {
-    id: 174,
-    vendorId: "MC-334455",
-    vendorEmail: "vendor16@example.com",
-    startCity: "Chicago",
-    endCity: "Detroit, MI",
-    baseRate: 478,
-    fsc: 10.46,
-    total: 528,
-    submittedAt: "2025-01-14 02:40 PM",
-  },
-  {
-    id: 175,
-    vendorId: "MC-667788",
-    vendorEmail: "vendor17@example.com",
-    startCity: "Dallas",
-    endCity: "Fort Worth, TX",
-    baseRate: 148,
-    fsc: 13.51,
-    total: 168,
-    submittedAt: "2025-01-14 08:55 AM",
-  },
-  {
-    id: 176,
-    vendorId: "MC-990011",
-    vendorEmail: "vendor18@example.com",
-    startCity: "Dallas",
-    endCity: "Austin, TX",
-    baseRate: 318,
-    fsc: 12.58,
-    total: 358,
-    submittedAt: "2025-01-14 10:30 AM",
-  },
-  {
-    id: 177,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "Dallas",
-    endCity: "Houston, TX",
-    baseRate: 448,
-    fsc: 11.16,
-    total: 498,
-    submittedAt: "2025-01-14 01:15 PM",
-  },
-  {
-    id: 178,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "Los Angeles",
-    endCity: "San Diego, CA",
-    baseRate: 338,
-    fsc: 11.83,
-    total: 378,
-    submittedAt: "2025-01-14 09:35 AM",
-  },
-  {
-    id: 179,
-    vendorId: "MC-223344",
-    vendorEmail: "vendor13@example.com",
-    startCity: "Los Angeles",
-    endCity: "Las Vegas, NV",
-    baseRate: 538,
-    fsc: 11.15,
-    total: 598,
-    submittedAt: "2025-01-14 11:50 AM",
-  },
-  {
-    id: 180,
-    vendorId: "MC-556677",
-    vendorEmail: "vendor14@example.com",
-    startCity: "Miami",
-    endCity: "Tampa, FL",
-    baseRate: 418,
-    fsc: 9.57,
-    total: 458,
-    submittedAt: "2025-01-14 10:05 AM",
-  },
-  {
-    id: 181,
-    vendorId: "MC-889900",
-    vendorEmail: "vendor15@example.com",
-    startCity: "Miami",
-    endCity: "Orlando, FL",
-    baseRate: 378,
-    fsc: 10.58,
-    total: 418,
-    submittedAt: "2025-01-14 02:20 PM",
-  },
-  {
-    id: 182,
-    vendorId: "MC-334455",
-    vendorEmail: "vendor16@example.com",
-    startCity: "Seattle",
-    endCity: "Portland, OR",
-    baseRate: 288,
-    fsc: 10.42,
-    total: 318,
-    submittedAt: "2025-01-14 08:45 AM",
-  },
-  {
-    id: 183,
-    vendorId: "MC-667788",
-    vendorEmail: "vendor17@example.com",
-    startCity: "Seattle",
-    endCity: "Spokane, WA",
-    baseRate: 448,
-    fsc: 11.16,
-    total: 498,
-    submittedAt: "2025-01-14 11:10 AM",
-  },
-  {
-    id: 184,
-    vendorId: "MC-990011",
-    vendorEmail: "vendor18@example.com",
-    startCity: "New York",
-    endCity: "Philadelphia, PA",
-    baseRate: 178,
-    fsc: 11.24,
-    total: 198,
-    submittedAt: "2025-01-14 01:35 PM",
-  },
-  {
-    id: 185,
-    vendorId: "MC-111222",
-    vendorEmail: "robert.chen@fasthaul.com",
-    startCity: "New York",
-    endCity: "Boston, MA",
-    baseRate: 378,
-    fsc: 10.58,
-    total: 418,
-    submittedAt: "2025-01-14 03:50 PM",
-  },
-  {
-    id: 186,
-    vendorId: "MC-333444",
-    vendorEmail: "lisa.martinez@quickship.com",
-    startCity: "Phoenix",
-    endCity: "Tucson, AZ",
-    baseRate: 258,
-    fsc: 15.5,
-    total: 298,
-    submittedAt: "2025-01-14 09:25 AM",
-  },
-  {
-    id: 187,
-    vendorId: "MC-223344",
-    vendorEmail: "vendor13@example.com",
-    startCity: "Denver",
-    endCity: "Colorado Springs, CO",
-    baseRate: 188,
-    fsc: 10.64,
-    total: 208,
-    submittedAt: "2025-01-14 11:40 AM",
-  },
-  {
-    id: 188,
-    vendorId: "MC-556677",
-    vendorEmail: "vendor14@example.com",
-    startCity: "Houston",
-    endCity: "San Antonio, TX",
-    baseRate: 378,
-    fsc: 10.58,
-    total: 418,
-    submittedAt: "2025-01-14 02:05 PM",
-  },
-  {
-    id: 189,
-    vendorId: "MC-889900",
-    vendorEmail: "vendor15@example.com",
-    startCity: "San Francisco",
-    endCity: "Sacramento, CA",
-    baseRate: 178,
-    fsc: 11.24,
-    total: 198,
-    submittedAt: "2025-01-14 08:20 AM",
-  },
-  {
-    id: 190,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Chicago",
-    endCity: "Detroit, MI",
-    baseRate: 540,
-    fsc: 11.11,
-    total: 600,
-    submittedAt: "2025-01-12 11:20 AM",
-  },
-  {
-    id: 191,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Dallas",
-    endCity: "Houston, TX",
-    baseRate: 450,
-    fsc: 11.11,
-    total: 500,
-    submittedAt: "2025-01-12 02:45 PM",
-  },
-  {
-    id: 192,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Phoenix",
-    endCity: "Las Vegas, NV",
-    baseRate: 540,
-    fsc: 11.11,
-    total: 600,
-    submittedAt: "2025-01-13 09:15 AM",
-  },
-  {
-    id: 193,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Denver",
-    endCity: "Colorado Springs, CO",
-    baseRate: 180,
-    fsc: 11.11,
-    total: 200,
-    submittedAt: "2025-01-13 10:30 AM",
-  },
-  {
-    id: 194,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "San Francisco",
-    endCity: "Oakland, CA",
-    baseRate: 90,
-    fsc: 11.11,
-    total: 100,
-    submittedAt: "2025-01-13 01:50 PM",
-  },
-  {
-    id: 195,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Seattle",
-    endCity: "Tacoma, WA",
-    baseRate: 135,
-    fsc: 11.11,
-    total: 150,
-    submittedAt: "2025-01-13 03:25 PM",
-  },
-  {
-    id: 196,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Miami",
-    endCity: "Fort Lauderdale, FL",
-    baseRate: 90,
-    fsc: 11.11,
-    total: 100,
-    submittedAt: "2025-01-14 08:40 AM",
-  },
-  {
-    id: 197,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Philadelphia",
-    endCity: "Pittsburgh, PA",
-    baseRate: 540,
-    fsc: 11.11,
-    total: 600,
-    submittedAt: "2025-01-14 11:15 AM",
-  },
-  {
-    id: 198,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Boston",
-    endCity: "Worcester, MA",
-    baseRate: 135,
-    fsc: 11.11,
-    total: 150,
-    submittedAt: "2025-01-14 02:30 PM",
-  },
-  {
-    id: 199,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Atlanta",
-    endCity: "Savannah, GA",
-    baseRate: 450,
-    fsc: 11.11,
-    total: 500,
-    submittedAt: "2025-01-15 09:00 AM",
-  },
-  {
-    id: 200,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Portland",
-    endCity: "Eugene, OR",
-    baseRate: 270,
-    fsc: 11.11,
-    total: 300,
-    submittedAt: "2025-01-15 10:45 AM",
-  },
-  {
-    id: 201,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "New York",
-    endCity: "Albany, NY",
-    baseRate: 315,
-    fsc: 11.11,
-    total: 350,
-    submittedAt: "2025-01-15 01:20 PM",
-  },
-  {
-    id: 202,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Chicago",
-    endCity: "Indianapolis, IN",
-    baseRate: 360,
-    fsc: 11.11,
-    total: 400,
-    submittedAt: "2025-01-15 03:55 PM",
-  },
-  {
-    id: 203,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Los Angeles",
-    endCity: "Santa Barbara, CA",
-    baseRate: 225,
-    fsc: 11.11,
-    total: 250,
-    submittedAt: "2025-01-16 08:10 AM",
-  },
-  {
-    id: 204,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Dallas",
-    endCity: "Austin, TX",
-    baseRate: 360,
-    fsc: 11.11,
-    total: 400,
-    submittedAt: "2025-01-16 10:35 AM",
-  },
-  {
-    id: 205,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Phoenix",
-    endCity: "Flagstaff, AZ",
-    baseRate: 315,
-    fsc: 11.11,
-    total: 350,
-    submittedAt: "2025-01-16 01:50 PM",
-  },
-  {
-    id: 206,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Denver",
-    endCity: "Boulder, CO",
-    baseRate: 90,
-    fsc: 11.11,
-    total: 100,
-    submittedAt: "2025-01-16 03:15 PM",
-  },
-  {
-    id: 207,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "San Francisco",
-    endCity: "San Jose, CA",
-    baseRate: 135,
-    fsc: 11.11,
-    total: 150,
-    submittedAt: "2025-01-17 09:30 AM",
-  },
-  {
-    id: 208,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Seattle",
-    endCity: "Spokane, WA",
-    baseRate: 540,
-    fsc: 11.11,
-    total: 600,
-    submittedAt: "2025-01-17 11:45 AM",
-  },
-  {
-    id: 209,
-    vendorId: "MC-123456",
-    vendorEmail: "john.smith@transport.com",
-    startCity: "Miami",
-    endCity: "Key West, FL",
-    baseRate: 315,
-    fsc: 11.11,
-    total: 350,
-    submittedAt: "2025-01-17 02:20 PM",
-  },
-]
+const DetailItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  
+  label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgb(100 116 139);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+  
+  value {
+    font-size: 0.875rem;
+    color: rgb(15 23 42);
+  }
+`
 
 export default function AdminRatesPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const selectedCity = searchParams.get("city")
-
   const [searchTerm, setSearchTerm] = useState("")
   const [orderBy, setOrderBy] = useState<keyof RateData>("submittedAt")
   const [order, setOrder] = useState<"asc" | "desc">("desc")
+  const [rates, setRates] = useState<RateData[]>([])
+  const [selectedCity, setSelectedCity] = useState<string | null>(null)
   const [selectedDestination, setSelectedDestination] = useState<string | null>(null)
-  const [rates, setRates] = []
-
   const [openAddDestDialog, setOpenAddDestDialog] = useState(false)
-  const [newDestination, setNewDestination] = useState<string | null>(null)
+  const [newDestination, setNewDestination] = useState("")
   const [newDestinationInput, setNewDestinationInput] = useState("")
+  const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
 
   useEffect(() => {
-    const loadRates = () => {
-      const submittedRates = JSON.parse(localStorage.getItem("submittedRates") || "{}")
-      const ratesArray: RateData[] = []
-
-      Object.entries(submittedRates).forEach(([key, value]: [string, any]) => {
-        const [city, destId] = key.split("-")
-        const cityName = city.charAt(0).toUpperCase() + city.slice(1)
-        const destName = DESTINATIONS[city]?.[Number.parseInt(destId)] || "Unknown"
-
-        const baseRate = Number.parseFloat(value.baseRate?.replace(/[^0-9.]/g, "") || "0")
-        const fsc = Number.parseFloat(value.fsc?.replace(/[^0-9.]/g, "") || "0")
-        const total = Number.parseFloat(value.total?.replace(/[^0-9.]/g, "") || "0")
-
-        ratesArray.push({
-          id: key,
-          vendorId: "MC-123456", // Default vendor ID
-          vendorEmail: "vendor@example.com", // Default email
-          startCity: cityName,
-          endCity: destName,
-          baseRate,
-          fsc,
-          total,
-          submittedAt: new Date().toLocaleString("en-US", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-          }),
-        })
-      })
-
-      // Combine MOCK_RATES with the loaded rates
-      const allRates = [...MOCK_RATES, ...ratesArray]
-
-      // Ensure unique IDs if necessary, or handle potential overlaps if mock and local storage can have same IDs
-      const uniqueRates = allRates.reduce((acc, rate) => {
-        if (!acc.some((r) => r.id === String(rate.id))) {
-          acc.push({ ...rate, id: String(rate.id) })
-        }
-        return acc
-      }, [] as RateData[])
-
-      setRates(uniqueRates)
+    const city = searchParams.get("city")
+    if (city) {
+      setSelectedCity(city)
     }
-
     loadRates()
   }, [])
+
+  const loadRates = async () => {
+    const storedRates = localStorage.getItem("rates")
+    if (storedRates) {
+      try {
+        setRates(JSON.parse(storedRates))
+      } catch (e) {
+        console.error("Error loading rates:", e)
+        setRates([])
+      }
+    }
+  }
 
   const handleSort = (property: keyof RateData) => {
     const isAsc = orderBy === property && order === "asc"
     setOrder(isAsc ? "desc" : "asc")
     setOrderBy(property)
-  }
-
-  const filteredRates = rates
-    .filter((rate) => {
-      const matchesCity = selectedCity ? rate.startCity.toLowerCase() === selectedCity.toLowerCase() : true
-      const matchesDestination =
-        selectedCity?.toLowerCase() === "atlanta" && selectedDestination ? rate.endCity === selectedDestination : true
-      const matchesSearch =
-        rate.vendorId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        rate.vendorEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        rate.startCity.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        rate.endCity.toLowerCase().includes(searchTerm.toLowerCase())
-
-      return matchesCity && matchesDestination && matchesSearch
-    })
-    .sort((a, b) => {
-      if (selectedCity?.toLowerCase() === "atlanta" && orderBy === "submittedAt") {
-        const destCompare = a.endCity.localeCompare(b.endCity)
-        if (destCompare !== 0) return destCompare
-        return order === "asc" ? a.submittedAt.localeCompare(b.submittedAt) : b.submittedAt.localeCompare(a.submittedAt)
-      }
-
-      const aValue = a[orderBy]
-      const bValue = b[orderBy]
-
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        return order === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue)
-      }
-
-      if (typeof aValue === "number" && typeof bValue === "number") {
-        return order === "asc" ? aValue - bValue : bValue - aValue
-      }
-
-      return 0
-    })
-
-  const atlantaDestinations =
-    selectedCity?.toLowerCase() === "atlanta"
-      ? Array.from(new Set(rates.filter((r) => r.startCity.toLowerCase() === "atlanta").map((r) => r.endCity))).sort()
-      : []
-
-  const handleExport = () => {
-    alert("Exporting rates to CSV...")
   }
 
   const handleLogout = () => {
@@ -2989,42 +436,70 @@ export default function AdminRatesPage() {
 
   const handleAddDestination = () => {
     if (newDestination && selectedCity) {
-      // Add the new destination to the rates list
       const newRate: RateData = {
-        id: `
-$
-{
-  selectedCity.toLowerCase()
-}
-;-$
-{
-  Date.now()
-}
-;`,
-        vendorId: "PENDING",
-        vendorEmail: "pending@example.com",
-        startCity: selectedCity.charAt(0).toUpperCase() + selectedCity.slice(1),
+        id: Date.now().toString(),
+        vendorId: "VENDOR001",
+        vendorEmail: "vendor@example.com",
+        startCity: selectedCity,
         endCity: newDestination,
         baseRate: 0,
         fsc: 0,
         total: 0,
-        submittedAt: new Date().toLocaleString("en-US", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        }),
+        submittedAt: new Date().toISOString(),
       }
-
       const updatedRates = [...rates, newRate]
       setRates(updatedRates)
-
-      setNewDestination(null)
+      localStorage.setItem("rates", JSON.stringify(updatedRates))
+      setNewDestination("")
       setNewDestinationInput("")
       setOpenAddDestDialog(false)
     }
+  }
+
+  // Filter rates based on selection
+  const filteredRates = rates.filter((rate) => {
+    const matchesSearch =
+      searchTerm === "" ||
+      rate.vendorId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      rate.vendorEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      rate.startCity.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      rate.endCity.toLowerCase().includes(searchTerm.toLowerCase())
+
+    const matchesCity = !selectedCity || rate.startCity === selectedCity
+    const matchesDestination = !selectedDestination || rate.endCity === selectedDestination
+
+    return matchesSearch && matchesCity && matchesDestination
+  })
+
+  // Sort rates
+  const sortedRates = [...filteredRates].sort((a, b) => {
+    const aValue = a[orderBy]
+    const bValue = b[orderBy]
+
+    if (typeof aValue === "string" && typeof bValue === "string") {
+      return order === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue)
+    }
+
+    if (typeof aValue === "number" && typeof bValue === "number") {
+      return order === "asc" ? aValue - bValue : bValue - aValue
+    }
+
+    return 0
+  })
+
+  const destinations = selectedCity ? Object.values(DESTINATIONS).flatMap(Object.values) : []
+
+  const hasOptionalData = (rate: RateData) => {
+    return !!(
+      rate.chassis ||
+      rate.yardStorage ||
+      rate.hazmat ||
+      rate.bond ||
+      rate.split ||
+      rate.flip ||
+      rate.overweight ||
+      rate.prepull
+    )
   }
 
   return (
@@ -3032,45 +507,23 @@ $
       <Header>
         <HeaderContent>
           <LogoCircle>
-            <Truck style={{ width: "1.5rem", height: "1.5rem", color: "white" }} />
+            <Truck size={24} color="white" />
           </LogoCircle>
           <HeaderText>
-            <HeaderTitle>Drayage Bid Portal</HeaderTitle>
-            <HeaderSubtitle>Admin - Rate Management{selectedCity && ` - $
-{
-  selectedCity
-}
-;`}</HeaderSubtitle>
+            <HeaderTitle>Admin Portal</HeaderTitle>
+            <HeaderSubtitle>Manage Vendor Rates</HeaderSubtitle>
           </HeaderText>
         </HeaderContent>
         <HeaderActions>
           <Button
-            variant="outlined"
-            size="small"
-            onClick={() => router.push("/cities")}
-            sx={{
-              marginLeft: "0.5rem",
-              borderColor: "rgb(148 163 184)",
-              color: "rgb(71 85 105)",
-              "&:hover": {
-                borderColor: "rgb(100 116 139)",
-                backgroundColor: "rgb(248 250 252)",
-              },
-            }}
-          >
-            Back to Cities
-          </Button>
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<LogOut style={{ width: "1rem", height: "1rem" }} />}
             onClick={handleLogout}
+            variant="outlined"
+            startIcon={<LogOut size={16} />}
             sx={{
-              marginLeft: "0.5rem",
-              borderColor: "rgb(148 163 184)",
-              color: "rgb(71 85 105)",
+              color: "rgb(100 116 139)",
+              borderColor: "rgb(226 232 240)",
               "&:hover": {
-                borderColor: "rgb(100 116 139)",
+                borderColor: "rgb(148 163 184)",
                 backgroundColor: "rgb(248 250 252)",
               },
             }}
@@ -3080,822 +533,233 @@ $
         </HeaderActions>
       </Header>
 
-      <Main>
-        <Container>
-          {selectedCity?.toLowerCase() === "atlanta" ? (
-            <GridContainer>
-              <Sidebar>
-                <SidebarTitle>Select Destination</SidebarTitle>
-                <AddDestinationCard onClick={() => setOpenAddDestDialog(true)}>
-                  <Plus size={18} />
-                  Add a New Destination
-                </AddDestinationCard>
-                <DestinationList>
-                  {atlantaDestinations.map((dest) => {
-                    const count = rates.filter(
-                      (r) => r.startCity.toLowerCase() === "atlanta" && r.endCity === dest,
-                    ).length
-                    return (
-                      <DestinationButton
-                        key={dest}
-                        onClick={() => setSelectedDestination(dest)}
-                        $selected={selectedDestination === dest}
-                      >
-                        <DestinationName>{dest}</DestinationName>
-                        <DestinationCount $selected={selectedDestination === dest}>
-                          {count} {count === 1 ? "rate" : "rates"}
-                        </DestinationCount>
-                      </DestinationButton>
-                    )
-                  })}
-                </DestinationList>
-              </Sidebar>
-
-              <ContentCard>
-                <CardHeader>
-                  <CardHeaderText>
-                    <CardTitle>
-                      Atlanta Vendor Rates
-                      {selectedDestination && ` - $
-{
-  selectedDestination
-}
-;`}
-                    </CardTitle>
-                    <CardDescription>
-                      {selectedDestination
-                        ? `
-Viewing
-rates
-for ${selectedDestination}`
-                        : "Select a destination to view rates"}
-                    </CardDescription>
-                  </CardHeaderText>
-                </CardHeader>
-
-                <SearchContainer>
-                  <TextField
-                    fullWidth
-                    placeholder="Search by vendor ID, email ..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Search
-                            style={{
-                              width: "1.25rem",
-                              height: "1.25rem",
-                              color: "rgb(156 163 175)",
-                            }}
-                          />
-                        </InputAdornment>
-                      ),
-                    }}
-                    variant="outlined"
-                  />
-                </SearchContainer>
-
-                <TableWrapper>
-                  <TableContainer component={Paper} variant="outlined" sx={{ height: "100%" }}>
-                    <Table stickyHeader>
-                      <TableHead>
-                        <TableRow sx={{ backgroundColor: "rgb(248 250 252)" }}>
-                          <TableCell sx={{ fontWeight: 700 }}>
-                            <TableSortLabel
-                              active={orderBy === "vendorId"}
-                              direction={orderBy === "vendorId" ? order : "asc"}
-                              onClick={() => handleSort("vendorId")}
-                            >
-                              Vendor ID
-                            </TableSortLabel>
-                          </TableCell>
-                          <TableCell sx={{ fontWeight: 700 }}>
-                            <TableSortLabel
-                              active={orderBy === "vendorEmail"}
-                              direction={orderBy === "vendorEmail" ? order : "asc"}
-                              onClick={() => handleSort("vendorEmail")}
-                            >
-                              Email
-                            </TableSortLabel>
-                          </TableCell>
-                          <TableCell sx={{ fontWeight: 700 }}>
-                            <TableSortLabel
-                              active={orderBy === "endCity"}
-                              direction={orderBy === "endCity" ? order : "asc"}
-                              onClick={() => handleSort("endCity")}
-                            >
-                              Destination
-                            </TableSortLabel>
-                          </TableCell>
-                          <TableCell sx={{ fontWeight: 700 }}>
-                            <TableSortLabel
-                              active={orderBy === "submittedAt"}
-                              direction={orderBy === "submittedAt" ? order : "asc"}
-                              onClick={() => handleSort("submittedAt")}
-                            >
-                              Submitted
-                            </TableSortLabel>
-                          </TableCell>
-                          <TableCell sx={{ fontWeight: 700 }} align="right">
-                            <TableSortLabel
-                              active={orderBy === "baseRate"}
-                              direction={orderBy === "baseRate" ? order : "asc"}
-                              onClick={() => handleSort("baseRate")}
-                            >
-                              Base Rate
-                            </TableSortLabel>
-                          </TableCell>
-                          <TableCell sx={{ fontWeight: 700 }} align="right">
-                            <TableSortLabel
-                              active={orderBy === "fsc"}
-                              direction={orderBy === "fsc" ? order : "asc"}
-                              onClick={() => handleSort("fsc")}
-                            >
-                              FSC %
-                            </TableSortLabel>
-                          </TableCell>
-                          <TableCell sx={{ fontWeight: 700 }} align="right">
-                            <TableSortLabel
-                              active={orderBy === "total"}
-                              direction={orderBy === "total" ? order : "asc"}
-                              onClick={() => handleSort("total")}
-                            >
-                              Total
-                            </TableSortLabel>
-                          </TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {filteredRates.map((rate) => (
-                          <TableRow key={rate.id} hover>
-                            <TableCell
-                              sx={{
-                                fontFamily: "monospace",
-                                fontSize: "0.875rem",
-                              }}
-                            >
-                              {rate.vendorId}
-                            </TableCell>
-                            <TableCell>{rate.vendorEmail}</TableCell>
-                            <TableCell>{rate.endCity}</TableCell>
-                            <TableCell
-                              sx={{
-                                fontSize: "0.875rem",
-                                color: "rgb(71 85 105)",
-                              }}
-                            >
-                              {rate.submittedAt}
-                            </TableCell>
-                            <TableCell align="right">${rate.baseRate.toFixed(2)}</TableCell>
-                            <TableCell align="right">{rate.fsc.toFixed(2)}%</TableCell>
-                            <TableCell align="right">
-                              <span
-                                style={{
-                                  fontWeight: 700,
-                                  color: "rgb(37 99 235)",
-                                }}
-                              >
-                                ${rate.total.toFixed(2)}
-                              </span>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </TableWrapper>
-
-                {filteredRates.length === 0 && <EmptyState>No rates found matching your search criteria</EmptyState>}
-              </ContentCard>
-            </GridContainer>
-          ) : (
-            <ContentCard>
-              <CardHeader>
-                <CardHeaderText>
-                  <CardTitle>{selectedCity ? `${selectedCity}
-Vendor
-Rates` : "All Vendor Rates"}</CardTitle>
-                  <CardDescription>
-                    {selectedCity
-                      ? `
-View
-and
-manage
-bids
-starting
-from
-$
-{
-  selectedCity
-}
-;`
-                      : "View and manage all submitted vendor bids"}
-                  </CardDescription>
-                </CardHeaderText>
-              </CardHeader>
-
-              <SearchContainer>
-                <TextField
-                  fullWidth
-                  placeholder="Search by vendor ID, email..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Search
-                          style={{
-                            width: "1.25rem",
-                            height: "1.25rem",
-                            color: "rgb(156 163 175)",
-                          }}
-                        />
-                      </InputAdornment>
-                    ),
-                  }}
-                  variant="outlined"
-                />
-              </SearchContainer>
-
-              <TableWrapper>
-                <TableContainer component={Paper} variant="outlined">
-                  <Table stickyHeader>
-                    <TableHead>
-                      <TableRow sx={{ backgroundColor: "rgb(248 250 252)" }}>
-                        <TableCell sx={{ fontWeight: 700 }}>
-                          <TableSortLabel
-                            active={orderBy === "vendorId"}
-                            direction={orderBy === "vendorId" ? order : "asc"}
-                            onClick={() => handleSort("vendorId")}
-                          >
-                            Vendor ID
-                          </TableSortLabel>
-                        </TableCell>
-                        <TableCell sx={{ fontWeight: 700 }}>
-                          <TableSortLabel
-                            active={orderBy === "vendorEmail"}
-                            direction={orderBy === "vendorEmail" ? order : "asc"}
-                            onClick={() => handleSort("vendorEmail")}
-                          >
-                            Email
-                          </TableSortLabel>
-                        </TableCell>
-                        {!selectedCity && (
-                          <TableCell sx={{ fontWeight: 700 }}>
-                            <TableSortLabel
-                              active={orderBy === "startCity"}
-                              direction={orderBy === "startCity" ? order : "asc"}
-                              onClick={() => handleSort("startCity")}
-                            >
-                              Port Location
-                            </TableSortLabel>
-                          </TableCell>
-                        )}
-                        <TableCell sx={{ fontWeight: 700 }}>
-                          <TableSortLabel
-                            active={orderBy === "endCity"}
-                            direction={orderBy === "endCity" ? order : "asc"}
-                            onClick={() => handleSort("endCity")}
-                          >
-                            Inland Location
-                          </TableSortLabel>
-                        </TableCell>
-                        <TableCell sx={{ fontWeight: 700 }}>
-                          <TableSortLabel
-                            active={orderBy === "submittedAt"}
-                            direction={orderBy === "submittedAt" ? order : "asc"}
-                            onClick={() => handleSort("submittedAt")}
-                          >
-                            Submitted
-                          </TableSortLabel>
-                        </TableCell>
-                        <TableCell sx={{ fontWeight: 700 }} align="right">
-                          <TableSortLabel
-                            active={orderBy === "baseRate"}
-                            direction={orderBy === "baseRate" ? order : "asc"}
-                            onClick={() => handleSort("baseRate")}
-                          >
-                            Base Rate
-                          </TableSortLabel>
-                        </TableCell>
-                        <TableCell sx={{ fontWeight: 700 }} align="right">
-                          <TableSortLabel
-                            active={orderBy === "fsc"}
-                            direction={orderBy === "fsc" ? order : "asc"}
-                            onClick={() => handleSort("fsc")}
-                          >
-                            FSC %
-                          </TableSortLabel>
-                        </TableCell>
-                        <TableCell sx={{ fontWeight: 700 }} align="right">
-                          <TableSortLabel
-                            active={orderBy === "total"}
-                            direction={orderBy === "total" ? order : "asc"}
-                            onClick={() => handleSort("total")}
-                          >
-                            Total
-                          </TableSortLabel>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {filteredRates.map((rate) => (
-                        <TableRow key={rate.id} hover>
-                          <TableCell
-                            sx={{
-                              fontFamily: "monospace",
-                              fontSize: "0.875rem",
-                            }}
-                          >
-                            {rate.vendorId}
-                          </TableCell>
-                          <TableCell>{rate.vendorEmail}</TableCell>
-                          {!selectedCity && <TableCell>{rate.startCity}</TableCell>}
-                          <TableCell>{rate.endCity}</TableCell>
-                          <TableCell
-                            sx={{
-                              fontSize: "0.875rem",
-                              color: "rgb(71 85 105)",
-                            }}
-                          >
-                            {rate.submittedAt}
-                          </TableCell>
-                          <TableCell align="right">${rate.baseRate.toFixed(2)}</TableCell>
-                          <TableCell align="right">{rate.fsc.toFixed(2)}%</TableCell>
-                          <TableCell align="right">
-                            <span
-                              style={{
-                                fontWeight: 700,
-                                color: "rgb(37 99 235)",
-                              }}
-                            >
-                              ${rate.total.toFixed(2)}
-                            </span>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-
-                {filteredRates.length === 0 && <EmptyState>No rates found matching your search criteria</EmptyState>}
-
-                <TableFooter>
-                  Showing {filteredRates.length} of {rates.length} total rates
-                </TableFooter>
-              </ContentCard>
-            </Container>
-          )}
-        </Main>
-
-      <Dialog open={openAddDestDialog} onClose={() => setOpenAddDestDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Add New Destination</DialogTitle>
-        <DialogContent>
-          <div style={{ paddingTop: "1rem" }}>
-            <Autocomplete
-              options={US_CITIES}
-              value={newDestination}
-              inputValue={newDestinationInput}
-              onInputChange={(event, newInputValue) => {
-                setNewDestinationInput(newInputValue)
-              }}
-              onChange={(event, newValue) => {
-                setNewDestination(newValue)
-              }}
-              renderInput={(params) => (
-                <TextField {...params} label="Inland Location Route" placeholder="Type at least 3 characters..." />
-              )}
-              filterOptions={(options, state) => {
-                if (state.inputValue.length < 3) return []
-                return options.filter((option) => option.toLowerCase().includes(state.inputValue.toLowerCase()))
-              }}
-              noOptionsText={newDestinationInput.length < 3 ? "Type at least 3 characters" : "No cities found"}
-            />
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              setOpenAddDestDialog(false)
-              setNewDestination(null)
-              setNewDestinationInput("")
-            }}
-          >
-            Cancel
-          </Button>
-          <Button onClick={handleAddDestination} variant="contained" color="primary" disabled={!newDestination}>
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </PageContainer>
-  )
-}
-
-</existing_code>
-
-2. Now, look at the updates to be made:
-<updates>
-
-import { Truck, LogOut, Search, Plus, ChevronDown, ChevronUp } from 'lucide-react'
-
-
-const TableWrapper = styled.div`
-width: 100%;
-overflow - x
-: auto
-border - radius
-: 0.5rem
-border:
-1px solid rgb(226 232 240)
-
-&::-webkit-scrollbar
-{
-  height:
-  8px
-}
-
-&::-webkit-scrollbar-track
-{
-  background: rgb(241 245 249);
-}
-
-&::-webkit-scrollbar-thumb
-{
-  background: rgb(203 213 225);
-  border - radius
-  : 4px
-
-  &:hover
-  background: rgb(148 163 184);
-}
-;`
-
-const ExpandButton = styled.button`
-display: flex
-align - items
-: center
-justify - content
-: center
-width:
-2rem
-height:
-2rem
-padding: 0
-background: white
-border:
-1px solid rgb(226 232 240)
-border - radius
-: 0.375rem
-cursor: pointer
-transition: all
-0.2s
-color: rgb(100 116 139)
-
-&:hover
-{
-  background: rgb(248 250 252);
-  border - color
-  : rgb(203 213 225)
-  color: rgb(51 65 85)
-}
-
-&.expanded
-{
-  background: rgb(37 99 235);
-  border - color
-  : rgb(37 99 235)
-  color: white
-
-  &:hover
-  background: rgb(29 78 216);
-  border - color
-  : rgb(29 78 216)
-}
-;`
-
-const DetailRow = styled(TableRow)<{ $isExpanded: boolean }>`
-display: $
-{
-  ;(props) => (props.$isExpanded ? "table-row" : "none")
-}
-
-$
-{
-  ;(props) =>
-    props.$isExpanded &&
-    `
-    background: rgb(248 250 252);
-    
-    & td {
-      padding: 1.5rem;
-      border-bottom: 2px solid rgb(226 232 240);
-      background: rgb(248 250 252);
-    }
-  `
-}
-;`
-
-const DetailContent = styled.div`
-display: grid
-grid - template - columns
-: repeat(auto-fit, minmax(250px, 1fr))
-gap:
-1.5rem
-padding:
-1rem 0
-;`
-
-const DetailField = styled.div`
-display: flex
-flex - direction
-: column
-gap:
-0.375rem
-;`
-
-const DetailLabel = styled.label`
-font - size
-: 0.75rem
-font - weight
-: 700
-color: rgb(100 116 139)
-text - transform
-: uppercase
-letter - spacing
-: 0.05em
-;`
-
-const DetailValue = styled.div`
-font - size
-: 0.95rem
-color: rgb(15 23 42)
-font - weight
-: 500
-word-
-break
-:
-break
-;
-;-word
-;`
-
-// ... existing code in main export function ...
-
-export default function AdminRatesPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const [rates, setRates] = useState<RateData[]>([])
-  const [filteredRates, setFilteredRates] = useState<RateData[]>([])
-  const [searchTerm, setSearchTerm] = useState("")
-  const [order, setOrder] = useState<"asc" | "desc">("asc")
-  const [orderBy, setOrderBy] = useState<keyof RateData>("submittedAt")
-  const [selectedCity, setSelectedCity] = useState<string | null>(null)
-  const [selectedDestination, setSelectedDestination] = useState<string>("")
-  const [expandedRowId, setExpandedRowId] = useState<string | null>(null)  // Add state for expanded rows
-  const [openDialog, setOpenDialog] = useState(false)
-  const [newRate, setNewRate] = useState({
-    vendorId: "",
-    vendorEmail: "",
-    startCity: "",
-    endCity: "",
-    baseRate: "",
-    fsc: "",
-  })
-
-
-  const toggleExpandRow = (rateId: string) => {
-    setExpandedRowId(expandedRowId === rateId ? null : rateId)
-  }
-
-  // ... existing code for useEffect, handleSort, handleAddRate ...
-
-  return (
-    <PageContainer>
-      {/* ... existing Header and Main sections ... */}
-
-      {/* Update the table rendering section: */}
-      <TableWrapper>
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow sx={{ backgroundColor: "rgb(248 250 252)" }}>
-              <TableCell sx={{ fontWeight: 700, width: "50px" }}>
-                {/* Expand/Collapse column */}
-              </TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>
-                <TableSortLabel
-                  active={orderBy === "vendorId"}
-                  direction={orderBy === "vendorId" ? order : "asc"}
-                  onClick={() => handleSort("vendorId")}
-                >
-                  Vendor ID
-                </TableSortLabel>
-              </TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>
-                <TableSortLabel
-                  active={orderBy === "vendorEmail"}
-                  direction={orderBy === "vendorEmail" ? order : "asc"}
-                  onClick={() => handleSort("vendorEmail")}
-                >
-                  Email
-                </TableSortLabel>
-              </TableCell>
-              {!selectedCity && (
-                <TableCell sx={{ fontWeight: 700 }}>
-                  <TableSortLabel
-                    active={orderBy === "startCity"}
-                    direction={orderBy === "startCity" ? order : "asc"}
-                    onClick={() => handleSort("startCity")}
-                  >
-                    Port Location
-                  </TableSortLabel>
-                </TableCell>
-              )}
-              <TableCell sx={{ fontWeight: 700 }}>
-                <TableSortLabel
-                  active={orderBy === "endCity"}
-                  direction={orderBy === "endCity" ? order : "asc"}
-                  onClick={() => handleSort("endCity")}
-                >
-                  Inland Location
-                </TableSortLabel>
-              </TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>
-                <TableSortLabel
-                  active={orderBy === "submittedAt"}
-                  direction={orderBy === "submittedAt" ? order : "asc"}
-                  onClick={() => handleSort("submittedAt")}
-                >
-                  Submitted
-                </TableSortLabel>
-              </TableCell>
-              <TableCell sx={{ fontWeight: 700 }} align="right">
-                <TableSortLabel
-                  active={orderBy === "baseRate"}
-                  direction={orderBy === "baseRate" ? order : "asc"}
-                  onClick={() => handleSort("baseRate")}
-                >
-                  Base Rate
-                </TableSortLabel>
-              </TableCell>
-              <TableCell sx={{ fontWeight: 700 }} align="right">
-                <TableSortLabel
-                  active={orderBy === "fsc"}
-                  direction={orderBy === "fsc" ? order : "asc"}
-                  onClick={() => handleSort("fsc")}
-                >
-                  FSC %
-                </TableSortLabel>
-              </TableCell>
-              <TableCell sx={{ fontWeight: 700 }} align="right">
-                <TableSortLabel
-                  active={orderBy === "total"}
-                  direction={orderBy === "total" ? order : "asc"}
-                  onClick={() => handleSort("total")}
-                >
-                  Total
-                </TableSortLabel>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredRates.map((rate) => (
-              <>
-                <TableRow key={rate.id} hover>
-                  <TableCell sx={{ width: "50px" }}>
-                    <ExpandButton
-                      className={expandedRowId === rate.id ? "expanded" : ""}
-                      onClick={() => toggleExpandRow(rate.id)}
-                      title="View full details"
-                    >
-                      {expandedRowId === rate.id ? (
-                        <ChevronUp size={18} />
-                      ) : (
-                        <ChevronDown size={18} />
-                      )}
-                    </ExpandButton>
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      fontFamily: "monospace",
-                      fontWeight: 600,
-                      color: "rgb(37 99 235)",
-                    }}
-                  >
-                    {rate.vendorId}
-                  </TableCell>
-                  <TableCell>{rate.vendorEmail}</TableCell>
-                  {!selectedCity && (
-                    <TableCell sx={{ color: "rgb(64 74 90)" }}>
-                      {rate.startCity}
-                    </TableCell>
-                  )}
-                  <TableCell sx={{ color: "rgb(64 74 90)" }}>
-                    {rate.endCity}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "0.875rem", color: "rgb(100 116 139)" }}>
-                    {new Date(rate.submittedAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 600, color: "rgb(15 23 42)" }} align="right">
-                    ${rate.baseRate.toFixed(2)}
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 600, color: "rgb(15 23 42)" }} align="right">
-                    {rate.fsc.toFixed(2)}%
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 700, color: "rgb(37 99 235)" }} align="right">
-                    ${rate.total.toFixed(2)}
-                  </TableCell>
-                </TableRow>
-
-                <DetailRow
-                  $isExpanded={expandedRowId === rate.id}
-                  key={`
-$
-{
-  rate.id
-}
-;-details`}
-                >
-                  <TableCell colSpan={9}>
-                    <DetailContent>
-                      <DetailField>
-                        <DetailLabel>Vendor ID</DetailLabel>
-                        <DetailValue>{rate.vendorId}</DetailValue>
-                      </DetailField>
-                      <DetailField>
-                        <DetailLabel>Vendor Email</DetailLabel>
-                        <DetailValue>{rate.vendorEmail}</DetailValue>
-                      </DetailField>
-                      <DetailField>
-                        <DetailLabel>Port Location</DetailLabel>
-                        <DetailValue>{rate.startCity}</DetailValue>
-                      </DetailField>
-                      <DetailField>
-                        <DetailLabel>Inland Location</DetailLabel>
-                        <DetailValue>{rate.endCity}</DetailValue>
-                      </DetailField>
-                      <DetailField>
-                        <DetailLabel>Base Rate</DetailLabel>
-                        <DetailValue>${rate.baseRate.toFixed(2)}</DetailValue>
-                      </DetailField>
-                      <DetailField>
-                        <DetailLabel>FSC %</DetailLabel>
-                        <DetailValue>{rate.fsc.toFixed(2)}%</DetailValue>
-                      </DetailField>
-                      <DetailField>
-                        <DetailLabel>Total Rate</DetailLabel>
-                        <DetailValue>${rate.total.toFixed(2)}</DetailValue>
-                      </DetailField>
-                      <DetailField>
-                        <DetailLabel>Submitted At</DetailLabel>
-                        <DetailValue>
-                          {new Date(rate.submittedAt).toLocaleString()}
-                        </DetailValue>
-                      </DetailField>
-                      <DetailField>
-                        <DetailLabel>Bid ID</DetailLabel>
-                        <DetailValue sx={{ fontFamily: "monospace", fontSize: "0.875rem" }}>
-                          {rate.id}
-                        </DetailValue>
-                      </DetailField>
-                    </DetailContent>
-                  </TableCell>
-                </DetailRow>
-              </>
+      {!selectedCity ? (
+        <div style={{ padding: "2rem", textAlign: "center" }}>
+          <h2 style={{ color: "rgb(15 23 42)", marginBottom: "1rem" }}>Select a City</h2>
+          <p style={{ color: "rgb(100 116 139)", marginBottom: "2rem" }}>Please select a starting city to view rates</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
+            {US_CITIES.slice(0, 12).map((city) => (
+              <Button
+                key={city}
+                variant="contained"
+                onClick={() => setSelectedCity(city)}
+                sx={{
+                  background: "rgb(37 99 235)",
+                  "&:hover": {
+                    background: "rgb(29 78 216)",
+                  },
+                }}
+              >
+                {city}
+              </Button>
             ))}
-          </TableBody>
-        </Table>
-      </TableWrapper>
+          </div>
+        </div>
+      ) : (
+        <GridContainer>
+          <Sidebar>
+            <div>
+              <SidebarTitle>Starting City</SidebarTitle>
+              <DestinationButton isSelected={true} onClick={() => setSelectedCity(null)}>
+                {selectedCity}
+              </DestinationButton>
+            </div>
+          </Sidebar>
 
-      {/* ... rest of existing code ... */}
+          <ContentCard>
+            <ContentHeader>
+              <SearchBox
+                placeholder="Search vendor ID, email, or cities..."
+                variant="outlined"
+                size="small"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search size={16} color="rgb(148 163 184)" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </ContentHeader>
+
+            <TableWrapper>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow sx={{ background: "rgb(248 250 252)" }}>
+                      <StyledTableCell style={{ width: "40px" }}></StyledTableCell>
+                      <StyledTableCell>
+                        <TableSortLabel
+                          active={orderBy === "vendorId"}
+                          direction={orderBy === "vendorId" ? order : "asc"}
+                          onClick={() => handleSort("vendorId")}
+                        >
+                          Vendor ID
+                        </TableSortLabel>
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <TableSortLabel
+                          active={orderBy === "vendorEmail"}
+                          direction={orderBy === "vendorEmail" ? order : "asc"}
+                          onClick={() => handleSort("vendorEmail")}
+                        >
+                          Email
+                        </TableSortLabel>
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <TableSortLabel
+                          active={orderBy === "endCity"}
+                          direction={orderBy === "endCity" ? order : "asc"}
+                          onClick={() => handleSort("endCity")}
+                        >
+                          Destination
+                        </TableSortLabel>
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <TableSortLabel
+                          active={orderBy === "submittedAt"}
+                          direction={orderBy === "submittedAt" ? order : "asc"}
+                          onClick={() => handleSort("submittedAt")}
+                        >
+                          Submitted
+                        </TableSortLabel>
+                      </StyledTableCell>
+                      <StyledTableCell align="right">
+                        <TableSortLabel
+                          active={orderBy === "baseRate"}
+                          direction={orderBy === "baseRate" ? order : "asc"}
+                          onClick={() => handleSort("baseRate")}
+                        >
+                          Base Rate
+                        </TableSortLabel>
+                      </StyledTableCell>
+                      <StyledTableCell align="right">
+                        <TableSortLabel
+                          active={orderBy === "fsc"}
+                          direction={orderBy === "fsc" ? order : "asc"}
+                          onClick={() => handleSort("fsc")}
+                        >
+                          FSC %
+                        </TableSortLabel>
+                      </StyledTableCell>
+                      <StyledTableCell align="right" isTotal>
+                        <TableSortLabel
+                          active={orderBy === "total"}
+                          direction={orderBy === "total" ? order : "asc"}
+                          onClick={() => handleSort("total")}
+                        >
+                          Total
+                        </TableSortLabel>
+                      </StyledTableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {sortedRates.length === 0 ? (
+                      <TableRow>
+                        <StyledTableCell colSpan={8} style={{ textAlign: "center", padding: "2rem" }}>
+                          No rates found for this selection
+                        </StyledTableCell>
+                      </TableRow>
+                    ) : (
+                      sortedRates.map((rate) => (
+                        <Box key={rate.id}>
+                          <TableRow
+                            sx={{
+                              cursor: hasOptionalData(rate) ? "pointer" : "default",
+                              "&:hover": {
+                                background: hasOptionalData(rate) ? "rgb(241 245 249)" : "transparent",
+                              },
+                            }}
+                            onClick={() => {
+                              if (hasOptionalData(rate)) {
+                                setExpandedRowId(expandedRowId === rate.id ? null : rate.id)
+                              }
+                            }}
+                          >
+                            <StyledTableCell>
+                              {hasOptionalData(rate) &&
+                                (expandedRowId === rate.id ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
+                            </StyledTableCell>
+                            <StyledTableCell>{rate.vendorId}</StyledTableCell>
+                            <StyledTableCell>{rate.vendorEmail}</StyledTableCell>
+                            <StyledTableCell>{rate.endCity}</StyledTableCell>
+                            <StyledTableCell>{new Date(rate.submittedAt).toLocaleDateString()}</StyledTableCell>
+                            <StyledTableCell align="right">${rate.baseRate.toFixed(2)}</StyledTableCell>
+                            <StyledTableCell align="right">{rate.fsc}%</StyledTableCell>
+                            <StyledTableCell align="right" isTotal>
+                              ${rate.total.toFixed(2)}
+                            </StyledTableCell>
+                          </TableRow>
+                          {hasOptionalData(rate) && expandedRowId === rate.id && (
+                            <TableRow>
+                              <StyledTableCell colSpan={8} style={{ padding: 0 }}>
+                                <Collapse in={true} timeout="auto" unmountOnExit>
+                                  <ExpandedDetailsGrid>
+                                    {rate.chassis && (
+                                      <DetailItem>
+                                        <label>Chassis</label>
+                                        <value>{rate.chassis}</value>
+                                      </DetailItem>
+                                    )}
+                                    {rate.yardStorage && (
+                                      <DetailItem>
+                                        <label>Yard Storage</label>
+                                        <value>{rate.yardStorage}</value>
+                                      </DetailItem>
+                                    )}
+                                    {rate.hazmat && (
+                                      <DetailItem>
+                                        <label>Hazmat</label>
+                                        <value>{rate.hazmat}</value>
+                                      </DetailItem>
+                                    )}
+                                    {rate.bond && (
+                                      <DetailItem>
+                                        <label>Bond</label>
+                                        <value>{rate.bond}</value>
+                                      </DetailItem>
+                                    )}
+                                    {rate.split && (
+                                      <DetailItem>
+                                        <label>Split</label>
+                                        <value>{rate.split}</value>
+                                      </DetailItem>
+                                    )}
+                                    {rate.flip && (
+                                      <DetailItem>
+                                        <label>Flip</label>
+                                        <value>{rate.flip}</value>
+                                      </DetailItem>
+                                    )}
+                                    {rate.overweight && (
+                                      <DetailItem>
+                                        <label>Overweight</label>
+                                        <value>{rate.overweight}</value>
+                                      </DetailItem>
+                                    )}
+                                    {rate.prepull && (
+                                      <DetailItem>
+                                        <label>Prepull</label>
+                                        <value>{rate.prepull}</value>
+                                      </DetailItem>
+                                    )}
+                                  </ExpandedDetailsGrid>
+                                </Collapse>
+                              </StyledTableCell>
+                            </TableRow>
+                          )}
+                        </Box>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </TableWrapper>
+          </ContentCard>
+        </GridContainer>
+      )}
     </PageContainer>
   )
 }
-</updates>
-
-3. Your task is to merge these updates into the existing `
-app/admin/rates/page.tsx`, creating a single, cohesive piece of code.
-
-4. Identify the locations in the existing code where updates need to be made. Look for markers like "/** rest of code here **/" in the updates, which indicate where the new code should be inserted.
-
-5. For each update:
-   a. Locate the corresponding section in the existing code.
-   b. Replace the existing code between the markers with the new code from the updates.
-   c. If there are no clear markers, use your best judgment to determine where the new code should be inserted based on the context and structure of the existing code.
-
-6. Ensure that the merged code maintains consistent formatting, indentation, and style with the rest of the code block.
-
-7. Write your answer inside <merged_code> tags. You should only respond with <merged_code> tags + the code inside them. DO NOT wrap the code in backticks or any other formatting.
-
-8. Here is a simple example to illustrate the process:
-
-const x = "updated value";
-
-
-Remember to maintain the overall structure and integrity of the original code while incorporating the updates seamlessly.
-
-Please begin with <merged_code> just as shown in the example:
-<|im_start|><|im_start|>
-<|im_start|><|im_start|>
-<|im_start|>
